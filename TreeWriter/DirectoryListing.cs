@@ -27,22 +27,20 @@ namespace TreeWriterWF
         }
 
         private TreeNode ContextNode = null;
-        private String DirectoryPath;
+        private Project Project;
 
         // Todo: Watch the filesystem for changes and automatically update directory tree.
         // https://msdn.microsoft.com/en-us/library/system.io.filesystemwatcher.aspx
 
-        public DirectoryListing(String Path)
+        public DirectoryListing(Project Project)
         {
-            this.DirectoryPath = Path;
+            this.Project = Project;
 
             InitializeComponent();
 
-            var root = BuildDirectoryTree(Path);
-            (root.Tag as NodeTag).NodeType = NodeTag.Type.Root;
-            treeView.Nodes.Add(root);
-            Text = System.IO.Path.GetFileName(Path);
-            root.Expand();
+            var directoryPath = System.IO.Path.GetDirectoryName(Project.Path);
+            BuildDirectoryTreeItems(directoryPath, treeView.Nodes);
+            Text = System.IO.Path.GetFileName(Project.Path);
         }
 
         private TreeNode BuildDirectoryTree(String DirectoryPath)
@@ -70,17 +68,25 @@ namespace TreeWriterWF
             }
         }
 
-        private void UpdateNode(TreeNode Node)
+        public void UpdateNode(TreeNode Node)
         {
-            Node.Nodes.Clear();
-            BuildDirectoryTreeItems((Node.Tag as NodeTag).Path, Node.Nodes);
+            if (Node == null)
+            {
+                treeView.Nodes.Clear();
+                BuildDirectoryTreeItems(System.IO.Path.GetDirectoryName(Project.Path), treeView.Nodes);
+            }
+            else
+            {
+                Node.Nodes.Clear();
+                BuildDirectoryTreeItems((Node.Tag as NodeTag).Path, Node.Nodes);
+            }
         }            
 
         private void treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             var file = e.Node.Tag as NodeTag;
             if (file.NodeType == NodeTag.Type.File)
-                ControllerCommand(new Commands.OpenFile(file.Path));
+                ControllerCommand(new Commands.OpenFile(file.Path, Project));
         }
 
         private void treeView_MouseUp(object sender, MouseEventArgs e)
@@ -97,12 +103,17 @@ namespace TreeWriterWF
                 {
                     ContextNode = node;
                     treeView.SelectedNode = ContextNode;
-                    
+
                     var tag = node.Tag as NodeTag;
                     if (tag.NodeType == NodeTag.Type.Directory)
                         DirectoryContextMenu.Show(treeView, p);
                     else if (tag.NodeType == NodeTag.Type.File)
                         FileContextMenu.Show(treeView, p);
+                }
+                else if (node == null)
+                {
+                    ContextNode = null;
+                    DirectoryContextMenu.Show(treeView, p);
                 }
             }
         }
@@ -116,29 +127,47 @@ namespace TreeWriterWF
             }
 
             var tag = e.Node.Tag as NodeTag;
-            var directory = System.IO.Path.GetDirectoryName(tag.Path);
-            var newPath = directory + "\\" + e.Label + ".txt";
+            if (tag.NodeType == NodeTag.Type.File)
+            {
+                var directory = System.IO.Path.GetDirectoryName(tag.Path);
+                var newPath = directory + "\\" + e.Label + ".txt";
 
-            ControllerCommand(new Commands.RenameFile(tag.Path, newPath));
+                ControllerCommand(new Commands.RenameFile(tag.Path, newPath));
 
-            tag.Path = newPath;
-            if (tag.NodeType == NodeTag.Type.Directory)
+                tag.Path = newPath;
+            }
+            else if (tag.NodeType == NodeTag.Type.Directory)
+            {
+                var directory = System.IO.Path.GetDirectoryName(tag.Path);
+                var newPath = directory + "\\" + e.Label;
+
+                ControllerCommand(new Commands.RenameFolder(tag.Path, newPath));
+
+                tag.Path = newPath;
                 UpdateNode(e.Node);
+            }
         }
 
         private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.Directory);
-            var tag = ContextNode.Tag as NodeTag;
-            var command = new Commands.CreateFile(tag.Path);
-            ControllerCommand(command);
-            UpdateNode(ContextNode);
+            if (ContextNode != null)
+            {
+                var tag = ContextNode.Tag as NodeTag;
+                var command = new Commands.CreateFile(tag.Path);
+                ControllerCommand(command);
+                UpdateNode(ContextNode);
+            }
+            else
+            {
+                ControllerCommand(new Commands.CreateFile(System.IO.Path.GetDirectoryName(Project.Path)));
+                UpdateNode(null);
+            }
             // TODO: Select the newly created file node.
         }
 
         private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.Directory);
+            if (ContextNode == null) return;
             var tag = ContextNode.Tag as NodeTag;
             ControllerCommand(new Commands.DeleteFolder(tag.Path));
             UpdateNode(ContextNode.Parent);
@@ -146,6 +175,7 @@ namespace TreeWriterWF
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (ContextNode == null) return;
             System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.File);
             var tag = ContextNode.Tag as NodeTag;
             ControllerCommand(new Commands.DeleteFile(tag.Path));
@@ -154,7 +184,24 @@ namespace TreeWriterWF
 
         private void DirectoryListing_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ControllerCommand(new Commands.CloseDirectory(DirectoryPath));
+            ControllerCommand(new Commands.CloseProject(Project));
+        }
+
+        private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ContextNode != null)
+            {
+                var tag = ContextNode.Tag as NodeTag;
+                var command = new Commands.CreateFolder(tag.Path);
+                ControllerCommand(command);
+                UpdateNode(ContextNode);
+            }
+            else
+            {
+                ControllerCommand(new Commands.CreateFolder(System.IO.Path.GetDirectoryName(Project.Path)));
+                UpdateNode(null);
+            }
+            // TODO: Select the newly created file node.
         }
     }
 }

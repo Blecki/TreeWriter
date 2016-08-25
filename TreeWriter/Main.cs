@@ -13,7 +13,7 @@ namespace TreeWriterWF
 {
     public partial class Main : Form
     {
-        private ProjectModel ProjectModel = new ProjectModel();
+        private Model ProjectModel = new Model();
 
         public Main()
         {
@@ -37,14 +37,23 @@ namespace TreeWriterWF
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var folderChooser = new FolderBrowserDialog();
-            if (folderChooser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.OpenDirectory(folderChooser.SelectedPath));
+            var fileDialog = new OpenFileDialog();
+            fileDialog.CheckFileExists = true;
+            fileDialog.Filter = "Tree Writer Projects|*.twproj";
+            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                ProcessControllerCommand(new Commands.OpenProject(fileDialog.FileName));
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             ProjectModel.SaveSettings();
+        }
+
+        private void createProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var projectDialog = new CreateProjectForm();
+            if (projectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                ProcessControllerCommand(new Commands.CreateProject(projectDialog.ProjectPath));
         }
     }
 }

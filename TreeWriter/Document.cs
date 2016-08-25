@@ -12,7 +12,8 @@ namespace TreeWriterWF
         public String Contents;
         public bool NeedChangesSaved = false;
         public List<DocumentEditor> OpenEditors = new List<DocumentEditor>();
-
+        public Project Owner;
+        
         // Todo: Watch file and update it if it's changed by another program.
 
         public void ApplyChanges(String NewText)

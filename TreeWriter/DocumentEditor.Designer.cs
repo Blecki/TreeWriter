@@ -43,6 +43,7 @@
             this.textEditor.Text = "scintilla1";
             this.textEditor.WrapMode = ScintillaNET.WrapMode.Word;
             this.textEditor.Zoom = 10;
+            this.textEditor.HotspotClick += new System.EventHandler<ScintillaNET.HotspotClickEventArgs>(this.textEditor_HotspotClick);
             this.textEditor.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.textEditor_StyleNeeded);
             // 
             // DocumentEditor

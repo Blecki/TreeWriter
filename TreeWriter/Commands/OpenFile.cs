@@ -9,15 +9,17 @@ namespace TreeWriterWF.Commands
     public class OpenFile :ICommand
     {
         private String FileName;
+        private Project Owner;
 
-        public OpenFile(String FileName)
+        public OpenFile(String FileName, Project Owner)
         {
             this.FileName = FileName;
+            this.Owner = Owner;
         }
 
-        public void Execute(ProjectModel Model, Main View)
+        public void Execute(Model Model, Main View)
         {
-            var document = Model.OpenDocument(FileName);
+            var document = Model.OpenDocument(FileName, Owner);
             if (document.OpenEditors.Count != 0)
                 document.OpenEditors[0].BringToFront();
             else

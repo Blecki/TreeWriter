@@ -7,15 +7,21 @@ using Newtonsoft.Json;
 
 namespace TreeWriterWF
 {
-    public class ProjectModel
+    public class Model
     {
         public List<Document> OpenDocuments = new List<Document>();
-        public List<String> OpenDirectories = new List<String>();
+        public List<Project> OpenProjects = new List<Project>();
+
+        public class SerializableDocument
+        {
+            public String Path;
+            public String Project;
+        }
 
         public class SerializableSettings
         {
-            public List<String> OpenDocuments;
-            public List<String> OpenDirectories;
+            public List<SerializableDocument> OpenDocuments;
+            public List<String> OpenProjects;
         }
 
         public void LoadSettings(Main View)
@@ -28,11 +34,17 @@ namespace TreeWriterWF
                     var text = System.IO.File.ReadAllText(settingsPath);
                     var settingsObject = JsonConvert.DeserializeObject<SerializableSettings>(text);
 
-                    foreach (var document in settingsObject.OpenDocuments)
-                        View.ProcessControllerCommand(new Commands.OpenFile(document));
+                    foreach (var folder in settingsObject.OpenProjects)
+                        View.ProcessControllerCommand(new Commands.OpenProject(folder));
 
-                    foreach (var folder in settingsObject.OpenDirectories)
-                        View.ProcessControllerCommand(new Commands.OpenDirectory(folder));
+                    foreach (var document in settingsObject.OpenDocuments)
+                    {
+                        var owner = OpenProjects.FirstOrDefault(p => p.Path == document.Project);
+                        if (owner != null)
+                            View.ProcessControllerCommand(new Commands.OpenFile(document.Path, owner));
+                    }
+
+                    
                 }
 
             } catch (Exception e)
@@ -52,8 +64,12 @@ namespace TreeWriterWF
 
                 var settingsObject = new SerializableSettings
                 {
-                    OpenDocuments = OpenDocuments.Select(d => d.FileName).ToList(),
-                    OpenDirectories = OpenDirectories
+                    OpenDocuments = OpenDocuments.Select(d => new SerializableDocument
+                    {
+                        Path = d.FileName,
+                        Project = d.Owner.Path
+                    }).ToList(),
+                    OpenProjects = OpenProjects.Select(d => d.Path).ToList()
                 };
                 
                 System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject));
@@ -69,7 +85,7 @@ namespace TreeWriterWF
             return OpenDocuments.FirstOrDefault(d => d.FileName == FileName);
         }
 
-        public Document OpenDocument(String FileName)
+        public Document OpenDocument(String FileName, Project Owner)
         {
             var existingDocument = FindOpenDocument(FileName);
             if (existingDocument == null)
@@ -77,9 +93,30 @@ namespace TreeWriterWF
                 existingDocument = new Document();
                 existingDocument.FileName = FileName;
                 existingDocument.Contents = System.IO.File.ReadAllText(FileName);
+                existingDocument.Owner = Owner;
                 OpenDocuments.Add(existingDocument);
             }
             return existingDocument;
+        }
+
+        public Project OpenProject(String ProjectPath)
+        {
+            var existingProject = OpenProjects.FirstOrDefault(d => d.Path == ProjectPath);
+            if (existingProject == null)
+            {
+                existingProject = new Project
+                {
+                    Path = ProjectPath,
+                    OpenView = null
+                };
+                OpenProjects.Add(existingProject);
+            }
+            return existingProject;
+        }
+
+        public void CloseProject(Project Project)
+        {
+            OpenProjects.Remove(Project);
         }
 
         /// <summary>
@@ -98,6 +135,16 @@ namespace TreeWriterWF
             System.IO.File.WriteAllText(Document.FileName, Document.Contents);
         }
 
-
+        public String WikiSearch(String ProjectDirectory, String ArticleName)
+        {
+            var localFile = ProjectDirectory + "\\" + ArticleName + ".txt";
+            if (System.IO.File.Exists(localFile)) return localFile;
+            else foreach (var directory in System.IO.Directory.EnumerateDirectories(ProjectDirectory))
+                {
+                    var r = WikiSearch(directory, ArticleName);
+                    if (!String.IsNullOrEmpty(r)) return r;
+                }
+            return null;
+        }
     }
 }

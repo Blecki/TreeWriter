@@ -56,6 +56,9 @@ namespace TreeWriterWF
 
             #endregion
 
+            textEditor.Styles[1].ForeColor = Color.Red;
+            textEditor.Styles[1].Hotspot = true;
+
             // Load document into editor.
             if (!LinkingDocument.HasValue)
                 textEditor.Text = Document.Contents;
@@ -76,6 +79,8 @@ namespace TreeWriterWF
 
         private void textEditor_StyleNeeded(object sender, StyleNeededEventArgs e)
         {
+            // Calculate folding
+
             int startLine = textEditor.FirstVisibleLine;
             if (startLine > 0) startLine -= 1;
             int currentFoldLevel = 1024;
@@ -83,10 +88,11 @@ namespace TreeWriterWF
                 currentFoldLevel = textEditor.Lines[startLine].FoldLevel;
 
             var endLine = textEditor.Lines.Count;
+            var currentLine = startLine;
 
-            while (startLine != endLine)
+            while (currentLine != endLine)
             {
-                var line = textEditor.Lines[startLine];
+                var line = textEditor.Lines[currentLine];
                 var headerSize = CountHashes(line.Text);
 
                 if (headerSize > 0)
@@ -102,7 +108,27 @@ namespace TreeWriterWF
                     line.FoldLevel = currentFoldLevel;
                 }
 
-                startLine += 1;
+                // Style line. 
+                textEditor.StartStyling(line.Position);
+                textEditor.SetStyling(line.Length, 0);
+
+                // Search line for brackets and style between them.
+                var bracketPos = line.Text.IndexOf('[');
+                while (bracketPos != -1)
+                {
+                    var end = line.Text.IndexOf(']', bracketPos);
+                    if (end != -1)
+                    {
+                        textEditor.StartStyling(line.Position + bracketPos);
+                        textEditor.SetStyling(end - bracketPos + 1, 1);
+
+                        bracketPos = line.Text.IndexOf('[', end);
+                    }
+                    else
+                        bracketPos = -1;
+                }
+
+                currentLine += 1;
             }
         }
 
@@ -124,6 +150,14 @@ namespace TreeWriterWF
             var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
             ControllerCommand(closeCommand);
             e.Cancel = closeCommand.Cancel;
+        }
+
+        private void textEditor_HotspotClick(object sender, HotspotClickEventArgs e)
+        {
+            var endPoint = textEditor.Text.IndexOf(']', e.Position);
+            var startPoint = textEditor.Text.LastIndexOf('[', e.Position, e.Position + 1);
+            var linkText = textEditor.Text.Substring(startPoint + 1, endPoint - startPoint - 1);
+            ControllerCommand(new Commands.WikiFollow(Document, linkText));
         }               
     }
 }

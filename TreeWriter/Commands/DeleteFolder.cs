@@ -15,7 +15,7 @@ namespace TreeWriterWF.Commands
             this.DirectoryPath = DirectoryPath;
         }
 
-        public void Execute(ProjectModel Model, Main View)
+        public void Execute(Model Model, Main View)
         {
             try
             {

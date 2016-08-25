@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF
 {
-    public interface ICommand
+    public class Project
     {
-        void Execute(Model Model, Main View);
+        public String Path;
+        public DirectoryListing OpenView;
     }
 }

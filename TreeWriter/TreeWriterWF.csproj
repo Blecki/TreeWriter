@@ -58,13 +58,17 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CloseDirectory.cs" />
+    <Compile Include="Commands\CloseProject.cs" />
+    <Compile Include="Commands\CreateFolder.cs" />
+    <Compile Include="Commands\RenameFolder.cs" />
+    <Compile Include="Commands\WikiFollow.cs" />
     <Compile Include="Commands\DeleteFile.cs" />
     <Compile Include="Commands\DeleteFolder.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CloseEditor.cs" />
     <Compile Include="Commands\CreateFile.cs" />
-    <Compile Include="Commands\OpenDirectory.cs" />
+    <Compile Include="Commands\CreateProject.cs" />
+    <Compile Include="Commands\OpenProject.cs" />
     <Compile Include="Commands\RenameFile.cs" />
     <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="ControllerPanel.cs">
@@ -72,6 +76,12 @@
     </Compile>
     <Compile Include="ControllerPanel.Designer.cs">
       <DependentUpon>ControllerPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateProjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateProjectForm.Designer.cs">
+      <DependentUpon>CreateProjectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DirectoryListing.cs">
       <SubType>Form</SubType>
@@ -93,8 +103,12 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="ProjectModel.cs" />
+    <Compile Include="Project.cs" />
+    <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CreateProjectForm.resx">
+      <DependentUpon>CreateProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DirectoryListing.resx">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </EmbeddedResource>

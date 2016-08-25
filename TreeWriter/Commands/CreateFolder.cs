@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class CreateFile :ICommand
+    public class CreateFolder :ICommand
     {
         private String DirectoryPath;
         public String NewFileName;
-        
-        public CreateFile(String DirectoryPath)
+
+        public CreateFolder(String DirectoryPath)
         {
             this.DirectoryPath = DirectoryPath;
         }
@@ -25,15 +25,14 @@ namespace TreeWriterWF.Commands
             {
                 try
                 {
-                    if (counter == 0) NewFileName = "untitled.txt";
-                    else NewFileName = String.Format("untitled {0}.txt", counter);
+                    if (counter == 0) NewFileName = "new folder";
+                    else NewFileName = String.Format("new folder {0}", counter);
                     counter += 1;
 
                     var fullPath = DirectoryPath + "\\" + NewFileName;
-                    if (System.IO.File.Exists(fullPath)) continue;
+                    if (System.IO.Directory.Exists(fullPath)) continue;
 
-                    var file = System.IO.File.CreateText(fullPath);
-                    file.Close();
+                    var file = System.IO.Directory.CreateDirectory(fullPath);
 
                     break;
                 }

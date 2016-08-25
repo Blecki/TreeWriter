@@ -20,7 +20,7 @@ namespace TreeWriterWF.Commands
             this.AppClosing = AppClosing;
         }
 
-        public void Execute(ProjectModel Model, Main View)
+        public void Execute(Model Model, Main View)
         {
             if (!Document.NeedChangesSaved)
             {
