@@ -15,6 +15,8 @@ namespace TreeWriterWF
     public partial class DocumentEditor : ControllerPanel
     {
         Document Document;
+        NHunspell.Hunspell SpellChecker = new NHunspell.Hunspell("en_US.aff", "en_US.dic");
+        String WordBoundaries = " \t\r\n.,;:\"?![]{}()<>#-";
 
         public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument)
         {
@@ -59,6 +61,10 @@ namespace TreeWriterWF
             textEditor.Styles[1].ForeColor = Color.Red;
             textEditor.Styles[1].Hotspot = true;
 
+            textEditor.Indicators[1].Style = IndicatorStyle.Squiggle;
+            textEditor.Indicators[1].ForeColor = Color.Red;
+
+
             // Load document into editor.
             if (!LinkingDocument.HasValue)
                 textEditor.Text = Document.Contents;
@@ -70,6 +76,11 @@ namespace TreeWriterWF
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
 
+        }
+
+        public ScintillaNET.Document GetScintillaDocument()
+        {
+            return textEditor.Document;
         }
 
         public void UpdateTitle()
@@ -90,7 +101,7 @@ namespace TreeWriterWF
             var endLine = textEditor.Lines.Count;
             var currentLine = startLine;
 
-            while (currentLine != endLine)
+            while (currentLine < endLine)
             {
                 var line = textEditor.Lines[currentLine];
                 var headerSize = CountHashes(line.Text);
@@ -128,8 +139,51 @@ namespace TreeWriterWF
                         bracketPos = -1;
                 }
 
+                // Finally, check for spelling.
+
+                // Clear any existing squiggles.
+                textEditor.IndicatorCurrent = 1;
+                textEditor.IndicatorClearRange(line.Position, line.EndPosition - line.Position);
+
+                // Find all words in line.
+                var startPos = FindWordStart(line.Text, 0);
+                while(startPos < line.Length)
+                {
+                    var end = FindWordEnd(line.Text, startPos);
+                    // Style between startPos and end
+                    var word = line.Text.Substring(startPos, end - startPos);
+                    var spellingResults = SpellChecker.Spell(word);
+                    if (!spellingResults)
+                        textEditor.IndicatorFillRange(line.Position + startPos, end - startPos);
+
+                    startPos = FindWordStart(line.Text, end);
+                }
+
                 currentLine += 1;
             }
+
+            
+        }
+
+        private int FindWordStart(String Str, int Start)
+        {
+            while (Start < Str.Length && WordBoundaries.Contains(Str[Start]))
+                Start += 1;
+            return Start;
+        }
+
+        private int FindWordEnd(String Str, int Start)
+        {
+            while (Start < Str.Length && !WordBoundaries.Contains(Str[Start]))
+                Start += 1;
+            return Start;
+        }
+
+        private int FindWordStartBackwards(String Str, int Start)
+        {
+            while (Start >= 0 && !WordBoundaries.Contains(Str[Start]))
+                Start -= 1;
+            return Start + 1;
         }
 
         private int CountHashes(String Line)
@@ -145,11 +199,13 @@ namespace TreeWriterWF
         }
 
         private void DocumentEditor_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            
+        {            
+            if (e.CloseReason == CloseReason.UserClosing)
+            { 
             var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
             ControllerCommand(closeCommand);
             e.Cancel = closeCommand.Cancel;
+                }
         }
 
         private void textEditor_HotspotClick(object sender, HotspotClickEventArgs e)
@@ -158,6 +214,64 @@ namespace TreeWriterWF
             var startPoint = textEditor.Text.LastIndexOf('[', e.Position, e.Position + 1);
             var linkText = textEditor.Text.Substring(startPoint + 1, endPoint - startPoint - 1);
             ControllerCommand(new Commands.WikiFollow(Document, linkText));
-        }               
+        }
+          
+        private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.S && e.Control)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                ControllerCommand(new Commands.SaveDocument(Document));
+            }
+        }
+
+        private void duplicateViewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Open a new document editor.
+            ControllerCommand(new Commands.DuplicateView(Document));
+        }
+
+        private void textEditor_MouseDown(object sender, MouseEventArgs e)
+        {
+           
+        }
+
+        private void textEditor_IndicatorClick(object sender, IndicatorClickEventArgs e)
+        {
+            var style = textEditor.IndicatorAllOnFor(e.Position);
+            if ((style & 2) == 0) return;
+
+            var lineIndex = textEditor.LineFromPosition(e.Position);
+            var line = textEditor.Lines[lineIndex];
+            var offset = e.Position - line.Position;
+            var wordStart = FindWordStartBackwards(line.Text, offset);
+            var wordEnd = FindWordEnd(line.Text, offset);
+            var word = line.Text.Substring(wordStart, wordEnd - wordStart);
+
+            var suggestions = SpellChecker.Suggest(word);
+
+            var contextMenu = new ContextMenuStrip();
+            if (suggestions.Count == 0)
+                contextMenu.Items.Add("No suggestions");
+            else
+            {
+                foreach (var suggestion in suggestions)
+                {
+                    var item = new ToolStripMenuItem(suggestion);
+                    item.Click += (s, args) =>
+                    {
+                        textEditor.TargetStart = wordStart + line.Position;
+                        textEditor.TargetEnd = wordEnd + line.Position;
+                        textEditor.ReplaceTarget(item.Text);
+                    };
+                    contextMenu.Items.Add(item);
+                }
+            }
+
+
+            contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));
+        }
+       
     }
 }

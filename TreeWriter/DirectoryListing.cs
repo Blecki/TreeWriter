@@ -203,5 +203,20 @@ namespace TreeWriterWF
             }
             // TODO: Select the newly created file node.
         }
+
+        private void treeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (treeView.SelectedNode != null)
+                {
+                    var tag = treeView.SelectedNode.Tag as NodeTag;
+                    if (tag != null && tag.NodeType == NodeTag.Type.File)
+                        ControllerCommand(new Commands.OpenFile(tag.Path, Project));
+                    else if (tag != null)
+                        treeView.SelectedNode.Toggle();
+                }
+            }
+        }
     }
 }

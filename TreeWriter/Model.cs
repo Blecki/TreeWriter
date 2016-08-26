@@ -133,6 +133,7 @@ namespace TreeWriterWF
         public void SaveDocument(Document Document)
         {
             System.IO.File.WriteAllText(Document.FileName, Document.Contents);
+            Document.NeedChangesSaved = false;
         }
 
         public String WikiSearch(String ProjectDirectory, String ArticleName)

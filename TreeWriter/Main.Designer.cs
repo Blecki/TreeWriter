@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +59,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openDirectoryToolStripMenuItem,
-            this.createProjectToolStripMenuItem});
+            this.createProjectToolStripMenuItem,
+            this.saveDocumentToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -66,16 +68,23 @@
             // openDirectoryToolStripMenuItem
             // 
             this.openDirectoryToolStripMenuItem.Name = "openDirectoryToolStripMenuItem";
-            this.openDirectoryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openDirectoryToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.openDirectoryToolStripMenuItem.Text = "Open Project";
             this.openDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openDirectoryToolStripMenuItem_Click);
             // 
             // createProjectToolStripMenuItem
             // 
             this.createProjectToolStripMenuItem.Name = "createProjectToolStripMenuItem";
-            this.createProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.createProjectToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.createProjectToolStripMenuItem.Text = "Create Project";
             this.createProjectToolStripMenuItem.Click += new System.EventHandler(this.createProjectToolStripMenuItem_Click);
+            // 
+            // saveDocumentToolStripMenuItem
+            // 
+            this.saveDocumentToolStripMenuItem.Name = "saveDocumentToolStripMenuItem";
+            this.saveDocumentToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.saveDocumentToolStripMenuItem.Text = "Save All Documents";
+            this.saveDocumentToolStripMenuItem.Click += new System.EventHandler(this.saveDocumentToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -103,6 +112,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveDocumentToolStripMenuItem;
     }
 }
 

@@ -46,7 +46,12 @@ namespace TreeWriterWF
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ProjectModel.SaveSettings();
+            var closeCommand = new Commands.CloseApplication();
+            ProcessControllerCommand(closeCommand);
+            if (closeCommand.Cancel == false)
+                ProjectModel.SaveSettings();
+            else
+                e.Cancel = true;
         }
 
         private void createProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -54,6 +59,11 @@ namespace TreeWriterWF
             var projectDialog = new CreateProjectForm();
             if (projectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 ProcessControllerCommand(new Commands.CreateProject(projectDialog.ProjectPath));
+        }
+
+        private void saveDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProcessControllerCommand(new Commands.SaveOpenDocuments());
         }
     }
 }
