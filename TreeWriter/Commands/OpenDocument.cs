@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class OpenFile :ICommand
+    public class OpenDocument :ICommand
     {
         private String FileName;
         private Project Owner;
 
-        public OpenFile(String FileName, Project Owner)
+        public OpenDocument(String FileName, Project Owner)
         {
             this.FileName = FileName;
             this.Owner = Owner;
@@ -25,7 +25,7 @@ namespace TreeWriterWF.Commands
             else
             {
                 // We would pass the existing scintilla document of an open editor to implement multiple views.
-                var docPanel = new DocumentEditor(document, null);
+                var docPanel = new DocumentEditor(document, null, Model.SpellChecker);
                 View.OpenControllerPanel(docPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
                 document.OpenEditors.Add(docPanel);
             }

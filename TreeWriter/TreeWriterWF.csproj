@@ -62,22 +62,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
+    <Compile Include="Commands\AddWordToDictionary.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
     <Compile Include="Commands\CloseProject.cs" />
     <Compile Include="Commands\CreateFolder.cs" />
     <Compile Include="Commands\RenameFolder.cs" />
-    <Compile Include="Commands\WikiFollow.cs" />
-    <Compile Include="Commands\DeleteFile.cs" />
+    <Compile Include="Commands\FollowWikiLink.cs" />
+    <Compile Include="Commands\DeleteDocument.cs" />
     <Compile Include="Commands\DeleteFolder.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CloseEditor.cs" />
-    <Compile Include="Commands\CreateFile.cs" />
+    <Compile Include="Commands\CreateNewDocument.cs" />
     <Compile Include="Commands\CreateProject.cs" />
     <Compile Include="Commands\OpenProject.cs" />
-    <Compile Include="Commands\RenameFile.cs" />
-    <Compile Include="Commands\OpenFile.cs" />
+    <Compile Include="Commands\RenameDocument.cs" />
+    <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="ControllerPanel.cs">
       <SubType>Form</SubType>
     </Compile>

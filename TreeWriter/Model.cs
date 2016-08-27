@@ -11,6 +11,9 @@ namespace TreeWriterWF
     {
         public List<Document> OpenDocuments = new List<Document>();
         public List<Project> OpenProjects = new List<Project>();
+        public NHunspell.Hunspell SpellChecker { get; private set; }
+        String DictionaryBase = "en_US";
+        public List<String> CustomDictionaryEntries = new List<string>();
 
         public class SerializableDocument
         {
@@ -22,6 +25,8 @@ namespace TreeWriterWF
         {
             public List<SerializableDocument> OpenDocuments;
             public List<String> OpenProjects;
+            public String Dictionary;
+            public List<String> CustomDictionaryEntries;
         }
 
         public void LoadSettings(Main View)
@@ -34,6 +39,11 @@ namespace TreeWriterWF
                     var text = System.IO.File.ReadAllText(settingsPath);
                     var settingsObject = JsonConvert.DeserializeObject<SerializableSettings>(text);
 
+                    if (!String.IsNullOrEmpty(settingsObject.Dictionary))
+                        DictionaryBase = settingsObject.Dictionary;
+        
+                    SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
+        
                     foreach (var folder in settingsObject.OpenProjects)
                         View.ProcessControllerCommand(new Commands.OpenProject(folder));
 
@@ -41,14 +51,21 @@ namespace TreeWriterWF
                     {
                         var owner = OpenProjects.FirstOrDefault(p => p.Path == document.Project);
                         if (owner != null)
-                            View.ProcessControllerCommand(new Commands.OpenFile(document.Path, owner));
+                            View.ProcessControllerCommand(new Commands.OpenDocument(document.Path, owner));
                     }
 
-                    
+                    if (settingsObject.CustomDictionaryEntries != null)
+                        foreach (var word in settingsObject.CustomDictionaryEntries)
+                        {
+                            CustomDictionaryEntries.Add(word);
+                            SpellChecker.Add(word);
+                        }
                 }
-
-            } catch (Exception e)
+            } 
+            catch (Exception e)
             {
+                DictionaryBase = "en_US";
+
                 System.Windows.Forms.MessageBox.Show("Error loading settings.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
             }
         }
@@ -69,7 +86,9 @@ namespace TreeWriterWF
                         Path = d.FileName,
                         Project = d.Owner.Path
                     }).ToList(),
-                    OpenProjects = OpenProjects.Select(d => d.Path).ToList()
+                    OpenProjects = OpenProjects.Select(d => d.Path).ToList(),
+                    Dictionary = DictionaryBase,
+                    CustomDictionaryEntries = CustomDictionaryEntries
                 };
                 
                 System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject));

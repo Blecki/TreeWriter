@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class CreateFile :ICommand
+    public class CreateNewDocument :ICommand
     {
         private String DirectoryPath;
         public String NewFileName;
         
-        public CreateFile(String DirectoryPath)
+        public CreateNewDocument(String DirectoryPath)
         {
             this.DirectoryPath = DirectoryPath;
         }

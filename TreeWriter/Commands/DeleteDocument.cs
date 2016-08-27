@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class DeleteFile :ICommand
+    public class DeleteDocument :ICommand
     {
         private String Path;
 
-        public DeleteFile(String Path)
+        public DeleteDocument(String Path)
         {
             this.Path = Path;
         }
@@ -19,7 +19,12 @@ namespace TreeWriterWF.Commands
         {
             try
             {
-                System.IO.File.Delete(Path);
+                var openDocument = Model.FindOpenDocument(Path);
+                if (openDocument != null)
+                    System.Windows.Forms.MessageBox.Show("Close this document before deleting it.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
+                else
+                    System.IO.File.Delete(Path);
+
             }
             catch (System.IO.IOException e)
             {

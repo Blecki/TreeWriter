@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class RenameFile :ICommand
+    public class RenameDocument :ICommand
     {
         private String OriginalFileName;
         private String NewFileName;
         
-        public RenameFile(String OriginalFileName, String NewFileName)
+        public RenameDocument(String OriginalFileName, String NewFileName)
         {
             this.OriginalFileName = OriginalFileName;
             this.NewFileName = NewFileName;

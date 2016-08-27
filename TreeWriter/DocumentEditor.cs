@@ -15,12 +15,13 @@ namespace TreeWriterWF
     public partial class DocumentEditor : ControllerPanel
     {
         Document Document;
-        NHunspell.Hunspell SpellChecker = new NHunspell.Hunspell("en_US.aff", "en_US.dic");
-        String WordBoundaries = " \t\r\n.,;:\"?![]{}()<>#-";
+        NHunspell.Hunspell SpellChecker;
+        String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-";
 
-        public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument)
+        public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, NHunspell.Hunspell SpellChecker)
         {
             this.Document = Document;
+            this.SpellChecker = SpellChecker;
 
             InitializeComponent();
 
@@ -58,7 +59,7 @@ namespace TreeWriterWF
 
             #endregion
 
-            textEditor.Styles[1].ForeColor = Color.Red;
+            textEditor.Styles[1].ForeColor = Color.Blue;
             textEditor.Styles[1].Hotspot = true;
 
             textEditor.Indicators[1].Style = IndicatorStyle.Squiggle;
@@ -92,9 +93,9 @@ namespace TreeWriterWF
         {
             // Calculate folding
 
-            int startLine = textEditor.FirstVisibleLine;
+            int startLine = textEditor.LineFromPosition(textEditor.CharPositionFromPoint(0, 0));
             if (startLine > 0) startLine -= 1;
-            int currentFoldLevel = 1024;
+            int currentFoldLevel = 1048;
             if (startLine != 0)
                 currentFoldLevel = textEditor.Lines[startLine].FoldLevel;
 
@@ -109,9 +110,8 @@ namespace TreeWriterWF
                 if (headerSize > 0)
                 {
                     line.FoldLevelFlags = FoldLevelFlags.Header;
-                    line.FoldLevel = 1024 + headerSize - 1;
-
-                    currentFoldLevel = 1024 + headerSize;
+                    line.FoldLevel = 1048 - headerSize - 1;
+                    currentFoldLevel = 1048 - headerSize;
                 }
                 else
                 {
@@ -213,7 +213,7 @@ namespace TreeWriterWF
             var endPoint = textEditor.Text.IndexOf(']', e.Position);
             var startPoint = textEditor.Text.LastIndexOf('[', e.Position, e.Position + 1);
             var linkText = textEditor.Text.Substring(startPoint + 1, endPoint - startPoint - 1);
-            ControllerCommand(new Commands.WikiFollow(Document, linkText));
+            ControllerCommand(new Commands.FollowWikiLink(Document, linkText));
         }
           
         private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
@@ -268,6 +268,13 @@ namespace TreeWriterWF
                     contextMenu.Items.Add(item);
                 }
             }
+            var addOption = new ToolStripMenuItem("add to dictionary");
+            addOption.Click += (s, args) =>
+                {
+                    ControllerCommand(new Commands.AddWordToDictionary(word));
+                    textEditor.Invalidate();
+                };
+            contextMenu.Items.Add(addOption);
 
 
             contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));

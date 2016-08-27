@@ -45,9 +45,16 @@ namespace TreeWriterWF
 
         private TreeNode BuildDirectoryTree(String DirectoryPath)
         {
-            var r = new TreeNode() { Text = System.IO.Path.GetFileName(DirectoryPath), Tag = new NodeTag {
-            NodeType = NodeTag.Type.Directory,
-            Path = DirectoryPath }
+            var r = new TreeNode()
+            {
+                Text = System.IO.Path.GetFileName(DirectoryPath),
+                Tag = new NodeTag
+                {
+                    NodeType = NodeTag.Type.Directory,
+                    Path = DirectoryPath
+                },
+                ImageIndex = 1,
+                SelectedImageIndex = 1,
             };
             BuildDirectoryTreeItems(DirectoryPath, r.Nodes);
             return r;
@@ -64,6 +71,8 @@ namespace TreeWriterWF
                 if (extension != ".txt") continue;
                 var fileNode = new TreeNode() { Text = System.IO.Path.GetFileNameWithoutExtension(file) };
                 fileNode.Tag = new NodeTag { NodeType = NodeTag.Type.File, Path = file };
+                fileNode.ImageIndex = 0;
+                fileNode.SelectedImageIndex = 0;
                 Into.Add(fileNode);
             }
         }
@@ -86,7 +95,7 @@ namespace TreeWriterWF
         {
             var file = e.Node.Tag as NodeTag;
             if (file.NodeType == NodeTag.Type.File)
-                ControllerCommand(new Commands.OpenFile(file.Path, Project));
+                ControllerCommand(new Commands.OpenDocument(file.Path, Project));
         }
 
         private void treeView_MouseUp(object sender, MouseEventArgs e)
@@ -120,6 +129,12 @@ namespace TreeWriterWF
 
         private void treeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
+            if (String.IsNullOrEmpty(e.Label))
+            {
+                e.CancelEdit = true;
+                return;
+            }
+
             if (e.Node.Tag == null)
             {
                 e.CancelEdit = true;
@@ -127,12 +142,15 @@ namespace TreeWriterWF
             }
 
             var tag = e.Node.Tag as NodeTag;
+
+            if (e.Label == System.IO.Path.GetFileNameWithoutExtension(tag.Path)) return;
+
             if (tag.NodeType == NodeTag.Type.File)
             {
                 var directory = System.IO.Path.GetDirectoryName(tag.Path);
                 var newPath = directory + "\\" + e.Label + ".txt";
 
-                ControllerCommand(new Commands.RenameFile(tag.Path, newPath));
+                ControllerCommand(new Commands.RenameDocument(tag.Path, newPath));
 
                 tag.Path = newPath;
             }
@@ -150,19 +168,32 @@ namespace TreeWriterWF
 
         private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Commands.CreateNewDocument createCommand = null;
+            TreeNode newNode = null;
+            
             if (ContextNode != null)
             {
                 var tag = ContextNode.Tag as NodeTag;
-                var command = new Commands.CreateFile(tag.Path);
-                ControllerCommand(command);
+                createCommand = new Commands.CreateNewDocument(tag.Path);
+                ControllerCommand(createCommand);
                 UpdateNode(ContextNode);
+                foreach (TreeNode node in ContextNode.Nodes)
+                    if ((node.Tag as NodeTag).Path == tag.Path + "\\" + createCommand.NewFileName)
+                        newNode = node;
             }
             else
             {
-                ControllerCommand(new Commands.CreateFile(System.IO.Path.GetDirectoryName(Project.Path)));
+                createCommand = new Commands.CreateNewDocument(System.IO.Path.GetDirectoryName(Project.Path));
+                ControllerCommand(createCommand);
                 UpdateNode(null);
+                foreach (TreeNode node in treeView.Nodes)
+                    if ((node.Tag as NodeTag).Path == System.IO.Path.GetDirectoryName(Project.Path) + "\\" + createCommand.NewFileName)
+                        newNode = node;
             }
-            // TODO: Select the newly created file node.
+
+            newNode.EnsureVisible();
+            treeView.SelectedNode = newNode;
+            newNode.BeginEdit();
         }
 
         private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -178,7 +209,7 @@ namespace TreeWriterWF
             if (ContextNode == null) return;
             System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.File);
             var tag = ContextNode.Tag as NodeTag;
-            ControllerCommand(new Commands.DeleteFile(tag.Path));
+            ControllerCommand(new Commands.DeleteDocument(tag.Path));
             UpdateNode(ContextNode.Parent);
         }
 
@@ -189,19 +220,32 @@ namespace TreeWriterWF
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Commands.CreateFolder createCommand = null;
+            TreeNode newNode = null;
+
             if (ContextNode != null)
             {
                 var tag = ContextNode.Tag as NodeTag;
-                var command = new Commands.CreateFolder(tag.Path);
-                ControllerCommand(command);
+                createCommand = new Commands.CreateFolder(tag.Path);
+                ControllerCommand(createCommand);
                 UpdateNode(ContextNode);
+                foreach (TreeNode node in ContextNode.Nodes)
+                    if ((node.Tag as NodeTag).Path == tag.Path + "\\" + createCommand.NewFileName)
+                        newNode = node;
             }
             else
             {
-                ControllerCommand(new Commands.CreateFolder(System.IO.Path.GetDirectoryName(Project.Path)));
+                createCommand = new Commands.CreateFolder(System.IO.Path.GetDirectoryName(Project.Path));
+                ControllerCommand(createCommand);
                 UpdateNode(null);
+                foreach (TreeNode node in treeView.Nodes)
+                    if ((node.Tag as NodeTag).Path == System.IO.Path.GetDirectoryName(Project.Path) + "\\" + createCommand.NewFileName)
+                        newNode = node;
             }
-            // TODO: Select the newly created file node.
+
+            newNode.EnsureVisible();
+            treeView.SelectedNode = newNode;
+            newNode.BeginEdit();
         }
 
         private void treeView_KeyDown(object sender, KeyEventArgs e)
@@ -212,7 +256,7 @@ namespace TreeWriterWF
                 {
                     var tag = treeView.SelectedNode.Tag as NodeTag;
                     if (tag != null && tag.NodeType == NodeTag.Type.File)
-                        ControllerCommand(new Commands.OpenFile(tag.Path, Project));
+                        ControllerCommand(new Commands.OpenDocument(tag.Path, Project));
                     else if (tag != null)
                         treeView.SelectedNode.Toggle();
                 }

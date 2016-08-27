@@ -42,15 +42,14 @@
             | ScintillaNET.AutomaticFold.Change)));
             this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.IdleStyling = ScintillaNET.IdleStyling.All;
             this.textEditor.Location = new System.Drawing.Point(0, 0);
             this.textEditor.Name = "textEditor";
             this.textEditor.Size = new System.Drawing.Size(475, 440);
             this.textEditor.TabIndex = 0;
             this.textEditor.Text = "scintilla1";
-            this.textEditor.WrapIndentMode = ScintillaNET.WrapIndentMode.Same;
             this.textEditor.WrapMode = ScintillaNET.WrapMode.Word;
-            this.textEditor.WrapVisualFlags = ScintillaNET.WrapVisualFlags.Start;
-            this.textEditor.Zoom = 10;
+            this.textEditor.Zoom = 5;
             this.textEditor.HotspotClick += new System.EventHandler<ScintillaNET.HotspotClickEventArgs>(this.textEditor_HotspotClick);
             this.textEditor.IndicatorClick += new System.EventHandler<ScintillaNET.IndicatorClickEventArgs>(this.textEditor_IndicatorClick);
             this.textEditor.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.textEditor_StyleNeeded);

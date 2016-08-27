@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class WikiFollow :ICommand
+    public class FollowWikiLink :ICommand
     {
         private Document Origin;
         public String ArticleName;
         
-        public WikiFollow(Document Origin, String ArticleName)
+        public FollowWikiLink(Document Origin, String ArticleName)
         {
             this.Origin = Origin;
             this.ArticleName = ArticleName;
@@ -31,12 +31,12 @@ namespace TreeWriterWF.Commands
                     // Update project tree view.
                     if (Origin.Owner.OpenView != null) Origin.Owner.OpenView.UpdateNode(null);
 
-                    (new OpenFile(fileName, Origin.Owner)).Execute(Model, View);
+                    (new OpenDocument(fileName, Origin.Owner)).Execute(Model, View);
                 }
             }
             else
             {
-                var openCommand = new OpenFile(results, Origin.Owner);
+                var openCommand = new OpenDocument(results, Origin.Owner);
                 openCommand.Execute(Model, View);
             }
         }
