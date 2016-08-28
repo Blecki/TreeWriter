@@ -262,5 +262,10 @@ namespace TreeWriterWF
                 }
             }
         }
+
+        private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ControllerCommand(new Commands.FileWordCount((ContextNode.Tag as NodeTag).Path));
+        }
     }
 }

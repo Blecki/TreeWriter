@@ -18,6 +18,15 @@ namespace TreeWriterWF
         NHunspell.Hunspell SpellChecker;
         String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-";
 
+        #region Custom Context Menu Items
+        MenuItem miUndo;
+        MenuItem miRedo;
+        MenuItem miCut;
+        MenuItem miCopy;
+        MenuItem miDelete;
+        MenuItem miSelectAll;
+        #endregion
+
         public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, NHunspell.Hunspell SpellChecker)
         {
             this.Document = Document;
@@ -77,11 +86,35 @@ namespace TreeWriterWF
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
 
+            initContextMenu();
+
         }
 
         public ScintillaNET.Document GetScintillaDocument()
         {
             return textEditor.Document;
+        }
+
+        private void initContextMenu()
+        {
+            var cm = this.ContextMenu = new ContextMenu();
+            this.miUndo = new MenuItem("Undo", (s, ea) => textEditor.Undo());
+            cm.MenuItems.Add(this.miUndo);
+            this.miRedo = new MenuItem("Redo", (s, ea) => textEditor.Redo());
+            cm.MenuItems.Add(this.miRedo);
+            cm.MenuItems.Add(new MenuItem("-"));
+            this.miCut = new MenuItem("Cut", (s, ea) => textEditor.Cut());
+            cm.MenuItems.Add(miCut);
+            this.miCopy = new MenuItem("Copy", (s, ea) => textEditor.Copy());
+            cm.MenuItems.Add(miCopy);
+            cm.MenuItems.Add(new MenuItem("Paste", (s, ea) => textEditor.Paste()));
+            this.miDelete = new MenuItem("Delete", (s, ea) => textEditor.ReplaceSelection(""));
+            cm.MenuItems.Add(miDelete);
+            cm.MenuItems.Add(new MenuItem("-"));
+            this.miSelectAll = new MenuItem("Select All", (s, ea) => textEditor.SelectAll());
+            cm.MenuItems.Add(miSelectAll);
+            cm.MenuItems.Add(new MenuItem("-"));
+            cm.MenuItems.Add(new MenuItem("Define word"));
         }
 
         public void UpdateTitle()
@@ -234,7 +267,16 @@ namespace TreeWriterWF
 
         private void textEditor_MouseDown(object sender, MouseEventArgs e)
         {
-           
+            if (e.Button == MouseButtons.Right)
+            {
+                miUndo.Enabled = textEditor.CanUndo;
+                miRedo.Enabled = textEditor.CanRedo;
+                miCut.Enabled = true;
+                miCopy.Enabled = true;
+                miDelete.Enabled = textEditor.Text.Length > 0;
+                miSelectAll.Enabled = true;
+                this.ContextMenu.Show(this, e.Location);
+            }
         }
 
         private void textEditor_IndicatorClick(object sender, IndicatorClickEventArgs e)
@@ -279,6 +321,10 @@ namespace TreeWriterWF
 
             contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));
         }
-       
+
+        private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ControllerCommand(new Commands.DocumentWordCount(Document));
+        }       
     }
 }

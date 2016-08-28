@@ -65,5 +65,10 @@ namespace TreeWriterWF
         {
             ProcessControllerCommand(new Commands.SaveOpenDocuments());
         }
+
+        private void closeAllDocumentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProcessControllerCommand(new Commands.CloseAllEditors());
+        }
     }
 }

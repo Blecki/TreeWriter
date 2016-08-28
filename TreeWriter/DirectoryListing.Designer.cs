@@ -38,6 +38,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
+            this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DirectoryContextMenu.SuspendLayout();
             this.FileContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -75,14 +76,15 @@
             // FileContextMenu
             // 
             this.FileContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteToolStripMenuItem});
+            this.deleteToolStripMenuItem,
+            this.wordCountToolStripMenuItem});
             this.FileContextMenu.Name = "FileContextMenu";
-            this.FileContextMenu.Size = new System.Drawing.Size(129, 26);
+            this.FileContextMenu.Size = new System.Drawing.Size(153, 70);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete File";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -112,6 +114,13 @@
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView_KeyDown);
             this.treeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseUp);
             // 
+            // wordCountToolStripMenuItem
+            // 
+            this.wordCountToolStripMenuItem.Name = "wordCountToolStripMenuItem";
+            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.wordCountToolStripMenuItem.Text = "Word Count";
+            this.wordCountToolStripMenuItem.Click += new System.EventHandler(this.wordCountToolStripMenuItem_Click);
+            // 
             // DirectoryListing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -139,5 +148,6 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
         private System.Windows.Forms.ImageList iconImageList;
+        private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem;
     }
 }
