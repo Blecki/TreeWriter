@@ -16,7 +16,9 @@ namespace TreeWriterWF
     {
         Document Document;
         NHunspell.Hunspell SpellChecker;
+        NHunspell.MyThes Thesaurus;
         String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-";
+        Point ContextPoint;
 
         #region Custom Context Menu Items
         MenuItem miUndo;
@@ -27,10 +29,13 @@ namespace TreeWriterWF
         MenuItem miSelectAll;
         #endregion
 
-        public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, NHunspell.Hunspell SpellChecker)
+        public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, 
+            NHunspell.Hunspell SpellChecker,
+            NHunspell.MyThes Thesaurus)
         {
             this.Document = Document;
             this.SpellChecker = SpellChecker;
+            this.Thesaurus = Thesaurus;
 
             InitializeComponent();
 
@@ -114,7 +119,45 @@ namespace TreeWriterWF
             this.miSelectAll = new MenuItem("Select All", (s, ea) => textEditor.SelectAll());
             cm.MenuItems.Add(miSelectAll);
             cm.MenuItems.Add(new MenuItem("-"));
-            cm.MenuItems.Add(new MenuItem("Define word"));
+            var defineWord = new MenuItem("Define word");
+            defineWord.Click += (sender, args) =>
+                {
+                    MessageBox.Show(WordAtPoint(ContextPoint));
+                };
+            cm.MenuItems.Add(defineWord);
+            var thesarus = new MenuItem("Thesarus");
+            thesarus.Click += (sender, args) =>
+                {
+                    var charPosition = textEditor.CharPositionFromPointClose(ContextPoint.X, ContextPoint.Y);
+                    if (charPosition == -1) return;
+
+                    var lineIndex = textEditor.LineFromPosition(charPosition);
+                    var line = textEditor.Lines[lineIndex];
+                    var offset = charPosition - line.Position;
+                    var wordStart = FindWordStartBackwards(line.Text, offset);
+                    var wordEnd = FindWordEnd(line.Text, offset);
+                    var word = line.Text.Substring(wordStart, wordEnd - wordStart);
+
+                    var suggestions = Thesaurus.Lookup(word);
+
+                    if (suggestions != null)
+                    {
+                        var contextMenu = new ContextMenuStrip();
+                        foreach (var meaning in suggestions.GetSynonyms())
+                        {
+                            var item = new ToolStripMenuItem(meaning.Key);
+                            item.Click += (s, _a) =>
+                            {
+                                textEditor.TargetStart = wordStart + line.Position;
+                                textEditor.TargetEnd = wordEnd + line.Position;
+                                textEditor.ReplaceTarget(item.Text);
+                            };
+                            contextMenu.Items.Add(item);
+                        }
+                        contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));
+                    }
+                };
+            cm.MenuItems.Add(thesarus);
         }
 
         public void UpdateTitle()
@@ -219,6 +262,24 @@ namespace TreeWriterWF
             return Start + 1;
         }
 
+        private String WordAtPoint(Point p)
+        {
+            var pos = textEditor.CharPositionFromPointClose(p.X, p.Y);
+            if (pos == -1) return null;
+            return textEditor.GetWordFromPosition(pos);
+        }
+
+        private String WordAtCharPosition(int p)
+        {
+            var lineIndex = textEditor.LineFromPosition(p);
+            var line = textEditor.Lines[lineIndex];
+            var offset = p - line.Position;
+            var wordStart = FindWordStartBackwards(line.Text, offset);
+            var wordEnd = FindWordEnd(line.Text, offset);
+            var word = line.Text.Substring(wordStart, wordEnd - wordStart);
+            return word;
+        }
+
         private int CountHashes(String Line)
         {
             int count = 0;
@@ -243,9 +304,7 @@ namespace TreeWriterWF
 
         private void textEditor_HotspotClick(object sender, HotspotClickEventArgs e)
         {
-            var endPoint = textEditor.Text.IndexOf(']', e.Position);
-            var startPoint = textEditor.Text.LastIndexOf('[', e.Position, e.Position + 1);
-            var linkText = textEditor.Text.Substring(startPoint + 1, endPoint - startPoint - 1);
+            var linkText = textEditor.GetWordFromPosition(e.Position);
             ControllerCommand(new Commands.FollowWikiLink(Document, linkText));
         }
           
@@ -261,7 +320,6 @@ namespace TreeWriterWF
 
         private void duplicateViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Open a new document editor.
             ControllerCommand(new Commands.DuplicateView(Document));
         }
 
@@ -275,6 +333,7 @@ namespace TreeWriterWF
                 miCopy.Enabled = true;
                 miDelete.Enabled = textEditor.Text.Length > 0;
                 miSelectAll.Enabled = true;
+                ContextPoint = e.Location;
                 this.ContextMenu.Show(this, e.Location);
             }
         }

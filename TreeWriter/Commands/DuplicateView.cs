@@ -18,7 +18,7 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             var existingScintillaDocument = Document.OpenEditors[0].GetScintillaDocument();
-            var docPanel = new DocumentEditor(Document, existingScintillaDocument, Model.SpellChecker);
+            var docPanel = new DocumentEditor(Document, existingScintillaDocument, Model.SpellChecker, Model.Thesaurus);
             View.OpenControllerPanel(docPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
             Document.OpenEditors.Add(docPanel);
             docPanel.Focus();

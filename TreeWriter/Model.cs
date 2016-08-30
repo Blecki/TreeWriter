@@ -14,6 +14,8 @@ namespace TreeWriterWF
         public NHunspell.Hunspell SpellChecker { get; private set; }
         String DictionaryBase = "en_US";
         public List<String> CustomDictionaryEntries = new List<string>();
+        String ThesaurusData = "th_en_US_new.dat";
+        public NHunspell.MyThes Thesaurus;
 
         public class SerializableDocument
         {
@@ -26,6 +28,7 @@ namespace TreeWriterWF
             public List<SerializableDocument> OpenDocuments;
             public List<String> OpenProjects;
             public String Dictionary;
+            public String Thesaurus;
             public List<String> CustomDictionaryEntries;
         }
 
@@ -43,6 +46,11 @@ namespace TreeWriterWF
                         DictionaryBase = settingsObject.Dictionary;
         
                     SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
+
+                    if (!String.IsNullOrEmpty(settingsObject.Thesaurus))
+                        ThesaurusData = settingsObject.Thesaurus;
+
+                    Thesaurus = new NHunspell.MyThes(ThesaurusData);
         
                     foreach (var folder in settingsObject.OpenProjects)
                         View.ProcessControllerCommand(new Commands.OpenProject(folder));
@@ -61,11 +69,21 @@ namespace TreeWriterWF
                             SpellChecker.Add(word);
                         }
                 }
+                else
+                {
+                    DictionaryBase = "en_US";
+                    SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
+                    ThesaurusData = "th_en_US_new.dat";
+                    Thesaurus = new NHunspell.MyThes(ThesaurusData);
+                }
             } 
             catch (Exception e)
             {
                 DictionaryBase = "en_US";
-
+                SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
+                ThesaurusData = "th_en_US_new.dat";                
+                Thesaurus = new NHunspell.MyThes(ThesaurusData);
+                
                 System.Windows.Forms.MessageBox.Show("Error loading settings.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
             }
         }
@@ -88,7 +106,8 @@ namespace TreeWriterWF
                     }).ToList(),
                     OpenProjects = OpenProjects.Select(d => d.Path).ToList(),
                     Dictionary = DictionaryBase,
-                    CustomDictionaryEntries = CustomDictionaryEntries
+                    CustomDictionaryEntries = CustomDictionaryEntries,
+                    Thesaurus = ThesaurusData
                 };
                 
                 System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject));

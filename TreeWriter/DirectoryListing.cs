@@ -150,7 +150,7 @@ namespace TreeWriterWF
                 var directory = System.IO.Path.GetDirectoryName(tag.Path);
                 var newPath = directory + "\\" + e.Label + ".txt";
 
-                ControllerCommand(new Commands.RenameDocument(tag.Path, newPath));
+                ControllerCommand(new Commands.RenameFilesystemItem(tag.Path, newPath));
 
                 tag.Path = newPath;
             }
@@ -159,7 +159,7 @@ namespace TreeWriterWF
                 var directory = System.IO.Path.GetDirectoryName(tag.Path);
                 var newPath = directory + "\\" + e.Label;
 
-                ControllerCommand(new Commands.RenameFolder(tag.Path, newPath));
+                ControllerCommand(new Commands.RenameFilesystemItem(tag.Path, newPath));
 
                 tag.Path = newPath;
                 UpdateNode(e.Node);
@@ -266,6 +266,76 @@ namespace TreeWriterWF
         private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ControllerCommand(new Commands.FileWordCount((ContextNode.Tag as NodeTag).Path));
+        }
+
+        private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            var tag = (e.Item as TreeNode).Tag;
+            var nodeTag = tag as NodeTag;
+            if (nodeTag.NodeType == NodeTag.Type.Root) return;
+            DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void treeView_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+            {
+                var sourceNode = e.Data.GetData("System.Windows.Forms.TreeNode") as TreeNode;
+                if (sourceNode != null && sourceNode.Tag is NodeTag)
+                    e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        private void treeView_DragDrop(object sender, DragEventArgs e)
+        {
+            var sourceNode = e.Data.GetData("System.Windows.Forms.TreeNode") as TreeNode;
+            if (sourceNode == null) throw new InvalidProgramException();
+            var sourceTag = sourceNode.Tag as NodeTag;
+            if (sourceTag == null) throw new InvalidProgramException();
+
+            NodeTag destTag = null;
+            var destinationDirectoryPath = "";
+
+            TreeNode destToRebuild = null;
+            TreeNode sourceToRebuild = sourceNode.Parent;
+
+            var node = treeView.GetNodeAt(treeView.PointToClient(new Point(e.X, e.Y)));
+
+            if (node != null)
+            {
+                destTag = node.Tag as NodeTag;
+                if (destTag.NodeType == NodeTag.Type.Directory)
+                {
+                    destinationDirectoryPath = destTag.Path;
+                    destToRebuild = node;
+                }
+                else if (destTag.NodeType == NodeTag.Type.File)
+                {
+                    destinationDirectoryPath = System.IO.Path.GetDirectoryName(destTag.Path);
+                    destToRebuild = node.Parent;
+                }
+            }
+            else
+            {
+                destinationDirectoryPath = System.IO.Path.GetDirectoryName(Project.Path);
+                destToRebuild = null;
+            }
+
+            var sourceFileName = System.IO.Path.GetFileName(sourceTag.Path);
+            var newPath = destinationDirectoryPath + "\\" + sourceFileName;
+
+            var command = new Commands.RenameFilesystemItem(sourceTag.Path, newPath);
+            ControllerCommand(command);
+            if (command.Succeeded)
+            {
+                UpdateNode(destToRebuild);
+                UpdateNode(sourceToRebuild);
+            }
+        }
+
+        private void treeView_DragOver(object sender, DragEventArgs e)
+        {
+            treeView.SelectedNode = treeView.GetNodeAt(treeView.PointToClient(new Point(e.X, e.Y)));
         }
     }
 }

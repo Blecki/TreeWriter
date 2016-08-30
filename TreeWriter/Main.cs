@@ -19,6 +19,7 @@ namespace TreeWriterWF
         {
             InitializeComponent();
 
+            this.dockPanel.Theme = new VS2012LightTheme();
             ProjectModel.LoadSettings(this);
         }
 

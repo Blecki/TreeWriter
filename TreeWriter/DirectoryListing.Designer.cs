@@ -36,9 +36,9 @@
             this.deleteFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
-            this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DirectoryContextMenu.SuspendLayout();
             this.FileContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -79,14 +79,21 @@
             this.deleteToolStripMenuItem,
             this.wordCountToolStripMenuItem});
             this.FileContextMenu.Name = "FileContextMenu";
-            this.FileContextMenu.Size = new System.Drawing.Size(153, 70);
+            this.FileContextMenu.Size = new System.Drawing.Size(140, 48);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.deleteToolStripMenuItem.Text = "Delete File";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // wordCountToolStripMenuItem
+            // 
+            this.wordCountToolStripMenuItem.Name = "wordCountToolStripMenuItem";
+            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.wordCountToolStripMenuItem.Text = "Word Count";
+            this.wordCountToolStripMenuItem.Click += new System.EventHandler(this.wordCountToolStripMenuItem_Click);
             // 
             // iconImageList
             // 
@@ -97,6 +104,7 @@
             // 
             // treeView
             // 
+            this.treeView.AllowDrop = true;
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.FullRowSelect = true;
             this.treeView.HideSelection = false;
@@ -110,16 +118,13 @@
             this.treeView.Size = new System.Drawing.Size(284, 262);
             this.treeView.TabIndex = 0;
             this.treeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_AfterLabelEdit);
+            this.treeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
             this.treeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseDoubleClick);
+            this.treeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
+            this.treeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
+            this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView_KeyDown);
             this.treeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseUp);
-            // 
-            // wordCountToolStripMenuItem
-            // 
-            this.wordCountToolStripMenuItem.Name = "wordCountToolStripMenuItem";
-            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.wordCountToolStripMenuItem.Text = "Word Count";
-            this.wordCountToolStripMenuItem.Click += new System.EventHandler(this.wordCountToolStripMenuItem_Click);
             // 
             // DirectoryListing
             // 

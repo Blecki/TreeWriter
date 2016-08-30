@@ -25,7 +25,7 @@ namespace TreeWriterWF.Commands
             else
             {
                 // We would pass the existing scintilla document of an open editor to implement multiple views.
-                var docPanel = new DocumentEditor(document, null, Model.SpellChecker);
+                var docPanel = new DocumentEditor(document, null, Model.SpellChecker, Model.Thesaurus);
                 View.OpenControllerPanel(docPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
                 document.OpenEditors.Add(docPanel);
             }
