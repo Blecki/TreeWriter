@@ -215,7 +215,10 @@ namespace TreeWriterWF
 
         private void DirectoryListing_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ControllerCommand(new Commands.CloseProject(Project));
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                ControllerCommand(new Commands.CloseProject(Project));
+            }
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -336,6 +339,14 @@ namespace TreeWriterWF
         private void treeView_DragOver(object sender, DragEventArgs e)
         {
             treeView.SelectedNode = treeView.GetNodeAt(treeView.PointToClient(new Point(e.X, e.Y)));
+        }
+
+        private void wordCountToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (ContextNode != null)
+                ControllerCommand(new Commands.FolderWordCount((ContextNode.Tag as NodeTag).Path));
+            else
+                ControllerCommand(new Commands.FolderWordCount(System.IO.Path.GetDirectoryName(Project.Path)));
         }
     }
 }

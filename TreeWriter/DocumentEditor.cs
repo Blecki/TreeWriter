@@ -76,6 +76,9 @@ namespace TreeWriterWF
             textEditor.Styles[1].ForeColor = Color.Blue;
             textEditor.Styles[1].Hotspot = true;
 
+            textEditor.Styles[2].ForeColor = Color.Green;
+            textEditor.Styles[2].Italic = true;
+
             textEditor.Indicators[1].Style = IndicatorStyle.Squiggle;
             textEditor.Indicators[1].ForeColor = Color.Red;
 
@@ -136,6 +139,7 @@ namespace TreeWriterWF
                     var offset = charPosition - line.Position;
                     var wordStart = FindWordStartBackwards(line.Text, offset);
                     var wordEnd = FindWordEnd(line.Text, offset);
+                    if (wordEnd <= wordStart) return;
                     var word = line.Text.Substring(wordStart, wordEnd - wordStart);
 
                     var suggestions = Thesaurus.Lookup(word);
@@ -175,10 +179,10 @@ namespace TreeWriterWF
             if (startLine != 0)
                 currentFoldLevel = textEditor.Lines[startLine].FoldLevel;
 
-            var endLine = textEditor.Lines.Count;
+            var endLine = startLine + 25;
             var currentLine = startLine;
 
-            while (currentLine < endLine)
+            while (currentLine < endLine && currentLine < textEditor.Lines.Count)
             {
                 var line = textEditor.Lines[currentLine];
                 var headerSize = CountHashes(line.Text);
@@ -207,9 +211,25 @@ namespace TreeWriterWF
                     if (end != -1)
                     {
                         textEditor.StartStyling(line.Position + bracketPos);
-                        textEditor.SetStyling(end - bracketPos + 1, 1);
+                        textEditor.SetStyling(end - bracketPos + 1, 2);
 
                         bracketPos = line.Text.IndexOf('[', end);
+                    }
+                    else
+                        bracketPos = -1;
+                }
+
+                // Search line for brackets and style between them.
+                bracketPos = line.Text.IndexOf('<');
+                while (bracketPos != -1)
+                {
+                    var end = line.Text.IndexOf('>', bracketPos);
+                    if (end != -1)
+                    {
+                        textEditor.StartStyling(line.Position + bracketPos);
+                        textEditor.SetStyling(end - bracketPos + 1, 1);
+
+                        bracketPos = line.Text.IndexOf('<', end);
                     }
                     else
                         bracketPos = -1;
@@ -340,6 +360,8 @@ namespace TreeWriterWF
 
         private void textEditor_IndicatorClick(object sender, IndicatorClickEventArgs e)
         {
+            if ((e.Modifiers & Keys.Control) != Keys.Control) return;
+
             var style = textEditor.IndicatorAllOnFor(e.Position);
             if ((style & 2) == 0) return;
 
@@ -353,7 +375,7 @@ namespace TreeWriterWF
             var suggestions = SpellChecker.Suggest(word);
 
             var contextMenu = new ContextMenuStrip();
-            if (suggestions.Count == 0)
+            if (suggestions == null || suggestions.Count == 0)
                 contextMenu.Items.Add("No suggestions");
             else
             {

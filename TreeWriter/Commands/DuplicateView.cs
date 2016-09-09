@@ -9,10 +9,12 @@ namespace TreeWriterWF.Commands
     public class DuplicateView :ICommand
     {
         private Document Document;
+        public bool Succeeded { get; private set; }
 
         public DuplicateView(Document Document)
         {
             this.Document = Document;
+            Succeeded = true;
         }
 
         public void Execute(Model Model, Main View)

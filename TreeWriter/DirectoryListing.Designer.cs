@@ -34,6 +34,7 @@
             this.newFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wordCountToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.FileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,9 +49,10 @@
             this.DirectoryContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFileToolStripMenuItem,
             this.newFolderToolStripMenuItem,
-            this.deleteFolderToolStripMenuItem});
+            this.deleteFolderToolStripMenuItem,
+            this.wordCountToolStripMenuItem1});
             this.DirectoryContextMenu.Name = "DirectoryContextMenu";
-            this.DirectoryContextMenu.Size = new System.Drawing.Size(144, 70);
+            this.DirectoryContextMenu.Size = new System.Drawing.Size(144, 92);
             // 
             // newFileToolStripMenuItem
             // 
@@ -72,6 +74,13 @@
             this.deleteFolderToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.deleteFolderToolStripMenuItem.Text = "Delete Folder";
             this.deleteFolderToolStripMenuItem.Click += new System.EventHandler(this.deleteFolderToolStripMenuItem_Click);
+            // 
+            // wordCountToolStripMenuItem1
+            // 
+            this.wordCountToolStripMenuItem1.Name = "wordCountToolStripMenuItem1";
+            this.wordCountToolStripMenuItem1.Size = new System.Drawing.Size(143, 22);
+            this.wordCountToolStripMenuItem1.Text = "Word Count";
+            this.wordCountToolStripMenuItem1.Click += new System.EventHandler(this.wordCountToolStripMenuItem1_Click);
             // 
             // FileContextMenu
             // 
@@ -133,7 +142,6 @@
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.treeView);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HideOnClose = true;
             this.Name = "DirectoryListing";
             this.Text = "DirectoryListing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectoryListing_FormClosing);
@@ -154,5 +162,6 @@
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
         private System.Windows.Forms.ImageList iconImageList;
         private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem1;
     }
 }

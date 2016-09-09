@@ -130,7 +130,16 @@ namespace TreeWriterWF
             {
                 existingDocument = new Document();
                 existingDocument.FileName = FileName;
-                existingDocument.Contents = System.IO.File.ReadAllText(FileName);
+
+                try
+                {
+                    existingDocument.Contents = System.IO.File.ReadAllText(FileName);
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                }
+
                 existingDocument.Owner = Owner;
                 OpenDocuments.Add(existingDocument);
             }

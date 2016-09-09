@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class DeleteFolder :ICommand
+    public class DeleteFolder : ICommand
     {
         private String DirectoryPath;
+        public bool Succeeded { get; private set; }
         
         public DeleteFolder(String DirectoryPath)
         {
             this.DirectoryPath = DirectoryPath;
+            Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
@@ -20,6 +22,7 @@ namespace TreeWriterWF.Commands
             try
             {
                 System.IO.Directory.Delete(DirectoryPath, true);
+                Succeeded = !System.IO.Directory.Exists(DirectoryPath);
             }
             catch (System.IO.IOException e)
             {

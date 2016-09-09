@@ -8,6 +8,13 @@ namespace TreeWriterWF.Commands
 {
     public class CloseAllEditors : ICommand
     {
+        public bool Succeeded { get; private set; }
+
+        public CloseAllEditors()
+        {
+            Succeeded = false;
+        }
+
         public void Execute(Model Model, Main View)
         {
             var cancel = false;
@@ -38,6 +45,8 @@ namespace TreeWriterWF.Commands
                         editor.Close();
                 }
             }
+
+            Succeeded = !cancel;
         }
     }
 }

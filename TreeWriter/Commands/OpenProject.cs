@@ -6,18 +6,24 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class OpenProject :ICommand
+    public class OpenProject : ICommand
     {
         private String ProjectPath;
+        public bool Succeeded { get; private set; }
 
         public OpenProject(String ProjectPath)
         {
             this.ProjectPath = ProjectPath;
+            Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
             var project = Model.OpenProject(ProjectPath);
+
+            if (project == null)
+                return;
+
             if (project.OpenView == null)
             {
                 project.OpenView = new DirectoryListing(project);
@@ -25,6 +31,8 @@ namespace TreeWriterWF.Commands
             }
             else
                 project.OpenView.BringToFront();
+
+            Succeeded = true;
         }
     }
 }

@@ -9,5 +9,6 @@ namespace TreeWriterWF
     public interface ICommand
     {
         void Execute(Model Model, Main View);
+        bool Succeeded { get; }
     }
 }

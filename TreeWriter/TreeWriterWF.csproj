@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
+    <Compile Include="Commands\FolderWordCount.cs" />
     <Compile Include="Commands\FileWordCount.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\DocumentWordCount.cs" />

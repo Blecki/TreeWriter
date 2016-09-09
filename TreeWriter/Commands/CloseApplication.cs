@@ -9,6 +9,12 @@ namespace TreeWriterWF.Commands
     public class CloseApplication : ICommand
     {
         public bool Cancel = false;
+        public bool Succeeded { get; private set; }
+
+        public CloseApplication()
+        {
+            Succeeded = false;
+        }
 
         public void Execute(Model Model, Main View)
         {
@@ -28,6 +34,8 @@ namespace TreeWriterWF.Commands
                 else
                     Cancel = true;
             }
+
+            Succeeded = !Cancel;
         }
     }
 }

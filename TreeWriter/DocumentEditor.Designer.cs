@@ -43,7 +43,7 @@
             | ScintillaNET.AutomaticFold.Change)));
             this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.IdleStyling = ScintillaNET.IdleStyling.All;
+            this.textEditor.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
             this.textEditor.Location = new System.Drawing.Point(0, 0);
             this.textEditor.Name = "textEditor";
             this.textEditor.Size = new System.Drawing.Size(475, 440);

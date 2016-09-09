@@ -6,18 +6,20 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class CloseEditor :ICommand
+    public class CloseEditor : ICommand
     {
         Document Document;
         DocumentEditor Editor;
         public bool Cancel = false;
         bool AppClosing = false;
+        public bool Succeeded { get; private set; }
 
         public CloseEditor(Document Document, DocumentEditor Editor, bool AppClosing)
         {
             this.Document = Document;
             this.Editor = Editor;
             this.AppClosing = AppClosing;
+            Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
@@ -59,6 +61,8 @@ namespace TreeWriterWF.Commands
                         throw new InvalidProgramException();
                 }
             }
+
+            Succeeded = !Cancel;
         }
     }
 }

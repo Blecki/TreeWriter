@@ -6,19 +6,20 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class CreateNewDocument :ICommand
+    public class CreateNewDocument : ICommand
     {
         private String DirectoryPath;
         public String NewFileName;
+        public bool Succeeded { get; private set; }
         
         public CreateNewDocument(String DirectoryPath)
         {
             this.DirectoryPath = DirectoryPath;
+            Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
-            // Create the file.
             var counter = 0;
             
             while (true)
@@ -27,8 +28,7 @@ namespace TreeWriterWF.Commands
                 {
                     if (counter == 0) NewFileName = "untitled.txt";
                     else NewFileName = String.Format("untitled {0}.txt", counter);
-                    counter += 1;
-
+            
                     var fullPath = DirectoryPath + "\\" + NewFileName;
                     if (System.IO.File.Exists(fullPath)) continue;
 
@@ -41,8 +41,13 @@ namespace TreeWriterWF.Commands
                 {
 
                 }
+                finally
+                {
+                    counter += 1;
+                }
             }
 
+            Succeeded = true;
             // Guess the directory listing will update itself?
         }
     }

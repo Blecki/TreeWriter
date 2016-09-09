@@ -9,10 +9,12 @@ namespace TreeWriterWF.Commands
     public class FileWordCount : ICommand
     {
         private String Path;
+        public bool Succeeded { get; private set; }
 
         public FileWordCount(String Path)
         {
             this.Path = Path;
+            Succeeded = true;
         }
 
         public void Execute(Model Model, Main View)

@@ -10,11 +10,13 @@ namespace TreeWriterWF.Commands
     {
         private Document Origin;
         public String ArticleName;
+        public bool Succeeded { get; private set; }
         
         public FollowWikiLink(Document Origin, String ArticleName)
         {
             this.Origin = Origin;
             this.ArticleName = ArticleName;
+            Succeeded = true;
         }
 
         public void Execute(Model Model, Main View)
