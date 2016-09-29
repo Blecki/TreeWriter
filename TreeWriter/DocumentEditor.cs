@@ -17,7 +17,7 @@ namespace TreeWriterWF
         Document Document;
         NHunspell.Hunspell SpellChecker;
         NHunspell.MyThes Thesaurus;
-        String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-";
+        String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-'`";
         Point ContextPoint;
 
         #region Custom Context Menu Items
@@ -27,6 +27,10 @@ namespace TreeWriterWF
         MenuItem miCopy;
         MenuItem miDelete;
         MenuItem miSelectAll;
+        MenuItem miPaste;
+        MenuItem miDefineWord;
+        MenuItem miThesarus;
+        MenuItem miSelectionWordCount;
         #endregion
 
         public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, 
@@ -73,16 +77,19 @@ namespace TreeWriterWF
 
             #endregion
 
+            textEditor.StyleClearAll();
+
             textEditor.Styles[1].ForeColor = Color.Blue;
             textEditor.Styles[1].Hotspot = true;
 
             textEditor.Styles[2].ForeColor = Color.Green;
             textEditor.Styles[2].Italic = true;
 
+            textEditor.Styles[3].Italic = true;
+
             textEditor.Indicators[1].Style = IndicatorStyle.Squiggle;
             textEditor.Indicators[1].ForeColor = Color.Red;
-
-
+            
             // Load document into editor.
             if (!LinkingDocument.HasValue)
                 textEditor.Text = Document.Contents;
@@ -105,31 +112,20 @@ namespace TreeWriterWF
 
         private void initContextMenu()
         {
-            var cm = this.ContextMenu = new ContextMenu();
             this.miUndo = new MenuItem("Undo", (s, ea) => textEditor.Undo());
-            cm.MenuItems.Add(this.miUndo);
             this.miRedo = new MenuItem("Redo", (s, ea) => textEditor.Redo());
-            cm.MenuItems.Add(this.miRedo);
-            cm.MenuItems.Add(new MenuItem("-"));
             this.miCut = new MenuItem("Cut", (s, ea) => textEditor.Cut());
-            cm.MenuItems.Add(miCut);
             this.miCopy = new MenuItem("Copy", (s, ea) => textEditor.Copy());
-            cm.MenuItems.Add(miCopy);
-            cm.MenuItems.Add(new MenuItem("Paste", (s, ea) => textEditor.Paste()));
+            this.miPaste = new MenuItem("Paste", (s, ea) => textEditor.Paste());
             this.miDelete = new MenuItem("Delete", (s, ea) => textEditor.ReplaceSelection(""));
-            cm.MenuItems.Add(miDelete);
-            cm.MenuItems.Add(new MenuItem("-"));
             this.miSelectAll = new MenuItem("Select All", (s, ea) => textEditor.SelectAll());
-            cm.MenuItems.Add(miSelectAll);
-            cm.MenuItems.Add(new MenuItem("-"));
-            var defineWord = new MenuItem("Define word");
-            defineWord.Click += (sender, args) =>
+            this.miDefineWord = new MenuItem("Define word");
+            this.miDefineWord.Click += (sender, args) =>
                 {
                     MessageBox.Show(WordAtPoint(ContextPoint));
                 };
-            cm.MenuItems.Add(defineWord);
-            var thesarus = new MenuItem("Thesarus");
-            thesarus.Click += (sender, args) =>
+            this.miThesarus = new MenuItem("Thesarus");
+            this.miThesarus.Click += (sender, args) =>
                 {
                     var charPosition = textEditor.CharPositionFromPointClose(ContextPoint.X, ContextPoint.Y);
                     if (charPosition == -1) return;
@@ -161,7 +157,12 @@ namespace TreeWriterWF
                         contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));
                     }
                 };
-            cm.MenuItems.Add(thesarus);
+
+            this.miSelectionWordCount = new MenuItem("selection word count");
+            this.miSelectionWordCount.Click += (sender, args) =>
+                {
+                    System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(textEditor.SelectedText)), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
+                };
         }
 
         public void UpdateTitle()
@@ -181,6 +182,8 @@ namespace TreeWriterWF
 
             var endLine = startLine + 25;
             var currentLine = startLine;
+
+            statusLabel.Text = String.Format("Styling: {0} to {1}", startLine, endLine);
 
             while (currentLine < endLine && currentLine < textEditor.Lines.Count)
             {
@@ -203,8 +206,23 @@ namespace TreeWriterWF
                 textEditor.StartStyling(line.Position);
                 textEditor.SetStyling(line.Length, 0);
 
+                var bracketPos = line.Text.IndexOf('*');
+                while (bracketPos != -1)
+                {
+                    var end = line.Text.IndexOf('*', bracketPos + 1);
+                    if (end != -1)
+                    {
+                        textEditor.StartStyling(line.Position + bracketPos);
+                        textEditor.SetStyling(end - bracketPos + 1, 3);
+
+                        bracketPos = line.Text.IndexOf('*', end + 1);
+                    }
+                    else
+                        bracketPos = -1;
+                }
+
                 // Search line for brackets and style between them.
-                var bracketPos = line.Text.IndexOf('[');
+                bracketPos = line.Text.IndexOf('[');
                 while (bracketPos != -1)
                 {
                     var end = line.Text.IndexOf(']', bracketPos);
@@ -354,58 +372,67 @@ namespace TreeWriterWF
                 miDelete.Enabled = textEditor.Text.Length > 0;
                 miSelectAll.Enabled = true;
                 ContextPoint = e.Location;
+
+                this.ContextMenu = new ContextMenu();
+
+                var charPosition = textEditor.CharPositionFromPointClose(ContextPoint.X, ContextPoint.Y);
+                if (charPosition != -1 && ((textEditor.IndicatorAllOnFor(charPosition) & 2) == 2))
+                {
+                    var lineIndex = textEditor.LineFromPosition(charPosition);
+                    var line = textEditor.Lines[lineIndex];
+                    var offset = charPosition - line.Position;
+                    var wordStart = FindWordStartBackwards(line.Text, offset);
+                    var wordEnd = FindWordEnd(line.Text, offset);
+                    var word = line.Text.Substring(wordStart, wordEnd - wordStart);
+
+                    var suggestions = SpellChecker.Suggest(word);
+
+                    if (suggestions == null || suggestions.Count == 0)
+                        this.ContextMenu.MenuItems.Add("No suggestions");
+                    else
+                    {
+                        foreach (var suggestion in suggestions)
+                        {
+                            var item = new MenuItem(suggestion);
+                            item.Click += (s, args) =>
+                            {
+                                textEditor.TargetStart = wordStart + line.Position;
+                                textEditor.TargetEnd = wordEnd + line.Position;
+                                textEditor.ReplaceTarget(item.Text);
+                            };
+                            this.ContextMenu.MenuItems.Add(item);
+                        }
+                    }
+                    var addOption = new MenuItem("add to dictionary");
+                    addOption.Click += (s, args) =>
+                        {
+                            ControllerCommand(new Commands.AddWordToDictionary(word));
+                            textEditor.Invalidate();
+                        };
+                    this.ContextMenu.MenuItems.Add(addOption);
+                    this.ContextMenu.MenuItems.Add(new MenuItem("-"));
+                }
+
+                this.ContextMenu.MenuItems.Add(this.miUndo);
+                this.ContextMenu.MenuItems.Add(this.miRedo);
+                this.ContextMenu.MenuItems.Add(new MenuItem("-"));
+                this.ContextMenu.MenuItems.Add(miCut);
+                this.ContextMenu.MenuItems.Add(miCopy);
+                this.ContextMenu.MenuItems.Add(miPaste);
+                this.ContextMenu.MenuItems.Add(miDelete);
+                this.ContextMenu.MenuItems.Add(new MenuItem("-"));
+                this.ContextMenu.MenuItems.Add(miSelectAll);
+                this.ContextMenu.MenuItems.Add(miSelectionWordCount);
+                this.ContextMenu.MenuItems.Add(new MenuItem("-"));
+                this.ContextMenu.MenuItems.Add(miDefineWord);
+                this.ContextMenu.MenuItems.Add(miThesarus);
                 this.ContextMenu.Show(this, e.Location);
             }
         }
 
-        private void textEditor_IndicatorClick(object sender, IndicatorClickEventArgs e)
-        {
-            if ((e.Modifiers & Keys.Control) != Keys.Control) return;
-
-            var style = textEditor.IndicatorAllOnFor(e.Position);
-            if ((style & 2) == 0) return;
-
-            var lineIndex = textEditor.LineFromPosition(e.Position);
-            var line = textEditor.Lines[lineIndex];
-            var offset = e.Position - line.Position;
-            var wordStart = FindWordStartBackwards(line.Text, offset);
-            var wordEnd = FindWordEnd(line.Text, offset);
-            var word = line.Text.Substring(wordStart, wordEnd - wordStart);
-
-            var suggestions = SpellChecker.Suggest(word);
-
-            var contextMenu = new ContextMenuStrip();
-            if (suggestions == null || suggestions.Count == 0)
-                contextMenu.Items.Add("No suggestions");
-            else
-            {
-                foreach (var suggestion in suggestions)
-                {
-                    var item = new ToolStripMenuItem(suggestion);
-                    item.Click += (s, args) =>
-                    {
-                        textEditor.TargetStart = wordStart + line.Position;
-                        textEditor.TargetEnd = wordEnd + line.Position;
-                        textEditor.ReplaceTarget(item.Text);
-                    };
-                    contextMenu.Items.Add(item);
-                }
-            }
-            var addOption = new ToolStripMenuItem("add to dictionary");
-            addOption.Click += (s, args) =>
-                {
-                    ControllerCommand(new Commands.AddWordToDictionary(word));
-                    textEditor.Invalidate();
-                };
-            contextMenu.Items.Add(addOption);
-
-
-            contextMenu.Show(this, textEditor.PointToClient(Control.MousePosition));
-        }
-
         private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ControllerCommand(new Commands.DocumentWordCount(Document));
+            System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(Document.Contents)), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
         }       
     }
 }

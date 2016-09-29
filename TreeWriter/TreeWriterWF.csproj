@@ -73,7 +73,6 @@
     <Compile Include="Commands\FolderWordCount.cs" />
     <Compile Include="Commands\FileWordCount.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
-    <Compile Include="Commands\DocumentWordCount.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
