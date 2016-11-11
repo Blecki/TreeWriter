@@ -52,33 +52,33 @@
             this.deleteFolderToolStripMenuItem,
             this.wordCountToolStripMenuItem1});
             this.DirectoryContextMenu.Name = "DirectoryContextMenu";
-            this.DirectoryContextMenu.Size = new System.Drawing.Size(144, 92);
+            this.DirectoryContextMenu.Size = new System.Drawing.Size(153, 114);
             // 
             // newFileToolStripMenuItem
             // 
             this.newFileToolStripMenuItem.Name = "newFileToolStripMenuItem";
-            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newFileToolStripMenuItem.Text = "New File";
             this.newFileToolStripMenuItem.Click += new System.EventHandler(this.newFileToolStripMenuItem_Click);
             // 
             // newFolderToolStripMenuItem
             // 
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newFolderToolStripMenuItem.Text = "New Folder";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderToolStripMenuItem_Click);
             // 
             // deleteFolderToolStripMenuItem
             // 
             this.deleteFolderToolStripMenuItem.Name = "deleteFolderToolStripMenuItem";
-            this.deleteFolderToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.deleteFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteFolderToolStripMenuItem.Text = "Delete Folder";
             this.deleteFolderToolStripMenuItem.Click += new System.EventHandler(this.deleteFolderToolStripMenuItem_Click);
             // 
             // wordCountToolStripMenuItem1
             // 
             this.wordCountToolStripMenuItem1.Name = "wordCountToolStripMenuItem1";
-            this.wordCountToolStripMenuItem1.Size = new System.Drawing.Size(143, 22);
+            this.wordCountToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.wordCountToolStripMenuItem1.Text = "Word Count";
             this.wordCountToolStripMenuItem1.Click += new System.EventHandler(this.wordCountToolStripMenuItem1_Click);
             // 

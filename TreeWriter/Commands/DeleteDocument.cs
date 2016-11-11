@@ -26,7 +26,8 @@ namespace TreeWriterWF.Commands
                     System.Windows.Forms.MessageBox.Show("Close this document before deleting it.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
                 else
                 {
-                    System.IO.File.Delete(Path);
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(Path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                        Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
                     Succeeded = !System.IO.File.Exists(Path);
                 }
             }

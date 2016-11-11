@@ -123,6 +123,12 @@ namespace TreeWriterWF
             return OpenDocuments.FirstOrDefault(d => d.FileName == FileName);
         }
 
+        public IEnumerable<Document> FindOpenDocuments(String BaseFileName)
+        {
+            foreach (var document in OpenDocuments)
+                if (document.FileName.StartsWith(BaseFileName)) yield return document;
+        }
+
         public Document OpenDocument(String FileName, Project Owner)
         {
             var existingDocument = FindOpenDocument(FileName);

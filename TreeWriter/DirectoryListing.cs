@@ -198,6 +198,7 @@ namespace TreeWriterWF
 
         private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!Confirm("Are you sure you want to delete this folder?")) return;
             if (ContextNode == null) return;
             var tag = ContextNode.Tag as NodeTag;
             ControllerCommand(new Commands.DeleteFolder(tag.Path));
@@ -206,11 +207,18 @@ namespace TreeWriterWF
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!Confirm("Are you sure you want to delete this document?")) return;
             if (ContextNode == null) return;
             System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.File);
             var tag = ContextNode.Tag as NodeTag;
             ControllerCommand(new Commands.DeleteDocument(tag.Path));
             UpdateNode(ContextNode.Parent);
+        }
+
+        private bool Confirm(String Text)
+        {
+            var r = MessageBox.Show(Text, "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            return r == System.Windows.Forms.DialogResult.Yes;
         }
 
         private void DirectoryListing_FormClosing(object sender, FormClosingEventArgs e)

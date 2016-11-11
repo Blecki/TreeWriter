@@ -36,6 +36,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -100,6 +101,12 @@
     <Compile Include="CreateProjectForm.Designer.cs">
       <DependentUpon>CreateProjectForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SceneListing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SceneListing.Designer.cs">
+      <DependentUpon>SceneListing.cs</DependentUpon>
+    </Compile>
     <Compile Include="DirectoryListing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,9 +130,15 @@
     <Compile Include="Project.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordParser.cs" />
     <EmbeddedResource Include="CreateProjectForm.resx">
       <DependentUpon>CreateProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SceneListing.resx">
+      <DependentUpon>SceneListing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DirectoryListing.resx">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
