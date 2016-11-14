@@ -38,11 +38,9 @@ namespace TreeWriterWF
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fileDialog = new OpenFileDialog();
-            fileDialog.CheckFileExists = true;
-            fileDialog.Filter = "Tree Writer Projects|*.twproj";
-            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.OpenProject(fileDialog.FileName));
+            var folderDialog = new FolderBrowserDialog();
+            if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                ProcessControllerCommand(new Commands.OpenFolder(folderDialog.SelectedPath));
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -55,13 +53,6 @@ namespace TreeWriterWF
                 e.Cancel = true;
         }
 
-        private void createProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var projectDialog = new CreateProjectForm();
-            if (projectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.CreateProject(projectDialog.ProjectPath));
-        }
-
         private void saveDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ProcessControllerCommand(new Commands.SaveOpenDocuments());
@@ -70,6 +61,13 @@ namespace TreeWriterWF
         private void closeAllDocumentsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ProcessControllerCommand(new Commands.CloseAllEditors());
+        }
+
+        private void openDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileDialog = new OpenFileDialog();
+            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                ProcessControllerCommand(new Commands.OpenDocument(fileDialog.FileName));
         }
     }
 }

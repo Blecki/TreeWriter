@@ -34,11 +34,11 @@ namespace TreeWriterWF.Commands
             }
             
             // If the document is a directory, look for any open documents in that folder, and update their paths.
-            foreach (var document in Model.OpenDocuments.Where(d => d.FileName.StartsWith(OriginalName)))
+            foreach (var document in Model.FindChildDocuments(OriginalName))
             {
-                document.FileName = NewName + (document.FileName.Substring(OriginalName.Length));
+                document.Path = NewName + (document.Path.Substring(OriginalName.Length));
                 foreach (var editor in document.OpenEditors)
-                    editor.UpdateTitle();
+                    editor.Text = document.GetEditorTitle();
             }
 
             Succeeded = true;

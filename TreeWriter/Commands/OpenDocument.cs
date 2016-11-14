@@ -9,31 +9,40 @@ namespace TreeWriterWF.Commands
     public class OpenDocument : ICommand
     {
         private String FileName;
-        private Project Owner;
         public bool Succeeded { get; private set; }
 
-        public OpenDocument(String FileName, Project Owner)
+        public OpenDocument(String FileName)
         {
             this.FileName = FileName;
-            this.Owner = Owner;
             Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
-            var document = Model.OpenDocument(FileName, Owner);
+            var document = Model.FindOpenDocument(FileName);
 
             if (document == null)
-                return;
+            {
+                var extension = System.IO.Path.GetExtension(FileName);
+                if (extension == ".txt")
+                    document = new TextDocument
+                    {
+                        Path = FileName,
+                        Contents = System.IO.File.ReadAllText(FileName)
+                    };
+                else if (extension == ".ms")
+                    document = new ManuscriptDocument
+                    {
+                        Path = FileName
+                    };
+
+                Model.OpenDocument(document);
+            }
 
             if (document.OpenEditors.Count != 0)
                 document.OpenEditors[0].BringToFront();
             else
-            {
-                var docPanel = new DocumentEditor(document, null, Model.SpellChecker, Model.Thesaurus);
-                View.OpenControllerPanel(docPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
-                document.OpenEditors.Add(docPanel);
-            }
+                View.OpenControllerPanel(document.OpenView(Model), WeifenLuo.WinFormsUI.Docking.DockState.Document);
 
             Succeeded = true;
         }

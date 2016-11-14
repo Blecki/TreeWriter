@@ -21,7 +21,7 @@ namespace TreeWriterWF.Commands
         {
             var openDocument = Model.FindOpenDocument(Path);
             if (openDocument != null)
-                System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(openDocument.Contents)), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
+                System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(openDocument.GetContents())), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
             else
                 System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(System.IO.File.ReadAllText(Path))), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
         }

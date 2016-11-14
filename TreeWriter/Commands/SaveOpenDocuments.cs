@@ -17,12 +17,12 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            foreach (var document in Model.OpenDocuments)
+            foreach (var document in Model.EnumerateOpenDocuments())
             {
                 if (document.NeedChangesSaved)
                 {
-                    Model.SaveDocument(document);
-                    foreach (var editor in document.OpenEditors) editor.UpdateTitle();
+                    document.SaveDocument();
+                    foreach (var editor in document.OpenEditors) editor.Text = document.GetEditorTitle();
                 }
             }
 

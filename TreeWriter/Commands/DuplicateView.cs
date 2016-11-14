@@ -8,10 +8,10 @@ namespace TreeWriterWF.Commands
 {
     public class DuplicateView :ICommand
     {
-        private Document Document;
+        private EditableDocument Document;
         public bool Succeeded { get; private set; }
 
-        public DuplicateView(Document Document)
+        public DuplicateView(EditableDocument Document)
         {
             this.Document = Document;
             Succeeded = true;
@@ -19,7 +19,11 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var existingScintillaDocument = Document.OpenEditors[0].GetScintillaDocument();
+            //TODO: This should use document.OpenView. OpenView should handle linking scintilla documents.
+            if (Document.OpenEditors.Count < 1) return;
+            var documentView = Document.OpenEditors[0] as DocumentEditor;
+            if (documentView == null) return;
+            var existingScintillaDocument = documentView.GetScintillaDocument();
             var docPanel = new DocumentEditor(Document, existingScintillaDocument, Model.SpellChecker, Model.Thesaurus);
             View.OpenControllerPanel(docPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
             Document.OpenEditors.Add(docPanel);

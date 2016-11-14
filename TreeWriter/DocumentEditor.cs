@@ -14,11 +14,13 @@ namespace TreeWriterWF
 {
     public partial class DocumentEditor : ControllerPanel
     {
-        Document Document;
+        EditableDocument Document;
         NHunspell.Hunspell SpellChecker;
         NHunspell.MyThes Thesaurus;
 
-        public DocumentEditor(Document Document, ScintillaNET.Document? LinkingDocument, 
+        public DocumentEditor(
+            EditableDocument Document, 
+            ScintillaNET.Document? LinkingDocument, 
             NHunspell.Hunspell SpellChecker,
             NHunspell.MyThes Thesaurus)
         {
@@ -30,13 +32,13 @@ namespace TreeWriterWF
             
             // Load document into editor.
             if (!LinkingDocument.HasValue)
-                textEditor.Text = Document.Contents;
+                textEditor.Text = Document.GetContents();
             else
                 textEditor.Document = LinkingDocument.Value;
 
             textEditor.Create(SpellChecker, Thesaurus, (a) => ControllerCommand(a));
 
-            UpdateTitle();
+            Text = Document.GetEditorTitle();
 
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
@@ -45,11 +47,6 @@ namespace TreeWriterWF
         public ScintillaNET.Document GetScintillaDocument()
         {
             return textEditor.Document;
-        }
-
-        public void UpdateTitle()
-        {
-            Text = System.IO.Path.GetFileNameWithoutExtension(Document.FileName) + (Document.NeedChangesSaved ? "*" : "");
         }
 
         private void textEditor_TextChanged(object sender, EventArgs e)
@@ -61,16 +58,16 @@ namespace TreeWriterWF
         {            
             if (e.CloseReason == CloseReason.UserClosing)
             { 
-            var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
-            ControllerCommand(closeCommand);
-            e.Cancel = closeCommand.Cancel;
-                }
+                var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
+                ControllerCommand(closeCommand);
+                e.Cancel = closeCommand.Cancel;
+            }
         }
 
         private void textEditor_HotspotClick(object sender, HotspotClickEventArgs e)
         {
-            var linkText = textEditor.GetWordFromPosition(e.Position);
-            ControllerCommand(new Commands.FollowWikiLink(Document, linkText));
+            //var linkText = textEditor.GetWordFromPosition(e.Position);
+            //ControllerCommand(new Commands.FollowWikiLink(Document, linkText));
         }
           
         private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
@@ -90,7 +87,7 @@ namespace TreeWriterWF
 
         private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(Document.Contents)), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
+            System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(Document.GetContents())), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
         }       
     }
 }

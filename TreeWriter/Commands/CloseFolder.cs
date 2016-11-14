@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class CloseProject : ICommand
+    public class CloseFolder : ICommand
     {
-        Project Project;
+        FolderDocument Project;
         public bool Succeeded { get; private set; }
 
-        public CloseProject(Project Project)
+        public CloseFolder(FolderDocument Project)
         {
             this.Project = Project;
             Succeeded = true;
@@ -19,7 +19,7 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            Model.CloseProject(Project);
+            Model.CloseDocument(Project);
         }
     }
 }

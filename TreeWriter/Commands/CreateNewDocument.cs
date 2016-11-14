@@ -10,11 +10,13 @@ namespace TreeWriterWF.Commands
     {
         private String DirectoryPath;
         public String NewFileName;
+        public String Extension;
         public bool Succeeded { get; private set; }
         
-        public CreateNewDocument(String DirectoryPath)
+        public CreateNewDocument(String DirectoryPath, String Extension)
         {
             this.DirectoryPath = DirectoryPath;
+            this.Extension = Extension;
             Succeeded = false;
         }
 
@@ -26,8 +28,8 @@ namespace TreeWriterWF.Commands
             {
                 try
                 {
-                    if (counter == 0) NewFileName = "untitled.txt";
-                    else NewFileName = String.Format("untitled {0}.txt", counter);
+                    if (counter == 0) NewFileName = "untitled." + Extension;
+                    else NewFileName = String.Format("untitled {0}." + Extension, counter);
             
                     var fullPath = DirectoryPath + "\\" + NewFileName;
                     if (System.IO.File.Exists(fullPath)) continue;

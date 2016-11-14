@@ -8,10 +8,10 @@ namespace TreeWriterWF.Commands
 {
     public class SaveDocument : ICommand
     {
-        private Document Document;
+        private EditableDocument Document;
         public bool Succeeded { get; private set; }
 
-        public SaveDocument(Document Document)
+        public SaveDocument(EditableDocument Document)
         {
             this.Document = Document;
             Succeeded = false;
@@ -20,8 +20,8 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             if (!Document.NeedChangesSaved) return;
-            Model.SaveDocument(Document);
-            foreach (var editor in Document.OpenEditors) editor.UpdateTitle();
+            Document.SaveDocument();
+            foreach (var editor in Document.OpenEditors) editor.Text = Document.GetEditorTitle();
             Succeeded = true;
         }
     }

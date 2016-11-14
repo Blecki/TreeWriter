@@ -31,7 +31,7 @@ namespace TreeWriterWF.Commands
         {
             var openDocument = Model.FindOpenDocument(Path);
             if (openDocument != null)
-                return WordParser.CountWords(openDocument.Contents);
+                return WordParser.CountWords(openDocument.GetContents());
             else
                 return WordParser.CountWords(System.IO.File.ReadAllText(Path));
         }

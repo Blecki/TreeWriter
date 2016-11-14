@@ -77,17 +77,15 @@
     <Compile Include="Commands\CloseAllEditors.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
-    <Compile Include="Commands\CloseProject.cs" />
+    <Compile Include="Commands\CloseFolder.cs" />
     <Compile Include="Commands\CreateFolder.cs" />
     <Compile Include="Commands\RenameFilesystemItem.cs" />
-    <Compile Include="Commands\FollowWikiLink.cs" />
     <Compile Include="Commands\DeleteDocument.cs" />
     <Compile Include="Commands\DeleteFolder.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CloseEditor.cs" />
     <Compile Include="Commands\CreateNewDocument.cs" />
-    <Compile Include="Commands\CreateProject.cs" />
-    <Compile Include="Commands\OpenProject.cs" />
+    <Compile Include="Commands\OpenFolder.cs" />
     <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="ControllerPanel.cs">
       <SubType>Form</SubType>
@@ -101,6 +99,9 @@
     <Compile Include="CreateProjectForm.Designer.cs">
       <DependentUpon>CreateProjectForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Documents\ManuscriptDocument.cs" />
+    <Compile Include="EditableDocument.cs" />
+    <Compile Include="Documents\SceneDocument.cs" />
     <Compile Include="SceneListing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,7 +114,7 @@
     <Compile Include="DirectoryListing.Designer.cs">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </Compile>
-    <Compile Include="Document.cs" />
+    <Compile Include="Documents\TextDocument.cs" />
     <Compile Include="DocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,7 +128,7 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="Project.cs" />
+    <Compile Include="Documents\FolderDocument.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextEditor.cs">

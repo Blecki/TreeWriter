@@ -9,8 +9,8 @@ namespace TreeWriterWF
 {
     public class Model
     {
-        public List<Document> OpenDocuments = new List<Document>();
-        public List<Project> OpenProjects = new List<Project>();
+        private List<EditableDocument> OpenDocuments = new List<EditableDocument>();
+
         public NHunspell.Hunspell SpellChecker { get; private set; }
         String DictionaryBase = "en_US";
         public List<String> CustomDictionaryEntries = new List<string>();
@@ -19,14 +19,13 @@ namespace TreeWriterWF
 
         public class SerializableDocument
         {
+            public String Type;
             public String Path;
-            public String Project;
         }
 
         public class SerializableSettings
         {
             public List<SerializableDocument> OpenDocuments;
-            public List<String> OpenProjects;
             public String Dictionary;
             public String Thesaurus;
             public List<String> CustomDictionaryEntries;
@@ -52,16 +51,12 @@ namespace TreeWriterWF
 
                     Thesaurus = new NHunspell.MyThes(ThesaurusData);
         
-                    foreach (var folder in settingsObject.OpenProjects)
-                        View.ProcessControllerCommand(new Commands.OpenProject(folder));
+                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "FOLDER"))
+                        View.ProcessControllerCommand(new Commands.OpenFolder(document.Path));
 
-                    foreach (var document in settingsObject.OpenDocuments)
-                    {
-                        var owner = OpenProjects.FirstOrDefault(p => p.Path == document.Project);
-                        if (owner != null)
-                            View.ProcessControllerCommand(new Commands.OpenDocument(document.Path, owner));
-                    }
-
+                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "TEXT"))
+                        View.ProcessControllerCommand(new Commands.OpenDocument(document.Path));
+                    
                     if (settingsObject.CustomDictionaryEntries != null)
                         foreach (var word in settingsObject.CustomDictionaryEntries)
                         {
@@ -99,12 +94,7 @@ namespace TreeWriterWF
 
                 var settingsObject = new SerializableSettings
                 {
-                    OpenDocuments = OpenDocuments.Select(d => new SerializableDocument
-                    {
-                        Path = d.FileName,
-                        Project = d.Owner.Path
-                    }).ToList(),
-                    OpenProjects = OpenProjects.Select(d => d.Path).ToList(),
+                    OpenDocuments = OpenDocuments.Select(d => d.GetSerializableDocument()).Where(s => s != null).ToList(),
                     Dictionary = DictionaryBase,
                     CustomDictionaryEntries = CustomDictionaryEntries,
                     Thesaurus = ThesaurusData
@@ -118,58 +108,15 @@ namespace TreeWriterWF
             }
         }
         
-        public Document FindOpenDocument(String FileName)
+        public EditableDocument FindOpenDocument(String FileName)
         {
-            return OpenDocuments.FirstOrDefault(d => d.FileName == FileName);
+            return OpenDocuments.FirstOrDefault(d => d.Path == FileName);
         }
 
-        public IEnumerable<Document> FindOpenDocuments(String BaseFileName)
+        public IEnumerable<EditableDocument> FindChildDocuments(String BaseFileName)
         {
             foreach (var document in OpenDocuments)
-                if (document.FileName.StartsWith(BaseFileName)) yield return document;
-        }
-
-        public Document OpenDocument(String FileName, Project Owner)
-        {
-            var existingDocument = FindOpenDocument(FileName);
-            if (existingDocument == null)
-            {
-                existingDocument = new Document();
-                existingDocument.FileName = FileName;
-
-                try
-                {
-                    existingDocument.Contents = System.IO.File.ReadAllText(FileName);
-                }
-                catch (Exception e)
-                {
-                    System.Windows.Forms.MessageBox.Show(e.Message);
-                }
-
-                existingDocument.Owner = Owner;
-                OpenDocuments.Add(existingDocument);
-            }
-            return existingDocument;
-        }
-
-        public Project OpenProject(String ProjectPath)
-        {
-            var existingProject = OpenProjects.FirstOrDefault(d => d.Path == ProjectPath);
-            if (existingProject == null)
-            {
-                existingProject = new Project
-                {
-                    Path = ProjectPath,
-                    OpenView = null
-                };
-                OpenProjects.Add(existingProject);
-            }
-            return existingProject;
-        }
-
-        public void CloseProject(Project Project)
-        {
-            OpenProjects.Remove(Project);
+                if (document.Path.StartsWith(BaseFileName)) yield return document;
         }
 
         /// <summary>
@@ -177,28 +124,20 @@ namespace TreeWriterWF
         /// DocumentEditors will be orphaned. 
         /// </summary>
         /// <param name="Document"></param>
-        public void CloseDocument(Document Document)
+        public void CloseDocument(EditableDocument Document)
         {
             System.Diagnostics.Debug.Assert(Document.OpenEditors.Count <= 1);
             OpenDocuments.Remove(Document);
         }
 
-        public void SaveDocument(Document Document)
+        public void OpenDocument(EditableDocument Document)
         {
-            System.IO.File.WriteAllText(Document.FileName, Document.Contents);
-            Document.NeedChangesSaved = false;
+            OpenDocuments.Add(Document);
         }
 
-        public String WikiSearch(String ProjectDirectory, String ArticleName)
+        public IEnumerable<EditableDocument> EnumerateOpenDocuments()
         {
-            var localFile = ProjectDirectory + "\\" + ArticleName + ".txt";
-            if (System.IO.File.Exists(localFile)) return localFile;
-            else foreach (var directory in System.IO.Directory.EnumerateDirectories(ProjectDirectory))
-                {
-                    var r = WikiSearch(directory, ArticleName);
-                    if (!String.IsNullOrEmpty(r)) return r;
-                }
-            return null;
+            return OpenDocuments;
         }
     }
 }

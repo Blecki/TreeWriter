@@ -21,7 +21,7 @@ namespace TreeWriterWF.Commands
         {
             try
             {
-                var openDocument = Model.FindOpenDocuments(DirectoryPath).FirstOrDefault();
+                var openDocument = Model.FindChildDocuments(DirectoryPath).FirstOrDefault();
                 if (openDocument != null)
                     System.Windows.Forms.MessageBox.Show("Close any documents in this folder before deleting it.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
                 else

@@ -8,13 +8,13 @@ namespace TreeWriterWF.Commands
 {
     public class CloseEditor : ICommand
     {
-        Document Document;
-        DocumentEditor Editor;
+        EditableDocument Document;
+        ControllerPanel Editor;
         public bool Cancel = false;
         bool AppClosing = false;
         public bool Succeeded { get; private set; }
 
-        public CloseEditor(Document Document, DocumentEditor Editor, bool AppClosing)
+        public CloseEditor(EditableDocument Document, ControllerPanel Editor, bool AppClosing)
         {
             this.Document = Document;
             this.Editor = Editor;
@@ -40,11 +40,11 @@ namespace TreeWriterWF.Commands
                 }
                 else
                 {
-                    var prompt = System.Windows.Forms.MessageBox.Show(String.Format("Save changes to {0}?", Document.FileName),
+                    var prompt = System.Windows.Forms.MessageBox.Show(String.Format("Save changes to {0}?", Document.GetEditorTitle()),
                         "Unsaved changes!", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
                     if (prompt == System.Windows.Forms.DialogResult.Yes)
                     {
-                        Model.SaveDocument(Document);
+                        Document.SaveDocument();
                         if (!AppClosing) Model.CloseDocument(Document);
                         Cancel = false;
                     }
