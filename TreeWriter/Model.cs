@@ -54,7 +54,7 @@ namespace TreeWriterWF
                     foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "FOLDER"))
                         View.ProcessControllerCommand(new Commands.OpenFolder(document.Path));
 
-                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "TEXT"))
+                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type != "FOLDER"))
                         View.ProcessControllerCommand(new Commands.OpenDocument(document.Path));
                     
                     if (settingsObject.CustomDictionaryEntries != null)

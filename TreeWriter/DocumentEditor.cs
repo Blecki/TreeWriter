@@ -44,6 +44,12 @@ namespace TreeWriterWF
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
         }
 
+        public override void ReloadDocument()
+        {
+            textEditor.Text = Document.GetContents();
+            Text = Document.GetEditorTitle();
+        }
+
         public ScintillaNET.Document GetScintillaDocument()
         {
             return textEditor.Document;

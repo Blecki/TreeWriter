@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class OpenDocument : ICommand
+    public class OpenManuscript : ICommand
     {
         private String FileName;
         public bool Succeeded { get; private set; }
 
-        public OpenDocument(String FileName)
+        public OpenManuscript(String FileName)
         {
             this.FileName = FileName;
             Succeeded = false;
@@ -24,8 +24,14 @@ namespace TreeWriterWF.Commands
                 var document = Model.FindOpenDocument(FileName);
 
                 if (document == null)
-                {                   
-                    document = new TextDocument(FileName);
+                {
+                    var json = System.IO.File.ReadAllText(FileName);
+
+                    if (String.IsNullOrEmpty(json))
+                        document = new ManuscriptDocument(FileName, ManuscriptData.CreateBlank());
+                    else
+                        document = new ManuscriptDocument(FileName, ManuscriptData.CreateFromJson(json));
+
                     Model.OpenDocument(document);
                 }
 
@@ -36,8 +42,9 @@ namespace TreeWriterWF.Commands
 
                 Succeeded = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                System.Windows.Forms.MessageBox.Show("Open operation has been aborted to avoid loss of data. Fail reason: " + e.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK);
                 Succeeded = false;
             }
         }

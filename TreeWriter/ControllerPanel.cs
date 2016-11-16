@@ -18,5 +18,8 @@ namespace TreeWriterWF
         {
             InitializeComponent();
         }
+
+        public virtual void ReloadDocument()
+        { }
     }
 }

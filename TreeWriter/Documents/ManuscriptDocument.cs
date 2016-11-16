@@ -8,7 +8,39 @@ namespace TreeWriterWF
 {
     public class ManuscriptDocument : EditableDocument
     {
-        public List<SceneDocument> Scenes = new List<SceneDocument>();
+        public ManuscriptData Data;
+
+        public ManuscriptDocument(String Path, ManuscriptData Data)
+        {
+            this.Path = Path;
+            this.Data = Data;
+        }
+        
+        public bool SendSceneToScrap(Model Model, SceneData Scene)
+        {
+            try
+            {
+                var scrap = String.Format("\nScrapped {0}\nName: {1}\nTags: {2}\nSummary: {3}\nProse:\n{4}\n",
+                    DateTime.Now, Scene.Name, Scene.Tags, Scene.Summary, Scene.Prose);
+
+                var scrapFileName = System.IO.Path.GetDirectoryName(Path) + "\\" +  System.IO.Path.GetFileNameWithoutExtension(Path) + "_ms_scrap.txt";
+
+                var openScrapDocument = Model.FindOpenDocument(scrapFileName);
+                if (openScrapDocument != null)
+                {
+                    openScrapDocument.ApplyChanges(openScrapDocument.GetContents() + scrap);
+                    openScrapDocument.UpdateViews();
+                }
+                else
+                    System.IO.File.AppendAllText(scrapFileName, scrap);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public override Model.SerializableDocument GetSerializableDocument()
         {
@@ -24,6 +56,11 @@ namespace TreeWriterWF
             var r = new SceneListing(this);
             OpenEditors.Add(r);
             return r;
+        }
+
+        public override void SaveDocument()
+        {
+            System.IO.File.WriteAllText(Path, Newtonsoft.Json.JsonConvert.SerializeObject(Data, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }

@@ -19,11 +19,8 @@ namespace TreeWriterWF.Commands
         {
             foreach (var document in Model.EnumerateOpenDocuments())
             {
-                if (document.NeedChangesSaved)
-                {
                     document.SaveDocument();
                     foreach (var editor in document.OpenEditors) editor.Text = document.GetEditorTitle();
-                }
             }
 
             Succeeded = true;

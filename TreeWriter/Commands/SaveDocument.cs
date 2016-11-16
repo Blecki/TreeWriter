@@ -19,7 +19,7 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            if (!Document.NeedChangesSaved) return;
+            //if (!Document.NeedChangesSaved) return;
             Document.SaveDocument();
             foreach (var editor in Document.OpenEditors) editor.Text = Document.GetEditorTitle();
             Succeeded = true;

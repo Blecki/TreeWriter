@@ -8,27 +8,41 @@ namespace TreeWriterWF
 {
     public class SceneDocument : EditableDocument
     {
-        public String Name;
-        public String Tags;
-        public String Summary;
-        public String Prose;
-
-        public FolderDocument Owner;
-
+        public SceneData Data;
+        public ManuscriptDocument Owner;
+     
         public override string GetContents()
         {
-            return Prose;
+            return Data.Prose;
         }
 
         public override string GetEditorTitle()
         {
-            return System.IO.Path.GetFileNameWithoutExtension(Name) + (NeedChangesSaved ? "*" : "");
+            return Data.Name + (NeedChangesSaved ? "*" : "");
         }
 
         public override void ApplyChanges(string NewText)
         {
-            Prose = NewText;
+            Data.Prose = NewText;
+            Owner.NeedChangesSaved = true;
             base.ApplyChanges(NewText);
+        }
+
+        public override void SaveDocument()
+        {
+            Owner.SaveDocument();
+        }
+
+        public override EditableDocument GetRootDocument()
+        {
+            return Owner;
+        }
+
+        public override ControllerPanel OpenView(Model Model)
+        {
+            var r = new DocumentEditor(this, null, Model.SpellChecker, Model.Thesaurus);
+            OpenEditors.Add(r);
+            return r;
         }
     }
 }

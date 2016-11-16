@@ -33,6 +33,7 @@
             this.DirectoryContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newManuscriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordCountToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.FileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -40,9 +41,12 @@
             this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
-            this.newManuscriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.duplicateViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DirectoryContextMenu.SuspendLayout();
             this.FileContextMenu.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // DirectoryContextMenu
@@ -54,7 +58,7 @@
             this.deleteFolderToolStripMenuItem,
             this.wordCountToolStripMenuItem1});
             this.DirectoryContextMenu.Name = "DirectoryContextMenu";
-            this.DirectoryContextMenu.Size = new System.Drawing.Size(162, 136);
+            this.DirectoryContextMenu.Size = new System.Drawing.Size(162, 114);
             // 
             // newFileToolStripMenuItem
             // 
@@ -69,6 +73,13 @@
             this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.newFolderToolStripMenuItem.Text = "New Folder";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderToolStripMenuItem_Click);
+            // 
+            // newManuscriptToolStripMenuItem
+            // 
+            this.newManuscriptToolStripMenuItem.Name = "newManuscriptToolStripMenuItem";
+            this.newManuscriptToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.newManuscriptToolStripMenuItem.Text = "New Manuscript";
+            this.newManuscriptToolStripMenuItem.Click += new System.EventHandler(this.newManuscriptToolStripMenuItem_Click);
             // 
             // deleteFolderToolStripMenuItem
             // 
@@ -137,12 +148,26 @@
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView_KeyDown);
             this.treeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseUp);
             // 
-            // newManuscriptToolStripMenuItem
+            // contextMenuStrip
             // 
-            this.newManuscriptToolStripMenuItem.Name = "newManuscriptToolStripMenuItem";
-            this.newManuscriptToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.newManuscriptToolStripMenuItem.Text = "New Manuscript";
-            this.newManuscriptToolStripMenuItem.Click += new System.EventHandler(this.newManuscriptToolStripMenuItem_Click);
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.duplicateViewToolStripMenuItem,
+            this.refreshToolStripMenuItem});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 70);
+            // 
+            // duplicateViewToolStripMenuItem
+            // 
+            this.duplicateViewToolStripMenuItem.Name = "duplicateViewToolStripMenuItem";
+            this.duplicateViewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.duplicateViewToolStripMenuItem.Text = "Duplicate View";
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // DirectoryListing
             // 
@@ -156,6 +181,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DirectoryListing_FormClosing);
             this.DirectoryContextMenu.ResumeLayout(false);
             this.FileContextMenu.ResumeLayout(false);
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -173,5 +199,8 @@
         private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newManuscriptToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem duplicateViewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

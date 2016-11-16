@@ -23,15 +23,15 @@ namespace TreeWriterWF
         
         public virtual String GetEditorTitle()
         {
-            throw new NotImplementedException();
-            //System.IO.Path.GetFileNameWithoutExtension(Document.FileName) + (Document.NeedChangesSaved ? "*" : "");
+            //throw new NotImplementedException();
+            return System.IO.Path.GetFileNameWithoutExtension(Path) + (NeedChangesSaved ? "*" : "");
         }
 
         public virtual EditableDocument GetRootDocument() { return this; }
 
         public virtual Model.SerializableDocument GetSerializableDocument() { return null; }
 
-        public virtual void SaveDocument() { throw new NotImplementedException(); }
+        public virtual void SaveDocument() { }
 
         public virtual void CloseAllViews() 
         {
@@ -43,6 +43,11 @@ namespace TreeWriterWF
         public virtual ControllerPanel OpenView(Model Model)
         {
             throw new NotImplementedException();
+        }
+
+        public void UpdateViews()
+        {
+            foreach (var editor in OpenEditors) editor.ReloadDocument();
         }
     }
 }

@@ -88,13 +88,26 @@ namespace TreeWriterWF
                 Node.Nodes.Clear();
                 BuildDirectoryTreeItems((Node.Tag as NodeTag).Path, Node.Nodes);
             }
-        }            
+        }
+
+        public override void ReloadDocument()
+        {
+            UpdateNode(null);
+        }
 
         private void treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             var file = e.Node.Tag as NodeTag;
             if (file.NodeType == NodeTag.Type.File)
-                ControllerCommand(new Commands.OpenDocument(file.Path));
+            {
+                var extension = System.IO.Path.GetExtension(file.Path);
+                if (extension == ".txt")
+                    ControllerCommand(new Commands.OpenDocument(file.Path));
+                else if (extension == ".ms")
+                    ControllerCommand(new Commands.OpenManuscript(file.Path));
+                else
+                    MessageBox.Show("Unknown file type!", "Error", MessageBoxButtons.OK);
+            }
         }
 
         private void treeView_MouseUp(object sender, MouseEventArgs e)
@@ -384,6 +397,11 @@ namespace TreeWriterWF
             newNode.EnsureVisible();
             treeView.SelectedNode = newNode;
             newNode.BeginEdit();
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadDocument();
         }
     }
 }

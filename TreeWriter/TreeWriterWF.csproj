@@ -71,10 +71,13 @@
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
+    <Compile Include="Commands\DeleteScene.cs" />
     <Compile Include="Commands\FolderWordCount.cs" />
     <Compile Include="Commands\FileWordCount.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
+    <Compile Include="Commands\OpenManuscript.cs" />
+    <Compile Include="Commands\OpenScene.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
     <Compile Include="Commands\CloseFolder.cs" />
@@ -100,6 +103,7 @@
       <DependentUpon>CreateProjectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\ManuscriptDocument.cs" />
+    <Compile Include="Documents\SceneData.cs" />
     <Compile Include="EditableDocument.cs" />
     <Compile Include="Documents\SceneDocument.cs" />
     <Compile Include="SceneListing.cs">

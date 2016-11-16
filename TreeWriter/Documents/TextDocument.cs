@@ -10,14 +10,15 @@ namespace TreeWriterWF
     {
         public String Contents;
 
+        public TextDocument(String FileName)
+        {
+            Path = FileName;
+            Contents = System.IO.File.ReadAllText(FileName);
+        }
+
         public override string GetContents()
         {
             return Contents;
-        }
-
-        public override string GetEditorTitle()
-        {
-            return System.IO.Path.GetFileNameWithoutExtension(Path) + (NeedChangesSaved ? "*" : "");
         }
 
         public override void ApplyChanges(string NewText)
