@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ToolTip toolTip1;
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +44,6 @@
             this.tagBox = new System.Windows.Forms.TextBox();
             this.openSceneLabel = new System.Windows.Forms.Label();
             this.textEditor = new TreeWriterWF.TextEditor();
-            toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -230,10 +228,6 @@
             this.textEditor.Zoom = 5;
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
             this.textEditor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DocumentEditor_KeyDown);
-            // 
-            // toolTip1
-            // 
-            toolTip1.ToolTipTitle = "Type to filter scene list";
             // 
             // SceneListing
             // 

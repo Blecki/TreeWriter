@@ -105,13 +105,13 @@ namespace TreeWriterWF
         
         public EditableDocument FindOpenDocument(String FileName)
         {
-            return OpenDocuments.FirstOrDefault(d => d.Path == FileName);
+            return OpenDocuments.FirstOrDefault(d => d.Path.ToUpper() == FileName.ToUpper());
         }
 
         public IEnumerable<EditableDocument> FindChildDocuments(String BaseFileName)
         {
             foreach (var document in OpenDocuments)
-                if (document.Path.StartsWith(BaseFileName)) yield return document;
+                if (document.Path.ToUpper().StartsWith(BaseFileName.ToUpper())) yield return document;
         }
 
         /// <summary>

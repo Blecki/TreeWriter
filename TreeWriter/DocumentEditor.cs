@@ -84,6 +84,14 @@ namespace TreeWriterWF
                 e.SuppressKeyPress = true;
                 ControllerCommand(new Commands.SaveDocument(Document));
             }
+            else if (e.KeyCode == Keys.D && e.Control)
+            {
+                //Send to scrap file.
+
+                var text = textEditor.SelectedText;
+                ControllerCommand(new Commands.SendToScrap(text, Document.Path));
+                textEditor.ReplaceSelection("");
+            }
         }
 
         private void duplicateViewToolStripMenuItem_Click(object sender, EventArgs e)

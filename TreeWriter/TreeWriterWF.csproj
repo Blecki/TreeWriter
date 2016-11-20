@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
+    <Compile Include="Commands\SendToScrap.cs" />
     <Compile Include="Commands\DeleteScene.cs" />
     <Compile Include="Commands\FolderWordCount.cs" />
     <Compile Include="Commands\FileWordCount.cs" />
