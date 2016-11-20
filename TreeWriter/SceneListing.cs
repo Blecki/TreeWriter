@@ -17,6 +17,7 @@ namespace TreeWriterWF
         private ListViewItem ContextNode;
         private SceneData SelectedScene = null;
         private bool SuppressTextChange = false;
+        private bool SuppressTagTextChange = false;
 
         public SceneListing(ManuscriptDocument Document)
         {
@@ -32,12 +33,30 @@ namespace TreeWriterWF
 
         private void UpdateList()
         {
+            int selectedIndex = -1;
+            if (listView.SelectedItems.Count > 0)
+                selectedIndex = Document.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
+
+            ListViewItem itemToSelect = null;
+
             listView.Items.Clear();
-            listView.Items.AddRange(Document.Data.Scenes.Select(s =>
-                new ListViewItem(new String[] { s.Name, s.Tags })
+            for (int i = 0; i < Document.Data.Scenes.Count; ++i)
+            {
+                var scene = Document.Data.Scenes[i];
+                if (scene.Tags.Contains(filterBox.Text))
                 {
-                    Tag = s
-                }).ToArray());
+                    var item = new ListViewItem(new String[] { scene.Name, scene.Tags })
+                    {
+                        Tag = scene
+                    };
+                    if (i == selectedIndex) itemToSelect = item;
+                    listView.Items.Add(item);
+                }
+            }
+
+            if (itemToSelect != null)
+                listView.SelectedIndices.Add(itemToSelect.Index);
+
             listView.Invalidate();
         }
 
@@ -103,15 +122,23 @@ namespace TreeWriterWF
             {
                 SelectedScene = null;
                 SuppressTextChange = true;
+                SuppressTagTextChange = true;
                 textEditor.Text = "";
                 textEditor.Enabled = false;
+                tagBox.Enabled = false;
+                tagBox.Text = "";
+                openSceneLabel.Text = "";
             }
             else
             {
                 SelectedScene = listView.SelectedItems[0].Tag as SceneData;
                 SuppressTextChange = true;
+                SuppressTagTextChange = true;
                 textEditor.Text = SelectedScene.Summary;
                 textEditor.Enabled = true;
+                tagBox.Enabled = true;
+                tagBox.Text = SelectedScene.Tags;
+                openSceneLabel.Text = SelectedScene.Name;
             }
         }
 
@@ -127,6 +154,22 @@ namespace TreeWriterWF
             {
                 SelectedScene.Summary = textEditor.Text;
                 Document.MadeChanges();
+            }
+        }
+
+        private void tagBox_TextChanged(object sender, EventArgs e)
+        {
+            if (SuppressTagTextChange)
+            {
+                SuppressTagTextChange = false;
+                return;
+            }
+
+            if (SelectedScene != null)
+            {
+                SelectedScene.Tags = tagBox.Text;
+                Document.MadeChanges();
+                listView.SelectedItems[0].SubItems[1].Text = tagBox.Text;
             }
         }
 
@@ -166,7 +209,7 @@ namespace TreeWriterWF
             if (listView.SelectedItems.Count == 0) return;
             var p = PointToClient(new Point(e.X, e.Y));
             ListViewItem dragToItem = listView.GetItemAt(p.X, p.Y);
-
+            
             if (dragToItem == null)
             {
                 Document.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
@@ -175,8 +218,9 @@ namespace TreeWriterWF
             }
             else
             {
-                var insertIndex = dragToItem.Index;
-                var sourceIndex = listView.SelectedItems[0].Index;
+                var insertAfter = dragToItem.Tag as SceneData;
+                var insertIndex = Document.Data.Scenes.IndexOf(insertAfter);
+                var sourceIndex = Document.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
                 Document.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
                 Document.Data.Scenes.Insert(sourceIndex > insertIndex ? (insertIndex) : (insertIndex - 1),
                     listView.SelectedItems[0].Tag as SceneData);
@@ -192,5 +236,21 @@ namespace TreeWriterWF
                 ControllerCommand(new Commands.DeleteScene(Document, scene));
             }
         }
+
+        private void clearFilterButton_Click(object sender, EventArgs e)
+        {
+            filterBox.Text = "";
+            UpdateList();
+        }
+
+        private void refreshFilterButton_Click(object sender, EventArgs e)
+        {
+            UpdateList();
+        }
+
+        private void filterBox_TextChanged(object sender, EventArgs e)
+        {
+            UpdateList();
+        }        
     }
 }
