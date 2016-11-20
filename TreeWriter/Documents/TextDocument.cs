@@ -29,13 +29,15 @@ namespace TreeWriterWF
 
         public override void SaveDocument()
         {
+
             System.IO.File.WriteAllText(Path, Contents);
             NeedChangesSaved = false;
+            UpdateViewTitles();
         }
 
-        public override Model.SerializableDocument GetSerializableDocument()
+        public override OpenDocumentRecord GetOpenDocumentRecord()
         {
-            return new Model.SerializableDocument
+            return new OpenDocumentRecord
             {
                 Path = Path,
                 Type = "TEXT"

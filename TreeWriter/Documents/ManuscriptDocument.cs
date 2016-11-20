@@ -15,13 +15,13 @@ namespace TreeWriterWF
             this.Path = Path;
             this.Data = Data;
         }
-        
+
         public bool SendSceneToScrap(Model Model, SceneData Scene)
         {
             try
             {
-                var scrap = String.Format("\nScrapped {0}\nName: {1}\nTags: {2}\nSummary: {3}\nProse:\n{4}\n",
-                    DateTime.Now, Scene.Name, Scene.Tags, Scene.Summary, Scene.Prose);
+                var scrap = String.Format("\nScrapped {0}\nName: {1}\nTags: {2}\nSummary: {3}\n\n",
+                    DateTime.Now, Scene.Name, Scene.Tags, Scene.Summary);
 
                 var scrapFileName = System.IO.Path.GetDirectoryName(Path) + "\\" +  System.IO.Path.GetFileNameWithoutExtension(Path) + "_ms_scrap.txt";
 
@@ -42,9 +42,9 @@ namespace TreeWriterWF
             }
         }
 
-        public override Model.SerializableDocument GetSerializableDocument()
+        public override OpenDocumentRecord GetOpenDocumentRecord()
         {
-            return new Model.SerializableDocument
+            return new OpenDocumentRecord
             {
                 Path = Path,
                 Type = "MANUSCRIPT"
@@ -61,6 +61,8 @@ namespace TreeWriterWF
         public override void SaveDocument()
         {
             System.IO.File.WriteAllText(Path, Newtonsoft.Json.JsonConvert.SerializeObject(Data, Newtonsoft.Json.Formatting.Indented));
+            NeedChangesSaved = false;
+            UpdateViewTitles();
         }
     }
 }

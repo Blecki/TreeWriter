@@ -106,7 +106,6 @@
             this.listView.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView_DragDrop);
             this.listView.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView_DragEnter);
             this.listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DocumentEditor_KeyDown);
-            this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseDoubleClick);
             this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
             // 
             // columnTitle

@@ -62,7 +62,7 @@ namespace TreeWriterWF
 
         private void DocumentEditor_FormClosing(object sender, FormClosingEventArgs e)
         {            
-            if (e.CloseReason == CloseReason.UserClosing)
+            if (CloseStyle == EditableDocument.CloseStyle.Natural && e.CloseReason == CloseReason.UserClosing)
             { 
                 var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
                 ControllerCommand(closeCommand);

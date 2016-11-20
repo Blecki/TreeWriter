@@ -13,6 +13,7 @@ namespace TreeWriterWF
     public partial class ControllerPanel : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         public Action<ICommand> ControllerCommand;
+        public EditableDocument.CloseStyle CloseStyle = EditableDocument.CloseStyle.Natural;
 
         public ControllerPanel()
         {

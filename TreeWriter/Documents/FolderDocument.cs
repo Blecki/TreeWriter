@@ -8,9 +8,9 @@ namespace TreeWriterWF
 {
     public class FolderDocument : EditableDocument
     {
-        public override Model.SerializableDocument GetSerializableDocument()
+        public override OpenDocumentRecord GetOpenDocumentRecord()
         {
-            return new Model.SerializableDocument
+            return new OpenDocumentRecord
             {
                 Path = Path,
                 Type = "FOLDER"

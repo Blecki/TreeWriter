@@ -9,8 +9,10 @@ namespace TreeWriterWF
     public class EditableDocument
     {
         public String Path;
-        public bool NeedChangesSaved = false;
+        protected bool NeedChangesSaved = false;
         public List<ControllerPanel> OpenEditors = new List<ControllerPanel>();
+
+        public bool HasUnsavedChanges { get { return NeedChangesSaved; } }
         
         public virtual void ApplyChanges(String NewText)
         {
@@ -19,25 +21,38 @@ namespace TreeWriterWF
             foreach (var editor in OpenEditors) editor.Text = this.GetEditorTitle();
         }
 
-        public virtual String GetContents() { throw new NotImplementedException(); }
-        
-        public virtual String GetEditorTitle()
+        public void MadeChanges()
         {
-            //throw new NotImplementedException();
-            return System.IO.Path.GetFileNameWithoutExtension(Path) + (NeedChangesSaved ? "*" : "");
+            NeedChangesSaved = true;
+            UpdateViewTitles();
         }
 
-        public virtual EditableDocument GetRootDocument() { return this; }
+        public virtual String GetContents() { throw new NotImplementedException(); }
+        
+        public String GetEditorTitle()
+        {
+            return System.IO.Path.GetFileName(Path) + (NeedChangesSaved ? "*" : "");
+        }
 
-        public virtual Model.SerializableDocument GetSerializableDocument() { return null; }
+        public virtual OpenDocumentRecord GetOpenDocumentRecord() { return null; }
 
         public virtual void SaveDocument() { }
 
-        public virtual void CloseAllViews() 
+
+        public enum CloseStyle
+        {
+            ForcedWithoutSaving,
+            Natural
+        }
+
+        public void CloseAllViews(CloseStyle CloseStyle = CloseStyle.Natural)
         {
             var editors = new List<ControllerPanel>(OpenEditors);
             foreach (var editor in editors)
+            {
+                editor.CloseStyle = CloseStyle;
                 editor.Close();
+            }
         }
 
         public virtual ControllerPanel OpenView(Model Model)
@@ -47,7 +62,17 @@ namespace TreeWriterWF
 
         public void UpdateViews()
         {
-            foreach (var editor in OpenEditors) editor.ReloadDocument();
+            foreach (var editor in OpenEditors)
+            {
+                editor.ReloadDocument();
+                editor.Text = GetEditorTitle();
+            }
+        }
+
+        public void UpdateViewTitles()
+        {
+            foreach (var editor in OpenEditors)
+                editor.Text = GetEditorTitle();
         }
     }
 }

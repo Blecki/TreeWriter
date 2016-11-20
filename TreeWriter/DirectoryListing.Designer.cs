@@ -44,6 +44,7 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.duplicateViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAsTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DirectoryContextMenu.SuspendLayout();
             this.FileContextMenu.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
@@ -99,21 +100,22 @@
             // 
             this.FileContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteToolStripMenuItem,
-            this.wordCountToolStripMenuItem});
+            this.wordCountToolStripMenuItem,
+            this.openAsTextToolStripMenuItem});
             this.FileContextMenu.Name = "FileContextMenu";
-            this.FileContextMenu.Size = new System.Drawing.Size(140, 48);
+            this.FileContextMenu.Size = new System.Drawing.Size(153, 92);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete File";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // wordCountToolStripMenuItem
             // 
             this.wordCountToolStripMenuItem.Name = "wordCountToolStripMenuItem";
-            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.wordCountToolStripMenuItem.Text = "Word Count";
             this.wordCountToolStripMenuItem.Click += new System.EventHandler(this.wordCountToolStripMenuItem_Click);
             // 
@@ -154,7 +156,7 @@
             this.duplicateViewToolStripMenuItem,
             this.refreshToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 70);
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 48);
             // 
             // duplicateViewToolStripMenuItem
             // 
@@ -168,6 +170,13 @@
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // openAsTextToolStripMenuItem
+            // 
+            this.openAsTextToolStripMenuItem.Name = "openAsTextToolStripMenuItem";
+            this.openAsTextToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openAsTextToolStripMenuItem.Text = "Open As Text";
+            this.openAsTextToolStripMenuItem.Click += new System.EventHandler(this.openAsTextToolStripMenuItem_Click);
             // 
             // DirectoryListing
             // 
@@ -202,5 +211,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem duplicateViewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openAsTextToolStripMenuItem;
     }
 }

@@ -21,12 +21,12 @@ namespace TreeWriterWF
         public SceneListing(ManuscriptDocument Document)
         {
             this.Document = Document;
-            
+
             InitializeComponent();
 
             UpdateList();
             listView_SelectedIndexChanged(null, null);
-            
+
             Text = Document.GetEditorTitle();
         }
 
@@ -48,7 +48,7 @@ namespace TreeWriterWF
 
         private void _FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            if (CloseStyle == EditableDocument.CloseStyle.Natural && e.CloseReason == CloseReason.UserClosing)
             {
                 var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
                 ControllerCommand(closeCommand);
@@ -84,16 +84,17 @@ namespace TreeWriterWF
 
         private void newSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Todo: This should be a command.
-            var scene = new SceneData
-                {
-                    Name = "New Scene"
-                };
-            if (ContextNode != null)
-                Document.Data.Scenes.Insert(Document.Data.Scenes.IndexOf(ContextNode.Tag as SceneData), scene);
-            else 
-                Document.Data.Scenes.Add(scene);
-            UpdateList();
+            var contextIndex = Document.Data.Scenes.Count();
+            if (ContextNode != null) contextIndex = ContextNode.Index + 1;
+            var command = new Commands.CreateScene(
+                ContextNode == null ? null : (ContextNode.Tag as SceneData),
+                Document);
+            ControllerCommand(command);
+            if (command.Succeeded)
+            {
+                UpdateList();
+                listView.Items[contextIndex].BeginEdit();
+            }
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -124,15 +125,13 @@ namespace TreeWriterWF
 
             if (SelectedScene != null)
             {
-                // Todo: Make this a command. Needs to search model for open scene editors and modify their title as well.
                 SelectedScene.Summary = textEditor.Text;
-                Document.NeedChangesSaved = true;
+                Document.MadeChanges();
             }
         }
 
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
-            //Todo: Make a command. Also needs to search model for open scene editors and modify title.
             if (String.IsNullOrEmpty(e.Label))
             {
                 e.CancelEdit = true;
@@ -140,8 +139,7 @@ namespace TreeWriterWF
             }
 
             var item = listView.Items[e.Item].Tag as SceneData;
-            item.Name = e.Label;
-            Document.NeedChangesSaved = true;
+            ControllerCommand(new Commands.RenameScene(Document, item, e.Label));
         }
 
         private void listView_ItemDrag(object sender, ItemDragEventArgs e)
@@ -167,7 +165,7 @@ namespace TreeWriterWF
         {
             if (listView.SelectedItems.Count == 0) return;
             var p = PointToClient(new Point(e.X, e.Y));
-            ListViewItem dragToItem = listView.GetItemAt(p.X,p.Y);
+            ListViewItem dragToItem = listView.GetItemAt(p.X, p.Y);
 
             if (dragToItem == null)
             {
@@ -190,17 +188,9 @@ namespace TreeWriterWF
         {
             if (ContextNode != null)
             {
-                var scene = ContextNode.Tag as SceneDocument;
-                ControllerCommand(new Commands.DeleteScene(scene));
+                var scene = ContextNode.Tag as SceneData;
+                ControllerCommand(new Commands.DeleteScene(Document, scene));
             }
-        }
-
-        private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            ListViewItem clickItem = listView.GetItemAt(e.X, e.Y);
-            if (clickItem == null) return;
-            ControllerCommand(new Commands.OpenScene(clickItem.Tag as SceneData, Document));
-
         }
     }
 }

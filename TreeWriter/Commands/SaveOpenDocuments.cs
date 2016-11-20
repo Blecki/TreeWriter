@@ -18,10 +18,7 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             foreach (var document in Model.EnumerateOpenDocuments())
-            {
-                    document.SaveDocument();
-                    foreach (var editor in document.OpenEditors) editor.Text = document.GetEditorTitle();
-            }
+                document.SaveDocument();
 
             Succeeded = true;
         }

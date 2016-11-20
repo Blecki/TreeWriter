@@ -67,7 +67,7 @@ namespace TreeWriterWF
         {
             var fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.OpenDocument(fileDialog.FileName));
+                ProcessControllerCommand(new Commands.OpenFile(fileDialog.FileName));
         }
     }
 }

@@ -100,13 +100,14 @@ namespace TreeWriterWF
             var file = e.Node.Tag as NodeTag;
             if (file.NodeType == NodeTag.Type.File)
             {
-                var extension = System.IO.Path.GetExtension(file.Path);
-                if (extension == ".txt")
-                    ControllerCommand(new Commands.OpenDocument(file.Path));
-                else if (extension == ".ms")
-                    ControllerCommand(new Commands.OpenManuscript(file.Path));
-                else
-                    MessageBox.Show("Unknown file type!", "Error", MessageBoxButtons.OK);
+                try
+                {
+                    ControllerCommand(new Commands.OpenFile(file.Path));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK);
+                }
             }
         }
 
@@ -279,7 +280,7 @@ namespace TreeWriterWF
                 {
                     var tag = treeView.SelectedNode.Tag as NodeTag;
                     if (tag != null && tag.NodeType == NodeTag.Type.File)
-                        ControllerCommand(new Commands.OpenDocument(tag.Path));
+                        ControllerCommand(new Commands.OpenFile(tag.Path));
                     else if (tag != null)
                         treeView.SelectedNode.Toggle();
                 }
@@ -402,6 +403,15 @@ namespace TreeWriterWF
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReloadDocument();
+        }
+
+        private void openAsTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var file = ContextNode.Tag as NodeTag;
+            if (file.NodeType == NodeTag.Type.File)
+            {
+                ControllerCommand(new Commands.OpenAsText(file.Path));
+            }
         }
     }
 }

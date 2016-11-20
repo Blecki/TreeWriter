@@ -76,8 +76,11 @@
     <Compile Include="Commands\FileWordCount.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
+    <Compile Include="Commands\OpenAsText.cs" />
+    <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\OpenManuscript.cs" />
-    <Compile Include="Commands\OpenScene.cs" />
+    <Compile Include="Commands\CreateScene.cs" />
+    <Compile Include="Commands\RenameScene.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
     <Compile Include="Commands\CloseFolder.cs" />
@@ -89,23 +92,16 @@
     <Compile Include="Commands\CloseEditor.cs" />
     <Compile Include="Commands\CreateNewDocument.cs" />
     <Compile Include="Commands\OpenFolder.cs" />
-    <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="ControllerPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ControllerPanel.Designer.cs">
       <DependentUpon>ControllerPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreateProjectForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CreateProjectForm.Designer.cs">
-      <DependentUpon>CreateProjectForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Documents\ManuscriptDocument.cs" />
     <Compile Include="Documents\SceneData.cs" />
     <Compile Include="EditableDocument.cs" />
-    <Compile Include="Documents\SceneDocument.cs" />
+    <Compile Include="OpenDocumentRecord.cs" />
     <Compile Include="SceneListing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,9 +135,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="WordParser.cs" />
-    <EmbeddedResource Include="CreateProjectForm.resx">
-      <DependentUpon>CreateProjectForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SceneListing.resx">
       <DependentUpon>SceneListing.cs</DependentUpon>
     </EmbeddedResource>

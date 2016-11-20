@@ -17,15 +17,9 @@ namespace TreeWriterWF
         String ThesaurusData = "th_en_US_new.dat";
         public NHunspell.MyThes Thesaurus;
 
-        public class SerializableDocument
-        {
-            public String Type;
-            public String Path;
-        }
-
         public class SerializableSettings
         {
-            public List<SerializableDocument> OpenDocuments;
+            public List<OpenDocumentRecord> OpenDocuments;
             public String Dictionary;
             public String Thesaurus;
             public List<String> CustomDictionaryEntries;
@@ -54,8 +48,9 @@ namespace TreeWriterWF
                     foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "FOLDER"))
                         View.ProcessControllerCommand(new Commands.OpenFolder(document.Path));
 
+                    // Todo: Properly open documents.
                     foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type != "FOLDER"))
-                        View.ProcessControllerCommand(new Commands.OpenDocument(document.Path));
+                        View.ProcessControllerCommand(new Commands.OpenFile(document.Path));
                     
                     if (settingsObject.CustomDictionaryEntries != null)
                         foreach (var word in settingsObject.CustomDictionaryEntries)
@@ -94,13 +89,13 @@ namespace TreeWriterWF
 
                 var settingsObject = new SerializableSettings
                 {
-                    OpenDocuments = OpenDocuments.Select(d => d.GetSerializableDocument()).Where(s => s != null).ToList(),
+                    OpenDocuments = OpenDocuments.Select(d => d.GetOpenDocumentRecord()).Where(s => s != null).ToList(),
                     Dictionary = DictionaryBase,
                     CustomDictionaryEntries = CustomDictionaryEntries,
                     Thesaurus = ThesaurusData
                 };
                 
-                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject));
+                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject, Formatting.Indented));
             }
             catch (Exception e)
             {

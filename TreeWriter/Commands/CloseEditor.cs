@@ -24,7 +24,7 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            if (!Document.NeedChangesSaved)
+            if (!Document.HasUnsavedChanges)
             {
                 Document.OpenEditors.Remove(Editor);
                 if (Document.OpenEditors.Count == 0 && !AppClosing) Model.CloseDocument(Document);
@@ -40,8 +40,10 @@ namespace TreeWriterWF.Commands
                 }
                 else
                 {
-                    var prompt = System.Windows.Forms.MessageBox.Show(String.Format("Save changes to {0}?", Document.GetEditorTitle()),
+                    var prompt = System.Windows.Forms.MessageBox.Show(
+                        String.Format("Save changes to {0}?", Document.GetEditorTitle()),
                         "Unsaved changes!", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+
                     if (prompt == System.Windows.Forms.DialogResult.Yes)
                     {
                         Document.SaveDocument();

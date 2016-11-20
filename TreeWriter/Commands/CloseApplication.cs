@@ -18,18 +18,16 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var needSaveCount = Model.EnumerateOpenDocuments().Count(d => d.NeedChangesSaved);
+            var needSaveCount = Model.EnumerateOpenDocuments().Count(d => d.HasUnsavedChanges);
             if (needSaveCount > 0)
             {
                 var promptResult = System.Windows.Forms.MessageBox.Show("One or more files have changes to save. Save them?", "Alert!", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
                 if (promptResult == System.Windows.Forms.DialogResult.Yes)
-                {
-                    foreach (var document in Model.EnumerateOpenDocuments().Where(d => d.NeedChangesSaved))
+                    foreach (var document in Model.EnumerateOpenDocuments())
                         document.SaveDocument();
-                }
                 else if (promptResult == System.Windows.Forms.DialogResult.No)
                 {
-                    foreach (var document in Model.EnumerateOpenDocuments()) document.NeedChangesSaved = false; //LIES
+                    Cancel = false;
                 }
                 else
                     Cancel = true;

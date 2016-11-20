@@ -8,21 +8,22 @@ namespace TreeWriterWF.Commands
 {
     public class DeleteScene :ICommand
     {
-        private SceneDocument Scene;
+        private SceneData Scene;
+        private ManuscriptDocument Document;
         public bool Succeeded { get; private set; }
 
-        public DeleteScene(SceneDocument Scene)
+        public DeleteScene(ManuscriptDocument Document, SceneData Scene)
         {
+            this.Document = Document;
             this.Scene = Scene;
             Succeeded = true;
         }
 
         public void Execute(Model Model, Main View)
         {
-            var manuscript = Scene.GetRootDocument() as ManuscriptDocument;
-            manuscript.SendSceneToScrap(Model, Scene.Data);
-            manuscript.Data.Scenes.Remove(Scene.Data);
-            manuscript.UpdateViews();
+            Document.SendSceneToScrap(Model, Scene);
+            Document.Data.Scenes.Remove(Scene);
+            Document.UpdateViews();
         }
     }
 }
