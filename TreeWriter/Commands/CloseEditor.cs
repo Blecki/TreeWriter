@@ -9,12 +9,12 @@ namespace TreeWriterWF.Commands
     public class CloseEditor : ICommand
     {
         EditableDocument Document;
-        ControllerPanel Editor;
+        DockablePanel Editor;
         public bool Cancel = false;
         bool AppClosing = false;
         public bool Succeeded { get; private set; }
 
-        public CloseEditor(EditableDocument Document, ControllerPanel Editor, bool AppClosing)
+        public CloseEditor(EditableDocument Document, DockablePanel Editor, bool AppClosing)
         {
             this.Document = Document;
             this.Editor = Editor;

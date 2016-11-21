@@ -17,7 +17,7 @@ namespace TreeWriterWF
             };
         }
 
-        public override ControllerPanel OpenView(Model Model)
+        public override DockablePanel OpenView(Model Model)
         {
             var r = new DirectoryListing(this);
             OpenEditors.Add(r);

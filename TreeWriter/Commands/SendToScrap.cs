@@ -21,15 +21,13 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var scrap = String.Format("\nScrapped {0}\n{1}\n\n",
-                    DateTime.Now, Text);
-
+            var scrap = String.Format("\nScrapped {0}\n{1}\n\n", DateTime.Now, Text);
             var scrapFileName = System.IO.Path.GetDirectoryName(DocumentPath) + "\\scrap.txt";
 
-            var openScrapDocument = Model.FindOpenDocument(scrapFileName);
+            var openScrapDocument = Model.FindOpenDocument(scrapFileName) as TextDocument;
             if (openScrapDocument != null)
             {
-                openScrapDocument.ApplyChanges(openScrapDocument.GetContents() + scrap);
+                openScrapDocument.ApplyChanges(openScrapDocument.Contents + scrap);
                 openScrapDocument.UpdateViews();
             }
             else

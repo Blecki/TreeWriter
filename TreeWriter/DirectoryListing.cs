@@ -11,7 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace TreeWriterWF
 {
-    public partial class DirectoryListing : ControllerPanel
+    public partial class DirectoryListing : DockablePanel
     {
         public class NodeTag
         {

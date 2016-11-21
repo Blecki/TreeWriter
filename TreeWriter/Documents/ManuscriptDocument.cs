@@ -30,9 +30,9 @@ namespace TreeWriterWF
             };
         }
 
-        public override ControllerPanel OpenView(Model Model)
+        public override DockablePanel OpenView(Model Model)
         {
-            var r = new SceneListing(this);
+            var r = new ManuscriptDocumentEditor(this);
             OpenEditors.Add(r);
             return r;
         }

@@ -104,11 +104,11 @@
     <Compile Include="Documents\SceneData.cs" />
     <Compile Include="EditableDocument.cs" />
     <Compile Include="OpenDocumentRecord.cs" />
-    <Compile Include="SceneListing.cs">
+    <Compile Include="ManuscriptDocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SceneListing.Designer.cs">
-      <DependentUpon>SceneListing.cs</DependentUpon>
+    <Compile Include="ManuscriptDocumentEditor.Designer.cs">
+      <DependentUpon>ManuscriptDocumentEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="DirectoryListing.cs">
       <SubType>Form</SubType>
@@ -117,11 +117,11 @@
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\TextDocument.cs" />
-    <Compile Include="DocumentEditor.cs">
+    <Compile Include="TextDocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DocumentEditor.Designer.cs">
-      <DependentUpon>DocumentEditor.cs</DependentUpon>
+    <Compile Include="TextDocumentEditor.Designer.cs">
+      <DependentUpon>TextDocumentEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -137,14 +137,14 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="WordParser.cs" />
-    <EmbeddedResource Include="SceneListing.resx">
-      <DependentUpon>SceneListing.cs</DependentUpon>
+    <EmbeddedResource Include="ManuscriptDocumentEditor.resx">
+      <DependentUpon>ManuscriptDocumentEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DirectoryListing.resx">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DocumentEditor.resx">
-      <DependentUpon>DocumentEditor.cs</DependentUpon>
+    <EmbeddedResource Include="TextDocumentEditor.resx">
+      <DependentUpon>TextDocumentEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

@@ -23,7 +23,7 @@ namespace TreeWriterWF
             ProjectModel.LoadSettings(this);
         }
 
-        public void OpenControllerPanel(ControllerPanel Panel, DockState Where)
+        public void OpenControllerPanel(DockablePanel Panel, DockState Where)
         {
             Panel.ControllerCommand += ProcessControllerCommand;
             Panel.Show(dockPanel, Where);

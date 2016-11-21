@@ -12,5 +12,4 @@ namespace TreeWriterWF
         public String Type;
         public String Path;
     }
-
 }

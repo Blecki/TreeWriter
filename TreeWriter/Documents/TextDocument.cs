@@ -49,9 +49,11 @@ namespace TreeWriterWF
             };
         }
 
-        public override ControllerPanel OpenView(Model Model)
+        public override DockablePanel OpenView(Model Model)
         {
-            var r = new DocumentEditor(this, null, Model.SpellChecker, Model.Thesaurus);
+            var r = new TextDocumentEditor(this, 
+                OpenEditors.Count != 0 ? (OpenEditors[0] as TextDocumentEditor).GetScintillaDocument() : (ScintillaNET.Document?)null,
+                Model.SpellChecker, Model.Thesaurus);
             OpenEditors.Add(r);
             return r;
         }

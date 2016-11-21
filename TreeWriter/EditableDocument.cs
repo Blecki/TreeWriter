@@ -10,7 +10,7 @@ namespace TreeWriterWF
     {
         public String Path;
         protected bool NeedChangesSaved = false;
-        public List<ControllerPanel> OpenEditors = new List<ControllerPanel>();
+        public List<DockablePanel> OpenEditors = new List<DockablePanel>();
 
         public bool HasUnsavedChanges { get { return NeedChangesSaved; } }
         
@@ -49,7 +49,7 @@ namespace TreeWriterWF
 
         public void CloseAllViews(CloseStyle CloseStyle = CloseStyle.Natural)
         {
-            var editors = new List<ControllerPanel>(OpenEditors);
+            var editors = new List<DockablePanel>(OpenEditors);
             foreach (var editor in editors)
             {
                 editor.CloseStyle = CloseStyle;
@@ -57,7 +57,7 @@ namespace TreeWriterWF
             }
         }
 
-        public virtual ControllerPanel OpenView(Model Model)
+        public virtual DockablePanel OpenView(Model Model)
         {
             throw new NotImplementedException();
         }
