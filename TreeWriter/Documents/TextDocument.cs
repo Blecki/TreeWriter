@@ -21,6 +21,11 @@ namespace TreeWriterWF
             return Contents;
         }
 
+        public override int CountWords()
+        {
+            return WordParser.CountWords(Contents);
+        }
+
         public override void ApplyChanges(string NewText)
         {
  	        Contents = NewText;

@@ -17,28 +17,28 @@ namespace TreeWriterWF.Commands
             Succeeded = true;
         }
 
-        private int TotalDirectory(String Path, Model Model)
+        private int TotalDirectory(String Path, Model Model, Main View)
         {
+            // TODO: Don't count scrap.txt
+
             var total = 0;
             foreach (var directory in System.IO.Directory.EnumerateDirectories(Path))
-                total += TotalDirectory(directory, Model);
+                total += TotalDirectory(directory, Model, View);
             foreach (var file in System.IO.Directory.EnumerateFiles(Path))
-                total += TotalDocument(file, Model);
+                total += TotalDocument(file, Model, View);
             return total;
         }
 
-        private int TotalDocument(String Path, Model Model)
+        private int TotalDocument(String Path, Model Model, Main View)
         {
-            var openDocument = Model.FindOpenDocument(Path);
-            if (openDocument != null)
-                return WordParser.CountWords(openDocument.GetContents());
-            else
-                return WordParser.CountWords(System.IO.File.ReadAllText(Path));
+            var countCommand = new FileWordCount(Path, false);
+            countCommand.Execute(Model, View);
+            return countCommand.Count;
         }
 
         public void Execute(Model Model, Main View)
         {
-            var totalWordCount = TotalDirectory(Path, Model);
+            var totalWordCount = TotalDirectory(Path, Model, View);
             System.Windows.Forms.MessageBox.Show(String.Format("{0} words", totalWordCount), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
         }
     }

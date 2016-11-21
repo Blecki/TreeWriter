@@ -410,7 +410,7 @@ namespace TreeWriterWF
             var file = ContextNode.Tag as NodeTag;
             if (file.NodeType == NodeTag.Type.File)
             {
-                ControllerCommand(new Commands.OpenAsText(file.Path));
+                ControllerCommand(new Commands.OpenAsText(file.Path, false));
             }
         }
     }

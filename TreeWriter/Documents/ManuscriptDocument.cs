@@ -16,30 +16,9 @@ namespace TreeWriterWF
             this.Data = Data;
         }
 
-        public bool SendSceneToScrap(Model Model, SceneData Scene)
+        public override int CountWords()
         {
-            try
-            {
-                var scrap = String.Format("\nScrapped {0}\nName: {1}\nTags: {2}\nSummary: {3}\n\n",
-                    DateTime.Now, Scene.Name, Scene.Tags, Scene.Summary);
-
-                var scrapFileName = System.IO.Path.GetDirectoryName(Path) + "\\" +  System.IO.Path.GetFileNameWithoutExtension(Path) + "_ms_scrap.txt";
-
-                var openScrapDocument = Model.FindOpenDocument(scrapFileName);
-                if (openScrapDocument != null)
-                {
-                    openScrapDocument.ApplyChanges(openScrapDocument.GetContents() + scrap);
-                    openScrapDocument.UpdateViews();
-                }
-                else
-                    System.IO.File.AppendAllText(scrapFileName, scrap);
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return Data.Scenes.Select(s => WordParser.CountWords(s.Summary)).Sum();
         }
 
         public override OpenDocumentRecord GetOpenDocumentRecord()

@@ -28,6 +28,8 @@ namespace TreeWriterWF
         }
 
         public virtual String GetContents() { throw new NotImplementedException(); }
+
+        public virtual int CountWords() { throw new NotImplementedException(); }
         
         public String GetEditorTitle()
         {

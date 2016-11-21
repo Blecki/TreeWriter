@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class OpenManuscript : ICommand
+    public class OpenManuscript : IOpenCommand
     {
         private String FileName;
+        private bool SuppressViews;
+        public EditableDocument Document { get; set; }
         public bool Succeeded { get; private set; }
 
-        public OpenManuscript(String FileName)
+        public OpenManuscript(String FileName, bool SuppressViews)
         {
             this.FileName = FileName;
+            this.SuppressViews = SuppressViews;
             Succeeded = false;
         }
 
@@ -21,24 +24,30 @@ namespace TreeWriterWF.Commands
         {
             try
             {
-                var document = Model.FindOpenDocument(FileName);
+                Document = Model.FindOpenDocument(FileName);
 
-                if (document == null)
+                if (Document == null)
                 {
                     var json = System.IO.File.ReadAllText(FileName);
 
                     if (String.IsNullOrEmpty(json))
-                        document = new ManuscriptDocument(FileName, ManuscriptData.CreateBlank());
+                        Document = new ManuscriptDocument(FileName, ManuscriptData.CreateBlank());
                     else
-                        document = new ManuscriptDocument(FileName, ManuscriptData.CreateFromJson(json));
+                        Document = new ManuscriptDocument(FileName, ManuscriptData.CreateFromJson(json));
 
-                    Model.OpenDocument(document);
+                    if (!SuppressViews) Model.OpenDocument(Document);
                 }
 
-                if (document.OpenEditors.Count != 0)
-                    document.OpenEditors[0].BringToFront();
+                if (SuppressViews)
+                {
+                    Succeeded = true;
+                    return;
+                }
+
+                if (Document.OpenEditors.Count != 0)
+                    Document.OpenEditors[0].BringToFront();
                 else
-                    View.OpenControllerPanel(document.OpenView(Model), WeifenLuo.WinFormsUI.Docking.DockState.Document);
+                    View.OpenControllerPanel(Document.OpenView(Model), WeifenLuo.WinFormsUI.Docking.DockState.Document);
 
                 Succeeded = true;
             }
