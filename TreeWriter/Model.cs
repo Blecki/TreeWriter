@@ -19,7 +19,7 @@ namespace TreeWriterWF
 
         public class SerializableSettings
         {
-            public List<OpenDocumentRecord> OpenDocuments;
+            public List<String> OpenDocuments;
             public String Dictionary;
             public String Thesaurus;
             public List<String> CustomDictionaryEntries;
@@ -45,12 +45,9 @@ namespace TreeWriterWF
 
                     Thesaurus = new NHunspell.MyThes(ThesaurusData);
         
-                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type == "FOLDER"))
-                        View.ProcessControllerCommand(new Commands.OpenFolder(document.Path));
-
-                    // Todo: Properly open documents.
-                    foreach (var document in settingsObject.OpenDocuments.Where(d => d.Type != "FOLDER"))
-                        View.ProcessControllerCommand(new Commands.OpenFile(document.Path));
+                    foreach (var document in settingsObject.OpenDocuments)
+                        View.ProcessControllerCommand(new Commands.OpenPath(document,
+                            Commands.OpenCommand.OpenStyles.CreateView));
                     
                     if (settingsObject.CustomDictionaryEntries != null)
                         foreach (var word in settingsObject.CustomDictionaryEntries)
@@ -89,7 +86,7 @@ namespace TreeWriterWF
 
                 var settingsObject = new SerializableSettings
                 {
-                    OpenDocuments = OpenDocuments.Select(d => d.GetOpenDocumentRecord()).Where(s => s != null).ToList(),
+                    OpenDocuments = OpenDocuments.Select(d => d.Path).ToList(),
                     Dictionary = DictionaryBase,
                     CustomDictionaryEntries = CustomDictionaryEntries,
                     Thesaurus = ThesaurusData

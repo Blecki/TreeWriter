@@ -22,7 +22,7 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var openCommand = new OpenFile(Path, true);
+            var openCommand = new OpenPath(Path, OpenCommand.OpenStyles.Transient);
             openCommand.Execute(Model, View);
             if (openCommand.Document != null)
             {

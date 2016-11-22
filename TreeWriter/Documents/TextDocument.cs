@@ -10,10 +10,10 @@ namespace TreeWriterWF
     {
         public String Contents;
 
-        public TextDocument(String FileName)
+        public override void Load(string Path)
         {
-            Path = FileName;
-            Contents = System.IO.File.ReadAllText(FileName);
+            this.Path = Path;
+            Contents = System.IO.File.ReadAllText(Path);
         }
 
         public override string GetContents()
@@ -38,15 +38,6 @@ namespace TreeWriterWF
             System.IO.File.WriteAllText(Path, Contents);
             NeedChangesSaved = false;
             UpdateViewTitles();
-        }
-
-        public override OpenDocumentRecord GetOpenDocumentRecord()
-        {
-            return new OpenDocumentRecord
-            {
-                Path = Path,
-                Type = "TEXT"
-            };
         }
 
         public override DockablePanel OpenView(Model Model)

@@ -6,29 +6,31 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF.Commands
 {
-    public class OpenFile : ICommand
+    public class OpenPath : ICommand
     {
         private String FileName;
-        private bool SuppressViews = false;
+        private OpenCommand.OpenStyles OpenStyle = OpenCommand.OpenStyles.CreateView;
         internal EditableDocument Document;
         public bool Succeeded { get; private set; }
 
-        public OpenFile(String FileName, bool SuppressViews = false)
+        public OpenPath(String FileName, OpenCommand.OpenStyles OpenStyle)
         {
             this.FileName = FileName;
-            this.SuppressViews = SuppressViews;
+            this.OpenStyle = OpenStyle;
             Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
             var extension = System.IO.Path.GetExtension(FileName);
-            IOpenCommand realCommand = null;
+            OpenCommand realCommand = null;
 
             if (extension == ".txt")
-                realCommand = new OpenAsText(FileName, SuppressViews);
+                realCommand = new OpenCommand<TextDocument>(FileName, OpenStyle);
             else if (extension == ".ms")
-                realCommand = new OpenManuscript(FileName, SuppressViews);
+                realCommand = new OpenCommand<ManuscriptDocument>(FileName, OpenStyle);
+            else if (System.IO.Directory.Exists(FileName))
+                realCommand = new OpenCommand<FolderDocument>(FileName, OpenStyle);
             else
                 throw new InvalidOperationException("Unknown file type");
 

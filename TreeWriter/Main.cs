@@ -25,7 +25,7 @@ namespace TreeWriterWF
 
         public void OpenControllerPanel(DockablePanel Panel, DockState Where)
         {
-            Panel.ControllerCommand += ProcessControllerCommand;
+            Panel.InvokeCommand += ProcessControllerCommand;
             Panel.Show(dockPanel, Where);
         }
 
@@ -40,7 +40,8 @@ namespace TreeWriterWF
         {
             var folderDialog = new FolderBrowserDialog();
             if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.OpenFolder(folderDialog.SelectedPath));
+                ProcessControllerCommand(new Commands.OpenCommand<FolderDocument>(folderDialog.SelectedPath,
+                    Commands.OpenCommand.OpenStyles.CreateView));
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -67,7 +68,8 @@ namespace TreeWriterWF
         {
             var fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProcessControllerCommand(new Commands.OpenFile(fileDialog.FileName));
+                ProcessControllerCommand(new Commands.OpenPath(fileDialog.FileName,
+                    Commands.OpenCommand.OpenStyles.CreateView));
         }
     }
 }

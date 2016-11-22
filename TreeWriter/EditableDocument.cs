@@ -13,6 +13,11 @@ namespace TreeWriterWF
         public List<DockablePanel> OpenEditors = new List<DockablePanel>();
 
         public bool HasUnsavedChanges { get { return NeedChangesSaved; } }
+
+        public virtual void Load(String Path)
+        {
+            throw new NotImplementedException();
+        }
         
         public virtual void ApplyChanges(String NewText)
         {
@@ -35,8 +40,6 @@ namespace TreeWriterWF
         {
             return System.IO.Path.GetFileName(Path) + (NeedChangesSaved ? "*" : "");
         }
-
-        public virtual OpenDocumentRecord GetOpenDocumentRecord() { return null; }
 
         public virtual void SaveDocument() { }
 

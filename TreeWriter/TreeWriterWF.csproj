@@ -71,16 +71,14 @@
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
-    <Compile Include="Commands\IOpenCommand.cs" />
+    <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
     <Compile Include="Commands\DeleteScene.cs" />
     <Compile Include="Commands\FolderWordCount.cs" />
     <Compile Include="Commands\FileWordCount.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
-    <Compile Include="Commands\OpenAsText.cs" />
-    <Compile Include="Commands\OpenFile.cs" />
-    <Compile Include="Commands\OpenManuscript.cs" />
+    <Compile Include="Commands\OpenPath.cs" />
     <Compile Include="Commands\CreateScene.cs" />
     <Compile Include="Commands\RenameScene.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
@@ -93,17 +91,15 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CloseEditor.cs" />
     <Compile Include="Commands\CreateNewDocument.cs" />
-    <Compile Include="Commands\OpenFolder.cs" />
-    <Compile Include="ControllerPanel.cs">
+    <Compile Include="DockablePanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ControllerPanel.Designer.cs">
-      <DependentUpon>ControllerPanel.cs</DependentUpon>
+    <Compile Include="DockablePanel.Designer.cs">
+      <DependentUpon>DockablePanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\ManuscriptDocument.cs" />
     <Compile Include="Documents\SceneData.cs" />
     <Compile Include="EditableDocument.cs" />
-    <Compile Include="OpenDocumentRecord.cs" />
     <Compile Include="ManuscriptDocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>

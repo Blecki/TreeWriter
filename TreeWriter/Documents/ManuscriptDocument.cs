@@ -9,25 +9,22 @@ namespace TreeWriterWF
     public class ManuscriptDocument : EditableDocument
     {
         public ManuscriptData Data;
-
-        public ManuscriptDocument(String Path, ManuscriptData Data)
+        
+        public override void Load(string Path)
         {
             this.Path = Path;
-            this.Data = Data;
+
+            var json = System.IO.File.ReadAllText(Path);
+
+            if (String.IsNullOrEmpty(json))
+                Data = ManuscriptData.CreateBlank();
+            else
+                Data = ManuscriptData.CreateFromJson(json);
         }
 
         public override int CountWords()
         {
             return Data.Scenes.Select(s => WordParser.CountWords(s.Summary)).Sum();
-        }
-
-        public override OpenDocumentRecord GetOpenDocumentRecord()
-        {
-            return new OpenDocumentRecord
-            {
-                Path = Path,
-                Type = "MANUSCRIPT"
-            };
         }
 
         public override DockablePanel OpenView(Model Model)

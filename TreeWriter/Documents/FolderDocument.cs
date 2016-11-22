@@ -8,13 +8,9 @@ namespace TreeWriterWF
 {
     public class FolderDocument : EditableDocument
     {
-        public override OpenDocumentRecord GetOpenDocumentRecord()
+        public override void Load(string Path)
         {
-            return new OpenDocumentRecord
-            {
-                Path = Path,
-                Type = "FOLDER"
-            };
+            this.Path = Path;
         }
 
         public override DockablePanel OpenView(Model Model)
