@@ -11,6 +11,7 @@ namespace TreeWriterWF
         public String Name = "";
         public String Tags = "";
         public String Summary = "";
+        public int Color = -1;
 
         internal void Validate()
         {

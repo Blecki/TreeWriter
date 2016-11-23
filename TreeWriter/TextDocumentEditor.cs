@@ -89,8 +89,11 @@ namespace TreeWriterWF
                 //Send to scrap file.
 
                 var text = textEditor.SelectedText;
-                InvokeCommand(new Commands.SendToScrap(text, Document.Path));
-                textEditor.ReplaceSelection("");
+                if (!String.IsNullOrEmpty(text))
+                {
+                    InvokeCommand(new Commands.SendToScrap(text, Document.Path));
+                    textEditor.ReplaceSelection("");
+                }
             }
         }
 

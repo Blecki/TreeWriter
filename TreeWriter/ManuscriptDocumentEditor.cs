@@ -19,15 +19,19 @@ namespace TreeWriterWF
         private bool SuppressTextChange = false;
         private bool SuppressTagTextChange = false;
 
-        public ManuscriptDocumentEditor(ManuscriptDocument Document)
+        public ManuscriptDocumentEditor(
+            ManuscriptDocument Document,
+            NHunspell.Hunspell SpellChecker,
+            NHunspell.MyThes Thesaurus)
         {
             this.Document = Document;
 
             InitializeComponent();
 
+            textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
+
             UpdateList();
             listView_SelectedIndexChanged(null, null);
-
             Text = Document.GetEditorTitle();
         }
 
@@ -45,9 +49,16 @@ namespace TreeWriterWF
                 var scene = Document.Data.Scenes[i];
                 if (scene.Tags.Contains(filterBox.Text))
                 {
-                    var item = new ListViewItem(new String[] { scene.Name, scene.Tags })
+                    var item = new ListViewItem(new String[] 
+                    { 
+                        scene.Name,
+                        "",
+                        scene.Tags, 
+                        WordParser.CountWords(scene.Summary).ToString() 
+                    })
                     {
-                        Tag = scene
+                        Tag = scene,
+                        BackColor = Color.FromArgb(scene.Color)
                     };
                     if (i == selectedIndex) itemToSelect = item;
                     listView.Items.Add(item);
@@ -55,7 +66,10 @@ namespace TreeWriterWF
             }
 
             if (itemToSelect != null)
+            {
                 listView.SelectedIndices.Add(itemToSelect.Index);
+                itemToSelect.EnsureVisible();
+            }
 
             listView.Invalidate();
         }
@@ -98,6 +112,17 @@ namespace TreeWriterWF
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 InvokeCommand(new Commands.SaveDocument(Document));
+            }
+            else if (e.KeyCode == Keys.D && e.Control)
+            {
+                //Send to scrap file.
+
+                var text = textEditor.SelectedText;
+                if (!String.IsNullOrEmpty(text))
+                {
+                    InvokeCommand(new Commands.SendToScrap(text, Document.Path));
+                    textEditor.ReplaceSelection("");
+                }
             }
         }
 
@@ -153,6 +178,8 @@ namespace TreeWriterWF
             if (SelectedScene != null)
             {
                 SelectedScene.Summary = textEditor.Text;
+                var count = WordParser.CountWords(textEditor.Text);
+                listView.SelectedItems[0].SubItems[3].Text = count.ToString();
                 Document.MadeChanges();
             }
         }
@@ -169,7 +196,7 @@ namespace TreeWriterWF
             {
                 SelectedScene.Tags = tagBox.Text;
                 Document.MadeChanges();
-                listView.SelectedItems[0].SubItems[1].Text = tagBox.Text;
+                listView.SelectedItems[0].SubItems[2].Text = tagBox.Text;
             }
         }
 
@@ -256,6 +283,25 @@ namespace TreeWriterWF
         private void duplicateViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvokeCommand(new Commands.DuplicateView(Document));
+        }
+
+        private void listView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Location.X > listView.Columns[0].Width && e.Location.X < listView.Columns[0].Width + listView.Columns[1].Width)
+            {
+                var item = listView.GetItemAt(e.Location.X, e.Location.Y);
+                if (item != null)
+                {
+                    var colorPicker = new ColorDialog();
+                    var dResult = colorPicker.ShowDialog();
+                    if (dResult == System.Windows.Forms.DialogResult.OK)
+                    {
+                        (item.Tag as SceneData).Color = colorPicker.Color.ToArgb();
+                        Document.MadeChanges();
+                        item.BackColor = colorPicker.Color;
+                    }
+                }
+            }
         }        
     }
 }

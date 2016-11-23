@@ -35,7 +35,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listView = new System.Windows.Forms.ListView();
             this.columnTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnTags = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnWordCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.filterBox = new System.Windows.Forms.TextBox();
             this.clearFilterButton = new System.Windows.Forms.Button();
@@ -105,9 +107,13 @@
             this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnTitle,
-            this.columnTags});
+            this.columnColor,
+            this.columnTags,
+            this.columnWordCount});
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
+            this.listView.GridLines = true;
+            this.listView.HideSelection = false;
             this.listView.LabelEdit = true;
             this.listView.Location = new System.Drawing.Point(0, 23);
             this.listView.MultiSelect = false;
@@ -122,6 +128,7 @@
             this.listView.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView_DragDrop);
             this.listView.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView_DragEnter);
             this.listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DocumentEditor_KeyDown);
+            this.listView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseClick);
             this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
             // 
             // columnTitle
@@ -129,9 +136,18 @@
             this.columnTitle.Text = "Name";
             this.columnTitle.Width = 200;
             // 
+            // columnColor
+            // 
+            this.columnColor.Width = 20;
+            // 
             // columnTags
             // 
             this.columnTags.Text = "Tags";
+            this.columnTags.Width = 180;
+            // 
+            // columnWordCount
+            // 
+            this.columnWordCount.Text = "Words";
             // 
             // panel1
             // 
@@ -294,6 +310,8 @@
         private System.Windows.Forms.Button refreshFilterButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem duplicateViewToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnWordCount;
+        private System.Windows.Forms.ColumnHeader columnColor;
 
         
     }
