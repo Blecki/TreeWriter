@@ -65,6 +65,11 @@ namespace TreeWriterWF
             throw new NotImplementedException();
         }
 
+        public virtual WeifenLuo.WinFormsUI.Docking.DockState GetPreferredOpeningDockState()
+        {
+            return WeifenLuo.WinFormsUI.Docking.DockState.Document;
+        }
+
         public void UpdateViews()
         {
             foreach (var editor in OpenEditors)

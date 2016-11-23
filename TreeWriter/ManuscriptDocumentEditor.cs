@@ -146,8 +146,8 @@ namespace TreeWriterWF
             if (listView.SelectedItems.Count == 0)
             {
                 SelectedScene = null;
-                SuppressTextChange = true;
-                SuppressTagTextChange = true;
+                if (!String.IsNullOrEmpty(textEditor.Text)) SuppressTextChange = true;
+                if (!String.IsNullOrEmpty(tagBox.Text)) SuppressTagTextChange = true;
                 textEditor.Text = "";
                 textEditor.Enabled = false;
                 tagBox.Enabled = false;
@@ -157,8 +157,8 @@ namespace TreeWriterWF
             else
             {
                 SelectedScene = listView.SelectedItems[0].Tag as SceneData;
-                SuppressTextChange = true;
-                SuppressTagTextChange = true;
+                if (!String.IsNullOrEmpty(SelectedScene.Summary)) SuppressTextChange = true;
+                if (!String.IsNullOrEmpty(SelectedScene.Tags)) SuppressTagTextChange = true;
                 textEditor.Text = SelectedScene.Summary;
                 textEditor.Enabled = true;
                 tagBox.Enabled = true;

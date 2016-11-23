@@ -63,7 +63,7 @@ namespace TreeWriterWF.Commands
                 if (Document.OpenEditors.Count != 0)
                     Document.OpenEditors[0].BringToFront();
                 else
-                    View.OpenControllerPanel(Document.OpenView(Model), WeifenLuo.WinFormsUI.Docking.DockState.Document);
+                    View.OpenControllerPanel(Document.OpenView(Model), Document.GetPreferredOpeningDockState());
 
                 Succeeded = true;
             }

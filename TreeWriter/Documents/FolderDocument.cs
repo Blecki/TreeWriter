@@ -19,5 +19,10 @@ namespace TreeWriterWF
             OpenEditors.Add(r);
             return r;
         }
+
+        public override WeifenLuo.WinFormsUI.Docking.DockState GetPreferredOpeningDockState()
+        {
+            return WeifenLuo.WinFormsUI.Docking.DockState.DockLeft;
+        }
     }
 }
