@@ -29,9 +29,12 @@ namespace TreeWriterWF
         MenuItem miDefineWord;
         MenuItem miThesarus;
         MenuItem miSelectionWordCount;
+        MenuItem miLaunchDistractionFree;
+        MenuItem miCloseDistractionFree;
         #endregion
 
         Action<ICommand> ControllerCommand;
+        public bool IsDistractionFreeMode = false;
 
         public void Create(NHunspell.Hunspell SpellChecker, NHunspell.MyThes Thesaurus, Action<ICommand> ControllerCommand)
         {
@@ -155,6 +158,17 @@ namespace TreeWriterWF
             this.miSelectionWordCount.Click += (sender, args) =>
                 {
                     System.Windows.Forms.MessageBox.Show(String.Format("{0} words", WordParser.CountWords(SelectedText)), "Word count", System.Windows.Forms.MessageBoxButtons.OK);
+                };
+            this.miLaunchDistractionFree = new MenuItem("Distraction Free");
+            this.miLaunchDistractionFree.Click += (sender, args) =>
+                {
+                    var distractionFree = new DistractionFreeEditor(Document);
+                    distractionFree.ShowDialog();
+                };
+            this.miCloseDistractionFree = new MenuItem("Close Distraction Free");
+            this.miCloseDistractionFree.Click += (sender, args) =>
+                {
+                    FindForm().Close();
                 };
         }
 
@@ -379,6 +393,13 @@ namespace TreeWriterWF
                 this.ContextMenu.MenuItems.Add(new MenuItem("-"));
                 this.ContextMenu.MenuItems.Add(miDefineWord);
                 this.ContextMenu.MenuItems.Add(miThesarus);
+
+                this.ContextMenu.MenuItems.Add(new MenuItem("-"));
+                if (IsDistractionFreeMode)
+                    this.ContextMenu.MenuItems.Add(miCloseDistractionFree);
+                else
+                    this.ContextMenu.MenuItems.Add(miLaunchDistractionFree);
+
                 this.ContextMenu.Show(this, e.Location);
             }
         }       

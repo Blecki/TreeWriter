@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.Panel filterPanel;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManuscriptDocumentEditor));
+            this.filterBox = new System.Windows.Forms.TextBox();
+            this.clearFilterButton = new System.Windows.Forms.Button();
+            this.refreshFilterButton = new System.Windows.Forms.Button();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,28 +43,76 @@
             this.columnColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnTags = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnWordCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.filterBox = new System.Windows.Forms.TextBox();
-            this.clearFilterButton = new System.Windows.Forms.Button();
-            this.refreshFilterButton = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tagBox = new System.Windows.Forms.TextBox();
             this.openSceneLabel = new System.Windows.Forms.Label();
             this.textEditor = new TreeWriterWF.TextEditor();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.duplicateViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            filterPanel = new System.Windows.Forms.Panel();
+            filterPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // filterPanel
+            // 
+            filterPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            filterPanel.Controls.Add(this.filterBox);
+            filterPanel.Controls.Add(this.clearFilterButton);
+            filterPanel.Controls.Add(this.refreshFilterButton);
+            filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            filterPanel.Location = new System.Drawing.Point(0, 0);
+            filterPanel.Name = "filterPanel";
+            filterPanel.Padding = new System.Windows.Forms.Padding(3);
+            filterPanel.Size = new System.Drawing.Size(285, 28);
+            filterPanel.TabIndex = 2;
+            // 
+            // filterBox
+            // 
+            this.filterBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.filterBox.Location = new System.Drawing.Point(3, 3);
+            this.filterBox.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.filterBox.Name = "filterBox";
+            this.filterBox.Size = new System.Drawing.Size(237, 20);
+            this.filterBox.TabIndex = 1;
+            this.filterBox.TextChanged += new System.EventHandler(this.filterBox_TextChanged);
+            // 
+            // clearFilterButton
+            // 
+            this.clearFilterButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("clearFilterButton.BackgroundImage")));
+            this.clearFilterButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.clearFilterButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.clearFilterButton.FlatAppearance.BorderSize = 0;
+            this.clearFilterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.clearFilterButton.Location = new System.Drawing.Point(240, 3);
+            this.clearFilterButton.Name = "clearFilterButton";
+            this.clearFilterButton.Size = new System.Drawing.Size(20, 20);
+            this.clearFilterButton.TabIndex = 2;
+            this.clearFilterButton.UseVisualStyleBackColor = true;
+            this.clearFilterButton.Click += new System.EventHandler(this.clearFilterButton_Click);
+            // 
+            // refreshFilterButton
+            // 
+            this.refreshFilterButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("refreshFilterButton.BackgroundImage")));
+            this.refreshFilterButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.refreshFilterButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.refreshFilterButton.FlatAppearance.BorderSize = 0;
+            this.refreshFilterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.refreshFilterButton.Location = new System.Drawing.Point(260, 3);
+            this.refreshFilterButton.Name = "refreshFilterButton";
+            this.refreshFilterButton.Size = new System.Drawing.Size(20, 20);
+            this.refreshFilterButton.TabIndex = 3;
+            this.refreshFilterButton.UseVisualStyleBackColor = true;
+            this.refreshFilterButton.Click += new System.EventHandler(this.refreshFilterButton_Click);
             // 
             // contextMenu
             // 
@@ -92,7 +145,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.listView);
-            this.splitContainer1.Panel1.Controls.Add(this.panel1);
+            this.splitContainer1.Panel1.Controls.Add(filterPanel);
             // 
             // splitContainer1.Panel2
             // 
@@ -115,10 +168,10 @@
             this.listView.GridLines = true;
             this.listView.HideSelection = false;
             this.listView.LabelEdit = true;
-            this.listView.Location = new System.Drawing.Point(0, 23);
+            this.listView.Location = new System.Drawing.Point(0, 28);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(285, 407);
+            this.listView.Size = new System.Drawing.Size(285, 402);
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -149,48 +202,6 @@
             // 
             this.columnWordCount.Text = "Words";
             // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.filterBox);
-            this.panel1.Controls.Add(this.clearFilterButton);
-            this.panel1.Controls.Add(this.refreshFilterButton);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(285, 23);
-            this.panel1.TabIndex = 2;
-            // 
-            // filterBox
-            // 
-            this.filterBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.filterBox.Location = new System.Drawing.Point(0, 0);
-            this.filterBox.Name = "filterBox";
-            this.filterBox.Size = new System.Drawing.Size(241, 20);
-            this.filterBox.TabIndex = 1;
-            this.filterBox.TextChanged += new System.EventHandler(this.filterBox_TextChanged);
-            // 
-            // clearFilterButton
-            // 
-            this.clearFilterButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.clearFilterButton.Location = new System.Drawing.Point(241, 0);
-            this.clearFilterButton.Name = "clearFilterButton";
-            this.clearFilterButton.Size = new System.Drawing.Size(20, 23);
-            this.clearFilterButton.TabIndex = 2;
-            this.clearFilterButton.Text = "X";
-            this.clearFilterButton.UseVisualStyleBackColor = true;
-            this.clearFilterButton.Click += new System.EventHandler(this.clearFilterButton_Click);
-            // 
-            // refreshFilterButton
-            // 
-            this.refreshFilterButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.refreshFilterButton.Location = new System.Drawing.Point(261, 0);
-            this.refreshFilterButton.Name = "refreshFilterButton";
-            this.refreshFilterButton.Size = new System.Drawing.Size(24, 23);
-            this.refreshFilterButton.TabIndex = 3;
-            this.refreshFilterButton.Text = "()";
-            this.refreshFilterButton.UseVisualStyleBackColor = true;
-            this.refreshFilterButton.Click += new System.EventHandler(this.refreshFilterButton_Click);
-            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -213,11 +224,11 @@
             // tagBox
             // 
             this.tagBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tagBox.Location = new System.Drawing.Point(0, 13);
+            this.tagBox.Location = new System.Drawing.Point(0, 19);
             this.tagBox.Multiline = true;
             this.tagBox.Name = "tagBox";
             this.tagBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tagBox.Size = new System.Drawing.Size(570, 27);
+            this.tagBox.Size = new System.Drawing.Size(570, 21);
             this.tagBox.TabIndex = 0;
             this.tagBox.TextChanged += new System.EventHandler(this.tagBox_TextChanged);
             // 
@@ -227,7 +238,8 @@
             this.openSceneLabel.Dock = System.Windows.Forms.DockStyle.Top;
             this.openSceneLabel.Location = new System.Drawing.Point(0, 0);
             this.openSceneLabel.Name = "openSceneLabel";
-            this.openSceneLabel.Size = new System.Drawing.Size(177, 13);
+            this.openSceneLabel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.openSceneLabel.Size = new System.Drawing.Size(177, 19);
             this.openSceneLabel.TabIndex = 1;
             this.openSceneLabel.Text = "THE NAME OF THE OPEN SCENE";
             // 
@@ -274,13 +286,13 @@
             this.Text = "SceneListing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this._FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DocumentEditor_KeyDown);
+            filterPanel.ResumeLayout(false);
+            filterPanel.PerformLayout();
             this.contextMenu.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -305,7 +317,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox tagBox;
         private System.Windows.Forms.Label openSceneLabel;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button clearFilterButton;
         private System.Windows.Forms.Button refreshFilterButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
