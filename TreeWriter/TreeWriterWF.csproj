@@ -119,6 +119,12 @@
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\TextDocument.cs" />
+    <Compile Include="DocumentEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentEditor.Designer.cs">
+      <DependentUpon>DocumentEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextDocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -147,6 +153,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DirectoryListing.resx">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentEditor.resx">
+      <DependentUpon>DocumentEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextDocumentEditor.resx">
       <DependentUpon>TextDocumentEditor.cs</DependentUpon>

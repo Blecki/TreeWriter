@@ -38,7 +38,7 @@ namespace TreeWriterWF
         
         public String GetEditorTitle()
         {
-            return System.IO.Path.GetFileName(Path) + (NeedChangesSaved ? "*" : "");
+            return (NeedChangesSaved ? "*" : "") + System.IO.Path.GetFileName(Path);
         }
 
         public virtual void SaveDocument() { }

@@ -11,10 +11,10 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace TreeWriterWF
 {
-    public partial class ManuscriptDocumentEditor : DockablePanel
+    public partial class ManuscriptDocumentEditor : DocumentEditor
     {
-        private ManuscriptDocument Document;
         private ListViewItem ContextNode;
+        private ManuscriptDocument ManuDoc;
         private SceneData SelectedScene = null;
         private bool SuppressTextChange = false;
         private bool SuppressTagTextChange = false;
@@ -22,9 +22,9 @@ namespace TreeWriterWF
         public ManuscriptDocumentEditor(
             ManuscriptDocument Document,
             NHunspell.Hunspell SpellChecker,
-            NHunspell.MyThes Thesaurus)
+            NHunspell.MyThes Thesaurus) : base(Document)
         {
-            this.Document = Document;
+            ManuDoc = Document;
 
             InitializeComponent();
 
@@ -33,20 +33,25 @@ namespace TreeWriterWF
             UpdateList();
             listView_SelectedIndexChanged(null, null);
             Text = Document.GetEditorTitle();
+
+            restoreLeft.Visible = false;
+            restoreRight.Visible = false;
+            collapseLeft.Visible = true;
+            collapseRight.Visible = true;
         }
 
         private void UpdateList()
         {
             int selectedIndex = -1;
             if (listView.SelectedItems.Count > 0)
-                selectedIndex = Document.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
+                selectedIndex = ManuDoc.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
 
             ListViewItem itemToSelect = null;
 
             listView.Items.Clear();
-            for (int i = 0; i < Document.Data.Scenes.Count; ++i)
+            for (int i = 0; i < ManuDoc.Data.Scenes.Count; ++i)
             {
-                var scene = Document.Data.Scenes[i];
+                var scene = ManuDoc.Data.Scenes[i];
                 if (scene.Tags.Contains(filterBox.Text))
                 {
                     var item = new ListViewItem(new String[] 
@@ -79,16 +84,6 @@ namespace TreeWriterWF
             UpdateList();
         }
 
-        private void _FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (CloseStyle == EditableDocument.CloseStyle.Natural && e.CloseReason == CloseReason.UserClosing)
-            {
-                var closeCommand = new Commands.CloseEditor(Document, this, e.CloseReason == CloseReason.MdiFormClosing);
-                InvokeCommand(closeCommand);
-                e.Cancel = closeCommand.Cancel;
-            }
-        }
-
         private void listView_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -107,13 +102,7 @@ namespace TreeWriterWF
 
         private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.S && e.Control)
-            {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                InvokeCommand(new Commands.SaveDocument(Document));
-            }
-            else if (e.KeyCode == Keys.D && e.Control)
+           if (e.KeyCode == Keys.D && e.Control)
             {
                 //Send to scrap file.
 
@@ -128,11 +117,11 @@ namespace TreeWriterWF
 
         private void newSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var contextIndex = Document.Data.Scenes.Count();
+            var contextIndex = ManuDoc.Data.Scenes.Count();
             if (ContextNode != null) contextIndex = ContextNode.Index + 1;
             var command = new Commands.CreateScene(
                 ContextNode == null ? null : (ContextNode.Tag as SceneData),
-                Document);
+                ManuDoc);
             InvokeCommand(command);
             if (command.Succeeded)
             {
@@ -209,7 +198,7 @@ namespace TreeWriterWF
             }
 
             var item = listView.Items[e.Item].Tag as SceneData;
-            InvokeCommand(new Commands.RenameScene(Document, item, e.Label));
+            InvokeCommand(new Commands.RenameScene(ManuDoc, item, e.Label));
         }
 
         private void listView_ItemDrag(object sender, ItemDragEventArgs e)
@@ -239,17 +228,17 @@ namespace TreeWriterWF
             
             if (dragToItem == null)
             {
-                Document.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
-                Document.Data.Scenes.Add(listView.SelectedItems[0].Tag as SceneData);
+                ManuDoc.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
+                ManuDoc.Data.Scenes.Add(listView.SelectedItems[0].Tag as SceneData);
                 UpdateList();
             }
             else
             {
                 var insertAfter = dragToItem.Tag as SceneData;
-                var insertIndex = Document.Data.Scenes.IndexOf(insertAfter);
-                var sourceIndex = Document.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
-                Document.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
-                Document.Data.Scenes.Insert(sourceIndex > insertIndex ? (insertIndex) : (insertIndex - 1),
+                var insertIndex = ManuDoc.Data.Scenes.IndexOf(insertAfter);
+                var sourceIndex = ManuDoc.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
+                ManuDoc.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
+                ManuDoc.Data.Scenes.Insert(sourceIndex > insertIndex ? (insertIndex) : (insertIndex - 1),
                     listView.SelectedItems[0].Tag as SceneData);
                 UpdateList();
             }
@@ -260,7 +249,8 @@ namespace TreeWriterWF
             if (ContextNode != null)
             {
                 var scene = ContextNode.Tag as SceneData;
-                InvokeCommand(new Commands.DeleteScene(Document, scene));
+                if (Confirm("Are you sure you want to delete this scene?")) 
+                    InvokeCommand(new Commands.DeleteScene(ManuDoc, scene));
             }
         }
 
@@ -280,11 +270,6 @@ namespace TreeWriterWF
             UpdateList();
         }
 
-        private void duplicateViewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InvokeCommand(new Commands.DuplicateView(Document));
-        }
-
         private void listView_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Location.X > listView.Columns[0].Width && e.Location.X < listView.Columns[0].Width + listView.Columns[1].Width)
@@ -302,6 +287,34 @@ namespace TreeWriterWF
                     }
                 }
             }
+        }
+
+        private void collapseRight_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel2Collapsed = true;
+            collapseLeft.Visible = false;
+            collapseRight.Visible = false;
+            restoreRight.Visible = true;
+            restoreLeft.Visible = false;
+        }
+
+        private void restoreLeft_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel1Collapsed = false;
+            splitContainer1.Panel2Collapsed = false;
+            restoreLeft.Visible = false;
+            restoreRight.Visible = false;
+            collapseLeft.Visible = true;
+            collapseRight.Visible = true;
+        }
+
+        private void collapseLeft_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel1Collapsed = true;
+            collapseLeft.Visible = false;
+            collapseRight.Visible = false;
+            restoreLeft.Visible = true;
+            restoreRight.Visible = false;
         }        
     }
 }
