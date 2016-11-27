@@ -15,6 +15,7 @@ namespace TreeWriterWF
     {
         private Model ProjectModel = new Model();
         private SettingsEditor SettingsEditor = null;
+        private Help HelpWindow = null;
 
         public Main()
         {
@@ -35,6 +36,17 @@ namespace TreeWriterWF
             // TODO: Queue these up or something?
             // TODO: Implement undo
             Command.Execute(ProjectModel, this);
+        }
+
+        private void OpenHelpWindow(String To)
+        {
+            if (HelpWindow == null || HelpWindow.Open == false)
+            {
+                HelpWindow = new Help();
+                OpenControllerPanel(HelpWindow, DockState.Document);
+            }
+            HelpWindow.Activate();
+            HelpWindow.Navigate(To);
         }
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -79,6 +91,41 @@ namespace TreeWriterWF
             {
                 SettingsEditor = new SettingsEditor(ProjectModel);
                 OpenControllerPanel(SettingsEditor, DockState.Document);
+            }
+            SettingsEditor.Activate();
+        }
+
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            OpenHelpWindow("about");
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenHelpWindow("main");
+        }
+
+        private void newManuscriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Manuscripts (*.ms)|*.ms";
+            fileDialog.CheckFileExists = false;
+            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                ProcessControllerCommand(new Commands.CreateNewDocumentAtPath(fileDialog.FileName));
+                ProcessControllerCommand(new Commands.OpenPath(fileDialog.FileName, Commands.OpenCommand.OpenStyles.CreateView));
+            }
+        }
+
+        private void newTextDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Text files (*.txt)|*.txt";
+            fileDialog.CheckFileExists = false;
+            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                ProcessControllerCommand(new Commands.CreateNewDocumentAtPath(fileDialog.FileName));
+                ProcessControllerCommand(new Commands.OpenPath(fileDialog.FileName, Commands.OpenCommand.OpenStyles.CreateView));
             }
         }
     }

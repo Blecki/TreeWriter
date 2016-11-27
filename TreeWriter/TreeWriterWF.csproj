@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
+    <Compile Include="Commands\CreateNewDocumentAtPath.cs" />
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
     <Compile Include="Commands\DeleteScene.cs" />
@@ -125,6 +126,12 @@
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="Help.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Help.Designer.cs">
+      <DependentUpon>Help.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingsEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,6 +169,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DocumentEditor.resx">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Help.resx">
+      <DependentUpon>Help.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsEditor.resx">
       <DependentUpon>SettingsEditor.cs</DependentUpon>
@@ -211,6 +221,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="help\manuscripts.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="help\main.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="help\about.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="help\manuscript_pane.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="help\treequillicon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Hunspellx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
