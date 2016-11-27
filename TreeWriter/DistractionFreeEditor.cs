@@ -17,7 +17,7 @@ namespace TreeWriterWF
             InitializeComponent();
         }
         
-        public DistractionFreeEditor(ScintillaNET.Document LinkedDocument)
+        public DistractionFreeEditor(System.Drawing.Font Font, ScintillaNET.Document LinkedDocument)
         {
             InitializeComponent();
             textEditor.Document = LinkedDocument;
@@ -26,6 +26,8 @@ namespace TreeWriterWF
             this.TopMost = true;
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
+
+            textEditor.LoadFont(Font);
         }
     }
 }

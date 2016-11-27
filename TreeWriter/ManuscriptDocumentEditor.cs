@@ -20,6 +20,7 @@ namespace TreeWriterWF
         private bool SuppressTagTextChange = false;
 
         public ManuscriptDocumentEditor(
+            Settings Settings,
             ManuscriptDocument Document,
             NHunspell.Hunspell SpellChecker,
             NHunspell.MyThes Thesaurus) : base(Document)
@@ -38,6 +39,13 @@ namespace TreeWriterWF
             restoreRight.Visible = false;
             collapseLeft.Visible = true;
             collapseRight.Visible = true;
+
+            ReloadSettings(Settings);
+        }
+
+        public override void ReloadSettings(Settings Settings)
+        {
+            textEditor.LoadFont(Settings.EditorFont);
         }
 
         private void UpdateList()
@@ -102,7 +110,8 @@ namespace TreeWriterWF
 
         private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
         {
-           if (e.KeyCode == Keys.D && e.Control)
+            base.DocumentEditor_KeyDown(sender, e);
+            if (e.KeyCode == Keys.D && e.Control)
             {
                 //Send to scrap file.
 

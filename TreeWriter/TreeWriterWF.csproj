@@ -74,8 +74,7 @@
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
     <Compile Include="Commands\DeleteScene.cs" />
-    <Compile Include="Commands\FolderWordCount.cs" />
-    <Compile Include="Commands\FileWordCount.cs" />
+    <Compile Include="Commands\CountWords.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
     <Compile Include="Commands\OpenPath.cs" />
@@ -125,6 +124,13 @@
     <Compile Include="DocumentEditor.Designer.cs">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="SettingsEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsEditor.Designer.cs">
+      <DependentUpon>SettingsEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextDocumentEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -156,6 +162,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DocumentEditor.resx">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsEditor.resx">
+      <DependentUpon>SettingsEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextDocumentEditor.resx">
       <DependentUpon>TextDocumentEditor.cs</DependentUpon>

@@ -17,6 +17,7 @@ namespace TreeWriterWF
         NHunspell.MyThes Thesaurus;
         String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-'`";
         Point ContextPoint;
+        System.Drawing.Font LoadedFont;
 
         #region Custom Context Menu Items
         MenuItem miUndo;
@@ -52,7 +53,6 @@ namespace TreeWriterWF
             //this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
             this.WrapMode = ScintillaNET.WrapMode.Word;
-            this.Zoom = 5;
             if (!this.DesignMode) this.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.textEditor_StyleNeeded);
             if (!this.DesignMode) this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textEditor_MouseDown);
 
@@ -92,10 +92,10 @@ namespace TreeWriterWF
 
             StyleClearAll();
 
-            Styles[1].ForeColor = Color.Blue;
-            Styles[1].Hotspot = true;
+            //Styles[1].ForeColor = Color.Blue;
+            //Styles[1].Hotspot = true;
 
-            Styles[2].ForeColor = Color.Green;
+            Styles[2].ForeColor = Color.Red;
             Styles[2].Italic = true;
 
             Styles[3].Italic = true;
@@ -104,6 +104,20 @@ namespace TreeWriterWF
             Indicators[1].ForeColor = Color.Red;
 
             if (!this.DesignMode) initContextMenu();
+        }
+
+        public void LoadFont(System.Drawing.Font Font)
+        {
+            LoadedFont = Font;
+
+            var fontName = Font == null ? Scintilla.DefaultFont.Name : Font.Name;
+            var fontSize = Font == null ? Scintilla.DefaultFont.SizeInPoints : Font.SizeInPoints;
+
+            for (var i = 0; i < 4; ++i)
+            {
+                Styles[i].Font = fontName;
+                Styles[i].SizeF = fontSize;
+            }
         }
                 
         private void initContextMenu()
@@ -162,7 +176,7 @@ namespace TreeWriterWF
             this.miLaunchDistractionFree = new MenuItem("Distraction Free");
             this.miLaunchDistractionFree.Click += (sender, args) =>
                 {
-                    var distractionFree = new DistractionFreeEditor(Document);
+                    var distractionFree = new DistractionFreeEditor(LoadedFont, Document);
                     distractionFree.ShowDialog();
                 };
             this.miCloseDistractionFree = new MenuItem("Close Distraction Free");
@@ -237,21 +251,21 @@ namespace TreeWriterWF
                         bracketPos = -1;
                 }
 
-                // Search line for brackets and style between them.
-                bracketPos = line.Text.IndexOf('<');
-                while (bracketPos != -1)
-                {
-                    var end = line.Text.IndexOf('>', bracketPos);
-                    if (end != -1)
-                    {
-                        StartStyling(line.Position + bracketPos);
-                        SetStyling(end - bracketPos + 1, 1);
+                //// Search line for brackets and style between them.
+                //bracketPos = line.Text.IndexOf('<');
+                //while (bracketPos != -1)
+                //{
+                //    var end = line.Text.IndexOf('>', bracketPos);
+                //    if (end != -1)
+                //    {
+                //        StartStyling(line.Position + bracketPos);
+                //        SetStyling(end - bracketPos + 1, 1);
 
-                        bracketPos = line.Text.IndexOf('<', end);
-                    }
-                    else
-                        bracketPos = -1;
-                }
+                //        bracketPos = line.Text.IndexOf('<', end);
+                //    }
+                //    else
+                //        bracketPos = -1;
+                //}
 
                 // Finally, check for spelling.
 

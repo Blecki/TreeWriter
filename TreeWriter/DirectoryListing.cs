@@ -11,8 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace TreeWriterWF
 {
-    //TODO: Make this a document editor
-    public partial class DirectoryListing : DockablePanel
+    public partial class DirectoryListing : DocumentEditor
     {
         public class NodeTag
         {
@@ -33,7 +32,7 @@ namespace TreeWriterWF
         // Todo: Watch the filesystem for changes and automatically update directory tree.
         // https://msdn.microsoft.com/en-us/library/system.io.filesystemwatcher.aspx
 
-        public DirectoryListing(FolderDocument Project)
+        public DirectoryListing(FolderDocument Project) : base(Project)
         {
             this.Project = Project;
 
@@ -290,7 +289,7 @@ namespace TreeWriterWF
 
         private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InvokeCommand(new Commands.FileWordCount((ContextNode.Tag as NodeTag).Path));
+            InvokeCommand(new Commands.CountWords((ContextNode.Tag as NodeTag).Path));
         }
 
         private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
@@ -366,9 +365,9 @@ namespace TreeWriterWF
         private void wordCountToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (ContextNode != null)
-                InvokeCommand(new Commands.FolderWordCount((ContextNode.Tag as NodeTag).Path));
+                InvokeCommand(new Commands.CountWords((ContextNode.Tag as NodeTag).Path));
             else
-                InvokeCommand(new Commands.FolderWordCount(System.IO.Path.GetDirectoryName(Project.Path)));
+                InvokeCommand(new Commands.CountWords(System.IO.Path.GetDirectoryName(Project.Path)));
         }
 
         private void newManuscriptToolStripMenuItem_Click(object sender, EventArgs e)

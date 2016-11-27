@@ -14,12 +14,13 @@ namespace TreeWriterWF
     public partial class Main : Form
     {
         private Model ProjectModel = new Model();
+        private SettingsEditor SettingsEditor = null;
 
         public Main()
         {
             InitializeComponent();
 
-            //this.dockPanel.Theme = new VS2012LightTheme();
+            this.dockPanel.Theme = new VS2012LightTheme();
             ProjectModel.LoadSettings(this);
         }
 
@@ -70,6 +71,15 @@ namespace TreeWriterWF
             if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 ProcessControllerCommand(new Commands.OpenPath(fileDialog.FileName,
                     Commands.OpenCommand.OpenStyles.CreateView));
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SettingsEditor == null || SettingsEditor.Open == false)
+            {
+                SettingsEditor = new SettingsEditor(ProjectModel);
+                OpenControllerPanel(SettingsEditor, DockState.Document);
+            }
         }
     }
 }

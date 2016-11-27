@@ -22,14 +22,14 @@ namespace TreeWriterWF
                 Data = ManuscriptData.CreateFromJson(json);
         }
 
-        public override int CountWords()
+        public override int CountWords(Model Model, Main View)
         {
             return Data.Scenes.Select(s => WordParser.CountWords(s.Summary)).Sum();
         }
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new ManuscriptDocumentEditor(this, Model.SpellChecker, Model.Thesaurus);
+            var r = new ManuscriptDocumentEditor(Model.Settings, this, Model.SpellChecker, Model.Thesaurus);
             OpenEditors.Add(r);
             return r;
         }

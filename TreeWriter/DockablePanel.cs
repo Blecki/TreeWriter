@@ -22,5 +22,8 @@ namespace TreeWriterWF
 
         public virtual void ReloadDocument()
         { }
+
+        public virtual void ReloadSettings(Settings Settings)
+        { }
     }
 }

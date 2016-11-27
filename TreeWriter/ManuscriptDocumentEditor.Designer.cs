@@ -338,7 +338,6 @@
             this.textEditor.Size = new System.Drawing.Size(570, 370);
             this.textEditor.TabIndex = 0;
             this.textEditor.WrapMode = ScintillaNET.WrapMode.Word;
-            this.textEditor.Zoom = 5;
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
             this.textEditor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DocumentEditor_KeyDown);
             // 
@@ -346,6 +345,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(859, 430);
             this.Controls.Add(this.splitContainer1);
             this.Name = "ManuscriptDocumentEditor";

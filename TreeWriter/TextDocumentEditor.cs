@@ -18,16 +18,18 @@ namespace TreeWriterWF
         NHunspell.MyThes Thesaurus;
 
         public TextDocumentEditor(
-            TextDocument Document, 
-            ScintillaNET.Document? LinkingDocument, 
+            Settings Settings,
+            TextDocument Document,
+            ScintillaNET.Document? LinkingDocument,
             NHunspell.Hunspell SpellChecker,
-            NHunspell.MyThes Thesaurus) : base(Document)
+            NHunspell.MyThes Thesaurus)
+            : base(Document)
         {
             this.SpellChecker = SpellChecker;
             this.Thesaurus = Thesaurus;
 
             this.InitializeComponent();
-            
+
             // Load document into editor.
             if (!LinkingDocument.HasValue)
                 textEditor.Text = Document.GetContents();
@@ -40,6 +42,13 @@ namespace TreeWriterWF
 
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
+
+            ReloadSettings(Settings);
+        }
+
+        public override void ReloadSettings(Settings Settings)
+        {
+            textEditor.LoadFont(Settings.EditorFont);
         }
 
         public override void ReloadDocument()
@@ -60,6 +69,7 @@ namespace TreeWriterWF
           
         private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
         {
+            base.DocumentEditor_KeyDown(sender, e);
             if (e.KeyCode == Keys.D && e.Control)
             {
                 //Send to scrap file.

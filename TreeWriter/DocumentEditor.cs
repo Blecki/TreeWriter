@@ -45,7 +45,7 @@ namespace TreeWriterWF
             }
         }
   
-        private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
+        protected void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.S && e.Control)
             {
@@ -62,8 +62,7 @@ namespace TreeWriterWF
 
         private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show(String.Format("{0} words", Document.CountWords()), "Word count",
-                System.Windows.Forms.MessageBoxButtons.OK);
+            InvokeCommand(new Commands.CountWords(Document.Path));
         }
 
         private void saveDocumentToolStripMenuItem_Click(object sender, EventArgs e)

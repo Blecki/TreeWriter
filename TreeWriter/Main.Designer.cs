@@ -43,6 +43,7 @@
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,7 @@
             this.openDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllDocumentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
@@ -83,9 +85,9 @@
             dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
             dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
             dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
+            tabGradient4.EndColor = System.Drawing.SystemColors.ControlLight;
             tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
+            tabGradient4.StartColor = System.Drawing.SystemColors.ControlLight;
             tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
             dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
             tabGradient5.EndColor = System.Drawing.SystemColors.Control;
@@ -95,9 +97,9 @@
             dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
             dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
-            tabGradient6.EndColor = System.Drawing.SystemColors.InactiveCaption;
+            tabGradient6.EndColor = System.Drawing.SystemColors.Control;
             tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.StartColor = System.Drawing.SystemColors.Control;
             tabGradient6.TextColor = System.Drawing.SystemColors.InactiveCaptionText;
             dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
             tabGradient7.EndColor = System.Drawing.Color.Transparent;
@@ -127,7 +129,8 @@
             this.openDirectoryToolStripMenuItem,
             this.openDocumentToolStripMenuItem,
             this.saveDocumentToolStripMenuItem,
-            this.closeAllDocumentsToolStripMenuItem});
+            this.closeAllDocumentsToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -160,6 +163,13 @@
             this.closeAllDocumentsToolStripMenuItem.Text = "Close All Documents";
             this.closeAllDocumentsToolStripMenuItem.Click += new System.EventHandler(this.closeAllDocumentsToolStripMenuItem_Click);
             // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -171,7 +181,7 @@
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem1.Text = "About";
             // 
             // Main
@@ -181,6 +191,7 @@
             this.ClientSize = new System.Drawing.Size(432, 430);
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
@@ -204,6 +215,7 @@
         private System.Windows.Forms.ToolStripMenuItem openDocumentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
 

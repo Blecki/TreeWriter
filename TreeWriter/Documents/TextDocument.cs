@@ -21,7 +21,7 @@ namespace TreeWriterWF
             return Contents;
         }
 
-        public override int CountWords()
+        public override int CountWords(Model Model, Main View)
         {
             return WordParser.CountWords(Contents);
         }
@@ -42,7 +42,9 @@ namespace TreeWriterWF
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new TextDocumentEditor(this, 
+            var r = new TextDocumentEditor(
+                Model.Settings,
+                this, 
                 OpenEditors.Count != 0 ? (OpenEditors[0] as TextDocumentEditor).GetScintillaDocument() : (ScintillaNET.Document?)null,
                 Model.SpellChecker, Model.Thesaurus);
             OpenEditors.Add(r);

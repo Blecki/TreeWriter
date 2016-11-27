@@ -34,7 +34,7 @@ namespace TreeWriterWF
 
         public virtual String GetContents() { throw new NotImplementedException(); }
 
-        public virtual int CountWords() { throw new NotImplementedException(); }
+        public virtual int CountWords(Model Model, Main View) { throw new NotImplementedException(); }
         
         public String GetEditorTitle()
         {

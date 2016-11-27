@@ -12,17 +12,13 @@ namespace TreeWriterWF
         private List<EditableDocument> OpenDocuments = new List<EditableDocument>();
 
         public NHunspell.Hunspell SpellChecker { get; private set; }
-        String DictionaryBase = "en_US";
-        public List<String> CustomDictionaryEntries = new List<string>();
-        String ThesaurusData = "th_en_US_new.dat";
         public NHunspell.MyThes Thesaurus;
+        public Settings Settings;
 
         public class SerializableSettings
         {
             public List<String> OpenDocuments;
-            public String Dictionary;
-            public String Thesaurus;
-            public List<String> CustomDictionaryEntries;
+            public Settings Settings;
         }
 
         public void LoadSettings(Main View)
@@ -30,47 +26,34 @@ namespace TreeWriterWF
             try
             {
                 var settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\settings.txt";
+                SerializableSettings settingsObject = null;
+
                 if (System.IO.File.Exists(settingsPath))
                 {
                     var text = System.IO.File.ReadAllText(settingsPath);
-                    var settingsObject = JsonConvert.DeserializeObject<SerializableSettings>(text);
+                    settingsObject = JsonConvert.DeserializeObject<SerializableSettings>(text);
+                    if (settingsObject != null) this.Settings = settingsObject.Settings;
+                }
 
-                    if (!String.IsNullOrEmpty(settingsObject.Dictionary))
-                        DictionaryBase = settingsObject.Dictionary;
-        
-                    SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
+                if (this.Settings == null) this.Settings = new Settings();
 
-                    if (!String.IsNullOrEmpty(settingsObject.Thesaurus))
-                        ThesaurusData = settingsObject.Thesaurus;
+                SpellChecker = new NHunspell.Hunspell(Settings.Dictionary + ".aff", Settings.Dictionary + ".dic");
+                Thesaurus = new NHunspell.MyThes(Settings.Thesaurus);
 
-                    Thesaurus = new NHunspell.MyThes(ThesaurusData);
-        
+                if (settingsObject != null)
                     foreach (var document in settingsObject.OpenDocuments)
                         View.ProcessControllerCommand(new Commands.OpenPath(document,
                             Commands.OpenCommand.OpenStyles.CreateView));
-                    
-                    if (settingsObject.CustomDictionaryEntries != null)
-                        foreach (var word in settingsObject.CustomDictionaryEntries)
-                        {
-                            CustomDictionaryEntries.Add(word);
-                            SpellChecker.Add(word);
-                        }
-                }
-                else
-                {
-                    DictionaryBase = "en_US";
-                    SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
-                    ThesaurusData = "th_en_US_new.dat";
-                    Thesaurus = new NHunspell.MyThes(ThesaurusData);
-                }
-            } 
+
+                foreach (var word in Settings.CustomDictionaryEntries)
+                    SpellChecker.Add(word);
+
+            }
             catch (Exception e)
             {
-                DictionaryBase = "en_US";
-                SpellChecker = new NHunspell.Hunspell(DictionaryBase + ".aff", DictionaryBase + ".dic");
-                ThesaurusData = "th_en_US_new.dat";                
-                Thesaurus = new NHunspell.MyThes(ThesaurusData);
-                
+                SpellChecker = new NHunspell.Hunspell("en_US.aff", "en_US.dic");
+                Thesaurus = new NHunspell.MyThes("th_en_US_new.dat");
+
                 System.Windows.Forms.MessageBox.Show("Error loading settings.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
             }
         }
@@ -87,9 +70,7 @@ namespace TreeWriterWF
                 var settingsObject = new SerializableSettings
                 {
                     OpenDocuments = OpenDocuments.Select(d => d.Path).ToList(),
-                    Dictionary = DictionaryBase,
-                    CustomDictionaryEntries = CustomDictionaryEntries,
-                    Thesaurus = ThesaurusData
+                    Settings = Settings
                 };
                 
                 System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject, Formatting.Indented));
