@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -72,6 +73,8 @@
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
     <Compile Include="Commands\CreateNewDocumentAtPath.cs" />
+    <Compile Include="Commands\ExtractManuscript.cs" />
+    <Compile Include="Commands\OpenNoteList.cs" />
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
     <Compile Include="Commands\DeleteScene.cs" />
@@ -125,12 +128,24 @@
     <Compile Include="DocumentEditor.Designer.cs">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ManuscriptExtractor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManuscriptExtractor.Designer.cs">
+      <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="Help.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Help.Designer.cs">
       <DependentUpon>Help.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NoteList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NoteList.Designer.cs">
+      <DependentUpon>NoteList.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsEditor.cs">
       <SubType>Form</SubType>
@@ -172,6 +187,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Help.resx">
       <DependentUpon>Help.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManuscriptExtractor.resx">
+      <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NoteList.resx">
+      <DependentUpon>NoteList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsEditor.resx">
       <DependentUpon>SettingsEditor.cs</DependentUpon>

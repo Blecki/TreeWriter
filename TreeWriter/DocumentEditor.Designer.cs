@@ -92,7 +92,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        protected System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem duplicateViewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveDocumentToolStripMenuItem;

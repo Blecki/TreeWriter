@@ -41,6 +41,15 @@ namespace TreeWriterWF
             var directoryPath = Project.Path;
             BuildDirectoryTreeItems(directoryPath, treeView.Nodes);
             Text = System.IO.Path.GetFileName(Project.Path);
+
+            var refreshMenuItem = new ToolStripMenuItem("Refresh");
+            refreshMenuItem.Click += refreshMenuItem_Click;
+            this.contextMenuStrip1.Items.Add(refreshMenuItem);
+        }
+
+        void refreshMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadDocument();
         }
 
         private TreeNode BuildDirectoryTree(String DirectoryPath)

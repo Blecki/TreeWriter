@@ -41,6 +41,24 @@ namespace TreeWriterWF
             collapseRight.Visible = true;
 
             ReloadSettings(Settings);
+
+            var notesContextMenuItem = new ToolStripMenuItem("Notes");
+            notesContextMenuItem.Click += notesContextMenuItem_Click;
+            this.contextMenuStrip1.Items.Add(notesContextMenuItem);
+
+            var extractMenuItem = new ToolStripMenuItem("Extract Manuscript");
+            extractMenuItem.Click += extractMenuItem_Click;
+            this.contextMenuStrip1.Items.Add(extractMenuItem);
+        }
+
+        void extractMenuItem_Click(object sender, EventArgs e)
+        {
+            InvokeCommand(new Commands.OpenManuscriptExtractor(Document as ManuscriptDocument));
+        }
+
+        void notesContextMenuItem_Click(object sender, EventArgs e)
+        {
+            InvokeCommand(new Commands.OpenNoteList(Document as ManuscriptDocument));
         }
 
         public override void ReloadSettings(Settings Settings)
@@ -296,6 +314,22 @@ namespace TreeWriterWF
                     }
                 }
             }
+        }
+
+        public void BringSceneToFront(SceneData Scene, int Location)
+        {
+            var itemIndex = 0;
+            for (; itemIndex < listView.Items.Count; ++itemIndex)
+                if (listView.Items[itemIndex].Tag == Scene) break;
+            if (itemIndex >= listView.Items.Count) return;
+
+            if (splitContainer1.Panel2Collapsed) restoreLeft_Click(null, null);
+
+            listView.Items[itemIndex].Selected = true;
+
+            textEditor.Focus();
+            textEditor.GotoPosition(Location);
+            textEditor.ScrollCaret();
         }
 
         private void collapseRight_Click(object sender, EventArgs e)
