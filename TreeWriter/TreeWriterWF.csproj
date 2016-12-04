@@ -73,7 +73,13 @@
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
     <Compile Include="Commands\CreateNewDocumentAtPath.cs" />
-    <Compile Include="Commands\ExtractManuscript.cs" />
+    <Compile Include="Commands\ExtractManuscript\ExtractionSettings.cs" />
+    <Compile Include="Commands\ExtractManuscript\ManuscriptFormatter.cs" />
+    <Compile Include="Commands\ExtractManuscript\OpenManuscriptExtractor.cs" />
+    <Compile Include="Commands\ExtractManuscript\LatexFormatter.cs" />
+    <Compile Include="Commands\ExtractManuscript\PlainTextFormatter.cs" />
+    <Compile Include="Commands\ExtractManuscript\SaveFileNameEditor.cs" />
+    <Compile Include="Commands\ExtractManuscript\ExtractManuscript.cs" />
     <Compile Include="Commands\OpenNoteList.cs" />
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
@@ -128,10 +134,10 @@
     <Compile Include="DocumentEditor.Designer.cs">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ManuscriptExtractor.cs">
+    <Compile Include="Commands\ExtractManuscript\ManuscriptExtractor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ManuscriptExtractor.Designer.cs">
+    <Compile Include="Commands\ExtractManuscript\ManuscriptExtractor.Designer.cs">
       <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
@@ -188,7 +194,7 @@
     <EmbeddedResource Include="Help.resx">
       <DependentUpon>Help.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ManuscriptExtractor.resx">
+    <EmbeddedResource Include="Commands\ExtractManuscript\ManuscriptExtractor.resx">
       <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NoteList.resx">

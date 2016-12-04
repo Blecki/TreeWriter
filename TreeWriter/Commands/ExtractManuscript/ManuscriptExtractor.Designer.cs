@@ -1,4 +1,4 @@
-﻿namespace TreeWriterWF
+﻿namespace TreeWriterWF.Commands.Extract
 {
     partial class ManuscriptExtractor
     {

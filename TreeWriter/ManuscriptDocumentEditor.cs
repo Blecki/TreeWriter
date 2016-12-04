@@ -53,7 +53,7 @@ namespace TreeWriterWF
 
         void extractMenuItem_Click(object sender, EventArgs e)
         {
-            InvokeCommand(new Commands.OpenManuscriptExtractor(Document as ManuscriptDocument));
+            InvokeCommand(new Commands.Extract.OpenManuscriptExtractor(Document as ManuscriptDocument));
         }
 
         void notesContextMenuItem_Click(object sender, EventArgs e)
