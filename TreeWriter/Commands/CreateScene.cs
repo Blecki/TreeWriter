@@ -31,6 +31,7 @@ namespace TreeWriterWF.Commands
             else
                 Owner.Data.Scenes.Add(scene);
 
+            Owner.MadeChanges();
             Succeeded = true;
         }
     }

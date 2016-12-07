@@ -17,9 +17,6 @@ namespace TreeWriterWF.Commands.Extract
         [Description("This text is placed between scenes.")]
         public String SceneSeperator { get; set; }
 
-        [Description("Any scene with this tag will start a new chapter. Leave empty to disable chapters.")]
-        public String ChapterTag { get; set; }
-
         public enum Formats
         {
             PlainText,
@@ -37,7 +34,6 @@ namespace TreeWriterWF.Commands.Extract
 
         public ExtractionSettings()
         {
-            ChapterTag = null;
             SceneSeperator = "* * *";
             Format = Formats.PlainText;
         }

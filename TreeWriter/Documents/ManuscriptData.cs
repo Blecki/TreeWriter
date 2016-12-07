@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace TreeWriterWF
 {
@@ -13,12 +14,21 @@ namespace TreeWriterWF
         public String Summary = "";
         public int Color { get; set; }
 
+        [Description("Does this scene begin a new chapter? If true, set the chapter name attribute.")]
+        [Category("Chapter")]
+        public bool StartsNewChapter { get; set; }
+
+        [Category("Chapter")]
+        public String ChapterName { get; set; }
+
         public SceneData()
         {
             Name = "";
             Tags = "";
             Color = -1;
             Summary = "";
+            StartsNewChapter = false;
+            ChapterName = "";
         }
 
         internal void Validate()

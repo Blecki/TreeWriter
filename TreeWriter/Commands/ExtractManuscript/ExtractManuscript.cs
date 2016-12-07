@@ -38,16 +38,18 @@ namespace TreeWriterWF.Commands.Extract
                     break;
             }
 
-            var chapters = !String.IsNullOrEmpty(Document.ExtractionSettings.ChapterTag);
             var chapter = 0;
             var scenesInChapter = 0;
 
             foreach (var scene in Document.Scenes)
             {
-                if (chapters && scene.Tags.Contains(Document.ExtractionSettings.ChapterTag))
+                if (scene.StartsNewChapter)
                 {
                     chapter += 1;
-                    formatter.BeginChapter(String.Format("Chapter {0}", chapter));
+                    if (String.IsNullOrEmpty(scene.ChapterName))
+                        formatter.BeginChapter(String.Format("Chapter {0}", chapter));
+                    else
+                        formatter.BeginChapter(scene.ChapterName);
                     scenesInChapter = 0;
                 }
 

@@ -173,6 +173,7 @@ namespace TreeWriterWF
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedScene = GetSelectedScene();
+            if (selectedScene == null) return;
             var openCommand = new Commands.OpenPath(Document.Path + "&" + selectedScene.Name + ".$settings",
                 Commands.OpenCommand.OpenStyles.CreateView);
             InvokeCommand(openCommand);
@@ -223,20 +224,6 @@ namespace TreeWriterWF
             }
         }
 
-        private void dataGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.RowIndex >= dataGridView.Rows.Count) return;
-
-            if (e.Button == MouseButtons.Right)
-            {
-                dataGridView.ClearSelection();
-                dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected = true;
-                ContextScene = GetSceneForRow(e.RowIndex);
-                deleteSceneToolStripMenuItem.Enabled = ContextScene != null;
-                contextMenu.Show(dataGridView, dataGridView.PointToClient(Control.MousePosition));
-            }
-        }
-
         private void dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView.EditingControl != null) return;
@@ -283,6 +270,24 @@ namespace TreeWriterWF
         private void dataGridView_MouseUp(object sender, MouseEventArgs e)
         {
             MouseDownScene = null;
+
+            if (e.Button == MouseButtons.Right)
+            {
+                var hit = dataGridView.HitTest(e.X, e.Y);
+
+                if (hit.RowIndex >= 0 && hit.RowIndex < dataGridView.Rows.Count)
+                {
+                    dataGridView.ClearSelection();
+                    dataGridView.Rows[hit.RowIndex].Cells[hit.ColumnIndex].Selected = true;
+                }
+
+                ContextScene = GetSceneForRow(hit.RowIndex);
+                deleteSceneToolStripMenuItem.Enabled = ContextScene != null;
+                propertiesToolStripMenuItem.Enabled = ContextScene != null;
+                contextMenu.Show(dataGridView, dataGridView.PointToClient(Control.MousePosition));
+            }
+
+            
         }
 
         private void dataGridView_DragEnter(object sender, DragEventArgs e)
