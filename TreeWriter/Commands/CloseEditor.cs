@@ -41,7 +41,7 @@ namespace TreeWriterWF.Commands
                 else
                 {
                     var prompt = System.Windows.Forms.MessageBox.Show(
-                        String.Format("Save changes to {0}?", Document.GetEditorTitle()),
+                        String.Format("Save changes to {0}?", Document.GetTitle()),
                         "Unsaved changes!", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
 
                     if (prompt == System.Windows.Forms.DialogResult.Yes)

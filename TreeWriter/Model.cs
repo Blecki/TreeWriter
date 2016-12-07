@@ -101,6 +101,7 @@ namespace TreeWriterWF
         {
             System.Diagnostics.Debug.Assert(Document.OpenEditors.Count <= 1);
             OpenDocuments.Remove(Document);
+            Document.Close();
         }
 
         public void OpenDocument(EditableDocument Document)

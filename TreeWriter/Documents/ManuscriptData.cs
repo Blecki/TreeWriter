@@ -8,10 +8,18 @@ namespace TreeWriterWF
 {
     public class SceneData
     {
-        public String Name = "";
-        public String Tags = "";
+        public String Name { get; set; }
+        public String Tags { get; set; }
         public String Summary = "";
-        public int Color = -1;
+        public int Color { get; set; }
+
+        public SceneData()
+        {
+            Name = "";
+            Tags = "";
+            Color = -1;
+            Summary = "";
+        }
 
         internal void Validate()
         {
@@ -23,7 +31,9 @@ namespace TreeWriterWF
 
     public class ManuscriptData
     {
-        public String Version = "V1.0";
+        public const String CurrentVersionString = "V1.0";
+
+        public Commands.Extract.ExtractionSettings ExtractionSettings = new Commands.Extract.ExtractionSettings();
         public List<SceneData> Scenes;
 
         public static ManuscriptData CreateBlank()
@@ -40,12 +50,18 @@ namespace TreeWriterWF
             if (r == null) 
                 throw new Exception("Failed to deserialize manuscript.");
 
-            if (r.Version != "V1.0")
-                throw new Exception("Manuscript version not recognized.");
-
             if (r.Scenes == null) r.Scenes = new List<SceneData>();
             foreach (var scene in r.Scenes) scene.Validate();
             return r;
+        }
+
+        public static ManuscriptData CreateFromLegacy(ManuscriptDataLegacyA Legacy)
+        {
+            return new ManuscriptData
+            {
+                Scenes = Legacy.Scenes.Select(scene => new SceneData { Name = scene.Name, Color = scene.Color, Summary = scene.Summary, Tags = scene.Tags }).ToList(),
+                ExtractionSettings = new Commands.Extract.ExtractionSettings()
+            };
         }
     }
 

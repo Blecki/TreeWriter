@@ -8,7 +8,7 @@ namespace TreeWriterWF
 {
     public class FolderDocument : EditableDocument
     {
-        public override void Load(string Path)
+        public override void Load(Model Model, Main View, string Path)
         {
             this.Path = Path;
         }
@@ -18,6 +18,11 @@ namespace TreeWriterWF
             var r = new DirectoryListing(this);
             OpenEditors.Add(r);
             return r;
+        }
+
+        protected override string ImplementGetEditorTitle()
+        {
+            return Path;
         }
 
         public override WeifenLuo.WinFormsUI.Docking.DockState GetPreferredOpeningDockState()

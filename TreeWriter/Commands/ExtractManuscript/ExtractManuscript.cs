@@ -10,27 +10,25 @@ namespace TreeWriterWF.Commands.Extract
     public class ExtractManuscript : ICommand
     {
         private ManuscriptData Document;
-        private ExtractionSettings Settings;
         public bool Succeeded { get; private set; }
 
-        public ExtractManuscript(ManuscriptData Document, ExtractionSettings Settings)
+        public ExtractManuscript(ManuscriptData Document)
         {
             this.Document = Document;
-            this.Settings = Settings;
             Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
-            if (System.IO.File.Exists(Settings.DestinationFile))
+            if (System.IO.File.Exists(Document.ExtractionSettings.DestinationFile))
                 if (System.Windows.Forms.MessageBox.Show(
-                    String.Format("{0} already exists. Overwrite?", Settings.DestinationFile), 
+                    String.Format("{0} already exists. Overwrite?", Document.ExtractionSettings.DestinationFile), 
                     "Warning", System.Windows.Forms.MessageBoxButtons.YesNo) 
                     != System.Windows.Forms.DialogResult.Yes)
                     return;
 
             ManuscriptFormatter formatter = null;
-            switch (Settings.Format)
+            switch (Document.ExtractionSettings.Format)
             {
                 case ExtractionSettings.Formats.PlainText:
                     formatter = new PlainTextFormatter();
@@ -40,13 +38,13 @@ namespace TreeWriterWF.Commands.Extract
                     break;
             }
 
-            var chapters = !String.IsNullOrEmpty(Settings.ChapterTag);
+            var chapters = !String.IsNullOrEmpty(Document.ExtractionSettings.ChapterTag);
             var chapter = 0;
             var scenesInChapter = 0;
 
             foreach (var scene in Document.Scenes)
             {
-                if (chapters && scene.Tags.Contains(Settings.ChapterTag))
+                if (chapters && scene.Tags.Contains(Document.ExtractionSettings.ChapterTag))
                 {
                     chapter += 1;
                     formatter.BeginChapter(String.Format("Chapter {0}", chapter));
@@ -54,14 +52,14 @@ namespace TreeWriterWF.Commands.Extract
                 }
 
                 if (scenesInChapter > 0)
-                    formatter.AddSceneBreak(Settings.SceneSeperator);
+                    formatter.AddSceneBreak(Document.ExtractionSettings.SceneSeperator);
 
                 formatter.AddScene(scene.Summary);
 
                 scenesInChapter += 1;
             }
 
-            System.IO.File.WriteAllText(Settings.DestinationFile, formatter.ToString());
+            System.IO.File.WriteAllText(Document.ExtractionSettings.DestinationFile, formatter.ToString());
             Succeeded = true;
         }
     }

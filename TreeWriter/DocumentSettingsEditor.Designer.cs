@@ -1,6 +1,6 @@
 ﻿namespace TreeWriterWF
 {
-    partial class TextDocumentEditor
+    partial class DocumentSettingsEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -28,39 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textEditor = new TreeWriterWF.TextEditor();
+            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
-            // textEditor
+            // propertyGrid
             // 
-            this.textEditor.AnnotationVisible = ScintillaNET.Annotation.Boxed;
-            this.textEditor.AutomaticFold = ((ScintillaNET.AutomaticFold)(((ScintillaNET.AutomaticFold.Show | ScintillaNET.AutomaticFold.Click) 
-            | ScintillaNET.AutomaticFold.Change)));
-            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
-            this.textEditor.Location = new System.Drawing.Point(0, 0);
-            this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(475, 440);
-            this.textEditor.TabIndex = 1;
-            this.textEditor.Text = "textEditor";
-            this.textEditor.WrapMode = ScintillaNET.WrapMode.Word;
-            this.textEditor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextEditor_KeyDown);
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(0, 0);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(475, 440);
+            this.propertyGrid.TabIndex = 0;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.settings_KeyDown);
             // 
-            // TextDocumentEditor
+            // DocumentSettingsEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 440);
-            this.Controls.Add(this.textEditor);
-            this.Name = "TextDocumentEditor";
+            this.Controls.Add(this.propertyGrid);
+            this.Name = "DocumentSettingsEditor";
+            this.Text = "#settings";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.settings_KeyDown);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private TextEditor textEditor;
+        private System.Windows.Forms.PropertyGrid propertyGrid;
+
 
     }
 }

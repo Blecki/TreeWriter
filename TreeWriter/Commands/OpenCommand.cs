@@ -50,7 +50,7 @@ namespace TreeWriterWF.Commands
                 if (Document == null)
                 {
                     Document = new T();
-                    Document.Load(FileName);
+                    Document.Load(Model, View, FileName);
                     if (this.OpenStyle == OpenCommand.OpenStyles.CreateView) Model.OpenDocument(Document);
                 }
 

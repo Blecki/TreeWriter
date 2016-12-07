@@ -28,12 +28,15 @@ namespace TreeWriterWF.Commands.Extract
 
         public Formats Format { get; set; }
 
-        public ExtractionSettings(ManuscriptDocument Document)
+        public void SetDefaultPath(ManuscriptDocument Document)
         {
             DestinationFile = System.IO.Path.GetDirectoryName(Document.Path) + "\\" +
                 System.IO.Path.GetFileNameWithoutExtension(Document.Path) +
                 "_extracted.txt";
+        }
 
+        public ExtractionSettings()
+        {
             ChapterTag = null;
             SceneSeperator = "* * *";
             Format = Formats.PlainText;

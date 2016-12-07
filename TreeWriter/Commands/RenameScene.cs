@@ -23,9 +23,27 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
+            var oldScenePath = ManuscriptDocument.Path + "&" + Scene.Name + ".$prose";
+            var newScenePath = ManuscriptDocument.Path + "&" + NewName + ".$prose";
+
             Scene.Name = NewName;
             ManuscriptDocument.MadeChanges();
-            ManuscriptDocument.UpdateViews();
+
+            foreach (var openEditor in ManuscriptDocument.OpenEditors)
+                if (openEditor is ManuscriptDocumentEditor)
+                    (openEditor as ManuscriptDocumentEditor).RebuildLineItem(Scene);
+            ManuscriptDocument.UpdateViewTitles();
+
+            //Find any open scenes that match and update their paths.
+            foreach (var openScene in Model.FindChildDocuments(oldScenePath))
+            {
+                if (openScene is SceneDocument)
+                {
+                    openScene.Path = newScenePath;
+                    openScene.UpdateViewTitles();
+                }
+            }
+
             Succeeded = true;
         }
     }

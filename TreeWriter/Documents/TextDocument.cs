@@ -10,7 +10,7 @@ namespace TreeWriterWF
     {
         public String Contents;
 
-        public override void Load(string Path)
+        public override void Load(Model Model, Main View, string Path)
         {
             this.Path = Path;
             Contents = System.IO.File.ReadAllText(Path);
@@ -19,6 +19,11 @@ namespace TreeWriterWF
         public override string GetContents()
         {
             return Contents;
+        }
+
+        protected override string ImplementGetEditorTitle()
+        {
+            return System.IO.Path.GetFileName(Path);
         }
 
         public override int CountWords(Model Model, Main View)

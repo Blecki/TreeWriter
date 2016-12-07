@@ -27,12 +27,12 @@ namespace TreeWriterWF
 
             InitializeComponent();
 
-            Text = Document.GetEditorTitle();
+            Text = Document.GetTitle();
         }
 
         public override void ReloadDocument()
         {
-            Text = Document.GetEditorTitle();
+            Text = Document.GetTitle();
         }
 
         private void DocumentEditor_FormClosing(object sender, FormClosingEventArgs e)

@@ -13,32 +13,21 @@ namespace TreeWriterWF
 {
     public partial class ManuscriptDocumentEditor : DocumentEditor
     {
-        private ListViewItem ContextNode;
+        private SceneData ContextScene;
+        private SceneData MouseDownScene;
+        private Point MouseDownPoint;
         private ManuscriptDocument ManuDoc;
-        private SceneData SelectedScene = null;
-        private bool SuppressTextChange = false;
-        private bool SuppressTagTextChange = false;
 
         public ManuscriptDocumentEditor(
             Settings Settings,
-            ManuscriptDocument Document,
-            NHunspell.Hunspell SpellChecker,
-            NHunspell.MyThes Thesaurus) : base(Document)
+            ManuscriptDocument Document) : base(Document)
         {
             ManuDoc = Document;
 
             InitializeComponent();
 
-            textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
-
             UpdateList();
-            listView_SelectedIndexChanged(null, null);
-            Text = Document.GetEditorTitle();
-
-            restoreLeft.Visible = false;
-            restoreRight.Visible = false;
-            collapseLeft.Visible = true;
-            collapseRight.Visible = true;
+            Text = Document.GetTitle();
 
             ReloadSettings(Settings);
 
@@ -61,63 +50,67 @@ namespace TreeWriterWF
             InvokeCommand(new Commands.OpenNoteList(Document as ManuscriptDocument));
         }
 
-        public override void ReloadSettings(Settings Settings)
-        {
-            textEditor.LoadFont(Settings.EditorFont);
-        }
-
         private void UpdateList()
         {
             int selectedIndex = -1;
-            if (listView.SelectedItems.Count > 0)
-                selectedIndex = ManuDoc.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
+            if (dataGridView.SelectedCells.Count > 0)
+                selectedIndex = ManuDoc.Data.Scenes.IndexOf(dataGridView.SelectedCells[0].OwningRow.Tag as SceneData);
 
-            ListViewItem itemToSelect = null;
-
-            listView.Items.Clear();
+            DataGridViewRow selectedRow = null;
+            dataGridView.DataSource = null;
+            dataGridView.Rows.Clear();
             for (int i = 0; i < ManuDoc.Data.Scenes.Count; ++i)
             {
                 var scene = ManuDoc.Data.Scenes[i];
                 if (scene.Tags.Contains(filterBox.Text))
                 {
-                    var item = new ListViewItem(new String[] 
-                    { 
-                        scene.Name,
-                        "",
-                        scene.Tags, 
-                        WordParser.CountWords(scene.Summary).ToString() 
-                    })
-                    {
-                        Tag = scene,
-                        BackColor = Color.FromArgb(scene.Color)
-                    };
-                    if (i == selectedIndex) itemToSelect = item;
-                    listView.Items.Add(item);
+                   
+                    var item = new DataGridViewRow();
+                    item.CreateCells(dataGridView, scene.Name, scene.Tags, WordParser.CountWords(scene.Summary).ToString());
+                    item.Tag = scene;
+                    item.DefaultCellStyle.BackColor = Color.FromArgb(scene.Color);
+                    if (i == selectedIndex) selectedRow = item;
+                    dataGridView.Rows.Add(item);
                 }
             }
 
-            if (itemToSelect != null)
-            {
-                listView.SelectedIndices.Add(itemToSelect.Index);
-                itemToSelect.EnsureVisible();
-            }
+            if (selectedRow != null)
+                selectedRow.Selected = true;
+               
+        }
 
-            listView.Invalidate();
+        private void RebuildListItem(int Index)
+        {
+            var row = dataGridView.Rows[Index];
+            var scene = row.Tag as SceneData;
+            row.Cells[0].Value = scene.Name;
+            row.Cells[1].Value = scene.Tags;
+            row.Cells[2].Value = WordParser.CountWords(scene.Summary).ToString();
+            row.DefaultCellStyle.BackColor = Color.FromArgb(scene.Color);
+        }
+
+        public void RebuildLineItem(SceneData Scene)
+        {
+            var listIndex = FindListIndexOfScene(Scene);
+            if (listIndex != -1)
+                RebuildListItem(listIndex);
+        }
+
+        private SceneData GetSelectedScene()
+        {
+            if (dataGridView.SelectedCells.Count == 0) return null;
+            return dataGridView.SelectedCells[0].OwningRow.Tag as SceneData;
+        }
+
+        private SceneData GetSceneForRow(int RowIndex)
+        {
+            if (RowIndex < 0 || RowIndex >= dataGridView.Rows.Count) return null;
+            return dataGridView.Rows[RowIndex].Tag as SceneData;
         }
 
         public override void ReloadDocument()
         {
             UpdateList();
-        }
-
-        private void listView_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextNode = listView.GetItemAt(e.X, e.Y);
-                deleteSceneToolStripMenuItem.Enabled = ContextNode != null;
-                contextMenu.Show(this, e.Location);
-            }
         }
 
         private bool Confirm(String Text)
@@ -126,158 +119,20 @@ namespace TreeWriterWF
             return r == System.Windows.Forms.DialogResult.Yes;
         }
 
-        private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
-        {
-            base.DocumentEditor_KeyDown(sender, e);
-            if (e.KeyCode == Keys.D && e.Control)
-            {
-                //Send to scrap file.
-
-                var text = textEditor.SelectedText;
-                if (!String.IsNullOrEmpty(text))
-                {
-                    InvokeCommand(new Commands.SendToScrap(text, Document.Path));
-                    textEditor.ReplaceSelection("");
-                }
-            }
-        }
-
         private void newSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var contextIndex = ManuDoc.Data.Scenes.Count();
-            if (ContextNode != null) contextIndex = ContextNode.Index + 1;
-            var command = new Commands.CreateScene(
-                ContextNode == null ? null : (ContextNode.Tag as SceneData),
-                ManuDoc);
+            var command = new Commands.CreateScene(ContextScene, ManuDoc);
             InvokeCommand(command);
             if (command.Succeeded)
-            {
                 UpdateList();
-                listView.Items[contextIndex].BeginEdit();
-            }
-        }
-
-        private void listView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listView.SelectedItems.Count == 0)
-            {
-                SelectedScene = null;
-                if (!String.IsNullOrEmpty(textEditor.Text)) SuppressTextChange = true;
-                if (!String.IsNullOrEmpty(tagBox.Text)) SuppressTagTextChange = true;
-                textEditor.Text = "";
-                textEditor.Enabled = false;
-                tagBox.Enabled = false;
-                tagBox.Text = "";
-                openSceneLabel.Text = "";
-            }
-            else
-            {
-                SelectedScene = listView.SelectedItems[0].Tag as SceneData;
-                if (!String.IsNullOrEmpty(SelectedScene.Summary)) SuppressTextChange = true;
-                if (!String.IsNullOrEmpty(SelectedScene.Tags)) SuppressTagTextChange = true;
-                textEditor.Text = SelectedScene.Summary;
-                textEditor.Enabled = true;
-                tagBox.Enabled = true;
-                tagBox.Text = SelectedScene.Tags;
-                openSceneLabel.Text = SelectedScene.Name;
-            }
-        }
-
-        private void textEditor_TextChanged(object sender, EventArgs e)
-        {
-            if (SuppressTextChange)
-            {
-                SuppressTextChange = false;
-                return;
-            }
-
-            if (SelectedScene != null)
-            {
-                SelectedScene.Summary = textEditor.Text;
-                var count = WordParser.CountWords(textEditor.Text);
-                listView.SelectedItems[0].SubItems[3].Text = count.ToString();
-                Document.MadeChanges();
-            }
-        }
-
-        private void tagBox_TextChanged(object sender, EventArgs e)
-        {
-            if (SuppressTagTextChange)
-            {
-                SuppressTagTextChange = false;
-                return;
-            }
-
-            if (SelectedScene != null)
-            {
-                SelectedScene.Tags = tagBox.Text;
-                Document.MadeChanges();
-                listView.SelectedItems[0].SubItems[2].Text = tagBox.Text;
-            }
-        }
-
-        private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e)
-        {
-            if (String.IsNullOrEmpty(e.Label))
-            {
-                e.CancelEdit = true;
-                return;
-            }
-
-            var item = listView.Items[e.Item].Tag as SceneData;
-            InvokeCommand(new Commands.RenameScene(ManuDoc, item, e.Label));
-        }
-
-        private void listView_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            listView.DoDragDrop(listView.SelectedItems, DragDropEffects.Move);
-        }
-
-        private void listView_DragEnter(object sender, DragEventArgs e)
-        {
-            int len = e.Data.GetFormats().Length - 1;
-            int i;
-            for (i = 0; i <= len; i++)
-            {
-                if (e.Data.GetFormats()[i].Equals("System.Windows.Forms.ListView+SelectedListViewItemCollection"))
-                {
-                    //The data from the drag source is moved to the target.	
-                    e.Effect = DragDropEffects.Move;
-                }
-            }
-        }
-
-        private void listView_DragDrop(object sender, DragEventArgs e)
-        {
-            if (listView.SelectedItems.Count == 0) return;
-            var p = PointToClient(new Point(e.X, e.Y));
-            ListViewItem dragToItem = listView.GetItemAt(p.X, p.Y);
-            
-            if (dragToItem == null)
-            {
-                ManuDoc.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
-                ManuDoc.Data.Scenes.Add(listView.SelectedItems[0].Tag as SceneData);
-                UpdateList();
-            }
-            else
-            {
-                var insertAfter = dragToItem.Tag as SceneData;
-                var insertIndex = ManuDoc.Data.Scenes.IndexOf(insertAfter);
-                var sourceIndex = ManuDoc.Data.Scenes.IndexOf(listView.SelectedItems[0].Tag as SceneData);
-                ManuDoc.Data.Scenes.Remove(listView.SelectedItems[0].Tag as SceneData);
-                ManuDoc.Data.Scenes.Insert(sourceIndex > insertIndex ? (insertIndex) : (insertIndex - 1),
-                    listView.SelectedItems[0].Tag as SceneData);
-                UpdateList();
-            }
-        }
+        }        
 
         private void deleteSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ContextNode != null)
+            if (ContextScene != null)
             {
-                var scene = ContextNode.Tag as SceneData;
-                if (Confirm("Are you sure you want to delete this scene?")) 
-                    InvokeCommand(new Commands.DeleteScene(ManuDoc, scene));
+                if (Confirm("Are you sure you want to delete this scene?"))
+                    InvokeCommand(new Commands.DeleteScene(ManuDoc, ContextScene));
             }
         }
 
@@ -297,67 +152,174 @@ namespace TreeWriterWF
             UpdateList();
         }
 
-        private void listView_MouseClick(object sender, MouseEventArgs e)
+        public int FindListIndexOfScene(SceneData Scene)
         {
-            if (e.Location.X > listView.Columns[0].Width && e.Location.X < listView.Columns[0].Width + listView.Columns[1].Width)
-            {
-                var item = listView.GetItemAt(e.Location.X, e.Location.Y);
-                if (item != null)
-                {
-                    var colorPicker = new ColorDialog();
-                    var dResult = colorPicker.ShowDialog();
-                    if (dResult == System.Windows.Forms.DialogResult.OK)
-                    {
-                        (item.Tag as SceneData).Color = colorPicker.Color.ToArgb();
-                        Document.MadeChanges();
-                        item.BackColor = colorPicker.Color;
-                    }
-                }
-            }
+            for (var itemIndex = 0; itemIndex < dataGridView.Rows.Count; ++itemIndex)
+                if (dataGridView.Rows[itemIndex].Tag == Scene) return itemIndex;
+            return -1;
         }
 
         public void BringSceneToFront(SceneData Scene, int Location)
         {
-            var itemIndex = 0;
-            for (; itemIndex < listView.Items.Count; ++itemIndex)
-                if (listView.Items[itemIndex].Tag == Scene) break;
-            if (itemIndex >= listView.Items.Count) return;
-
-            if (splitContainer1.Panel2Collapsed) restoreLeft_Click(null, null);
-
-            listView.Items[itemIndex].Selected = true;
-
-            textEditor.Focus();
-            textEditor.GotoPosition(Location);
-            textEditor.ScrollCaret();
+            // TODO: Find or open scene editor and navigate to location.
         }
 
-        private void collapseRight_Click(object sender, EventArgs e)
+        private void OpenSceneEditor(SceneData Scene)
         {
-            splitContainer1.Panel2Collapsed = true;
-            collapseLeft.Visible = false;
-            collapseRight.Visible = false;
-            restoreRight.Visible = true;
-            restoreLeft.Visible = false;
+            var openCommand = new Commands.OpenPath(Document.Path + "&" + Scene.Name + ".$prose", Commands.OpenCommand.OpenStyles.CreateView);
+            InvokeCommand(openCommand);
         }
 
-        private void restoreLeft_Click(object sender, EventArgs e)
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            splitContainer1.Panel1Collapsed = false;
-            splitContainer1.Panel2Collapsed = false;
-            restoreLeft.Visible = false;
-            restoreRight.Visible = false;
-            collapseLeft.Visible = true;
-            collapseRight.Visible = true;
+            var selectedScene = GetSelectedScene();
+            var openCommand = new Commands.OpenPath(Document.Path + "&" + selectedScene.Name + ".$settings",
+                Commands.OpenCommand.OpenStyles.CreateView);
+            InvokeCommand(openCommand);
+            if (openCommand.Succeeded && openCommand.Document != null)
+            {
+                (openCommand.Document.OpenEditors[0] as DocumentSettingsEditor).OnObjectPropertyChange += () =>
+                    {
+                        RebuildLineItem(selectedScene);
+                    };
+            }
         }
 
-        private void collapseLeft_Click(object sender, EventArgs e)
+        private void dataGridView_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            splitContainer1.Panel1Collapsed = true;
-            collapseLeft.Visible = false;
-            collapseRight.Visible = false;
-            restoreLeft.Visible = true;
-            restoreRight.Visible = false;
-        }        
+            var row = dataGridView.Rows[e.RowIndex];
+            var scene = row.Tag as SceneData;
+            var colorPicker = new ColorDialog();
+            var dResult = colorPicker.ShowDialog();
+            if (dResult == System.Windows.Forms.DialogResult.OK)
+            {
+                scene.Color = colorPicker.Color.ToArgb();
+                Document.MadeChanges();
+                RebuildListItem(e.RowIndex);
+            }
+        }
+
+        private void dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var row = dataGridView.Rows[e.RowIndex];
+            var scene = row.Tag as SceneData;
+            var value = row.Cells[e.ColumnIndex].Value.ToString();
+
+            if (e.ColumnIndex == 0) // Edit Name
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    row.Cells[e.ColumnIndex].Value = scene.Name;
+                }
+                else
+                {
+                    InvokeCommand(new Commands.RenameScene(ManuDoc, scene, value));
+                }
+            }
+            else if (e.ColumnIndex == 1) // Edit tags
+            {
+                scene.Tags = value;
+                Document.MadeChanges();
+            }
+        }
+
+        private void dataGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= dataGridView.Rows.Count) return;
+
+            if (e.Button == MouseButtons.Right)
+            {
+                dataGridView.ClearSelection();
+                dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected = true;
+                ContextScene = GetSceneForRow(e.RowIndex);
+                deleteSceneToolStripMenuItem.Enabled = ContextScene != null;
+                contextMenu.Show(dataGridView, dataGridView.PointToClient(Control.MousePosition));
+            }
+        }
+
+        private void dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView.EditingControl != null) return;
+            var scene = GetSceneForRow(e.RowIndex);
+            if (scene != null) OpenSceneEditor(scene);
+        }
+
+        private void dataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                var scene = GetSelectedScene();
+                if (scene != null) OpenSceneEditor(scene);
+            }
+            else
+                base.DocumentEditor_KeyDown(sender, e);
+        }
+
+        private void dataGridView_MouseDown(object sender, MouseEventArgs e)
+        {
+            var clickRow = dataGridView.HitTest(e.X, e.Y).RowIndex;
+            dataGridView.ClearSelection();
+            if (clickRow >= 0 && clickRow < dataGridView.Rows.Count)
+            {
+                MouseDownScene = GetSceneForRow(clickRow);
+                MouseDownPoint = Control.MousePosition;
+                dataGridView.Rows[clickRow].Selected = true;
+            }
+        }
+
+        private void dataGridView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (MouseDownScene != null)
+            {
+                var mousePoint = Control.MousePosition;
+                var xDelta = System.Math.Abs(mousePoint.X - MouseDownPoint.X);
+                var yDelta = System.Math.Abs(mousePoint.Y - MouseDownPoint.Y);
+                if (xDelta > 10 || yDelta > 10)
+                    dataGridView.DoDragDrop(MouseDownScene, DragDropEffects.Move);
+            }
+        }
+
+        private void dataGridView_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseDownScene = null;
+        }
+
+        private void dataGridView_DragEnter(object sender, DragEventArgs e)
+        {
+            if (MouseDownScene != null)
+                e.Effect = DragDropEffects.Move;
+        }
+
+        private void dataGridView_DragDrop(object sender, DragEventArgs e)
+        {
+            var clientPoint = dataGridView.PointToClient(new Point(e.X, e.Y));
+            var dropRow = dataGridView.HitTest(clientPoint.X, clientPoint.Y);
+
+            if (e.Effect == DragDropEffects.Move)
+            {
+                if (dropRow.RowIndex < 0)
+                {
+                    ManuDoc.Data.Scenes.Remove(MouseDownScene);
+                    ManuDoc.Data.Scenes.Insert(0, MouseDownScene);
+                }
+                else if (dropRow.RowIndex >= dataGridView.Rows.Count)
+                {
+                    ManuDoc.Data.Scenes.Remove(MouseDownScene);
+                    ManuDoc.Data.Scenes.Add(MouseDownScene);
+                }
+                else
+                {
+                    var insertAfter = GetSceneForRow(dropRow.RowIndex);
+                    ManuDoc.Data.Scenes.Remove(MouseDownScene);
+                    ManuDoc.Data.Scenes.Insert(ManuDoc.Data.Scenes.IndexOf(insertAfter) + 1, MouseDownScene);
+                }
+
+                ManuDoc.MadeChanges();
+                UpdateList();
+            }
+
+            MouseDownScene = null;
+        }
     }
 }

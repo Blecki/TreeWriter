@@ -28,7 +28,7 @@ namespace TreeWriterWF
 
             this.InitializeComponent();
 
-            Text = Document.GetEditorTitle();
+            Text = Document.GetTitle();
         }
 
         public void RefreshList()

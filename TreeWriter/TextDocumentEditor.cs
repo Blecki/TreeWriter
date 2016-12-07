@@ -19,7 +19,7 @@ namespace TreeWriterWF
 
         public TextDocumentEditor(
             Settings Settings,
-            TextDocument Document,
+            EditableDocument Document,
             ScintillaNET.Document? LinkingDocument,
             NHunspell.Hunspell SpellChecker,
             NHunspell.MyThes Thesaurus)
@@ -38,7 +38,7 @@ namespace TreeWriterWF
 
             textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
 
-            Text = Document.GetEditorTitle();
+            Text = Document.GetTitle();
 
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
@@ -67,7 +67,7 @@ namespace TreeWriterWF
             Document.ApplyChanges(textEditor.Text);
         }
           
-        private void DocumentEditor_KeyDown(object sender, KeyEventArgs e)
+        private void TextEditor_KeyDown(object sender, KeyEventArgs e)
         {
             base.DocumentEditor_KeyDown(sender, e);
             if (e.KeyCode == Keys.D && e.Control)

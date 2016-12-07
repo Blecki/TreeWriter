@@ -106,8 +106,11 @@
     <Compile Include="DockablePanel.Designer.cs">
       <DependentUpon>DockablePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Documents\SceneSettingsDocument.cs" />
+    <Compile Include="Documents\SceneDocument.cs" />
     <Compile Include="Documents\ManuscriptDocument.cs" />
-    <Compile Include="Documents\SceneData.cs" />
+    <Compile Include="Documents\LegacyFormats\ManuscriptLegacyA.cs" />
+    <Compile Include="Documents\ManuscriptData.cs" />
     <Compile Include="EditableDocument.cs" />
     <Compile Include="DistractionFreeEditor.cs">
       <SubType>Form</SubType>
@@ -152,6 +155,12 @@
     </Compile>
     <Compile Include="NoteList.Designer.cs">
       <DependentUpon>NoteList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentSettingsEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DocumentSettingsEditor.Designer.cs">
+      <DependentUpon>DocumentSettingsEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsEditor.cs">
       <SubType>Form</SubType>
@@ -199,6 +208,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NoteList.resx">
       <DependentUpon>NoteList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentSettingsEditor.resx">
+      <DependentUpon>DocumentSettingsEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsEditor.resx">
       <DependentUpon>SettingsEditor.cs</DependentUpon>

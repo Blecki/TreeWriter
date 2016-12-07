@@ -38,7 +38,7 @@ namespace TreeWriterWF.Commands
             {
                 document.Path = NewName + (document.Path.Substring(OriginalName.Length));
                 foreach (var editor in document.OpenEditors)
-                    editor.Text = document.GetEditorTitle();
+                    editor.Text = document.GetTitle();
             }
 
             Succeeded = true;

@@ -14,7 +14,7 @@ namespace TreeWriterWF
 
         public bool HasUnsavedChanges { get { return NeedChangesSaved; } }
 
-        public virtual void Load(String Path)
+        public virtual void Load(Model Model, Main View, String Path)
         {
             throw new NotImplementedException();
         }
@@ -23,10 +23,10 @@ namespace TreeWriterWF
         {
             NeedChangesSaved = true;
             // If editors are properly linked through scintilla documents, they should already share changes.
-            foreach (var editor in OpenEditors) editor.Text = this.GetEditorTitle();
+            foreach (var editor in OpenEditors) editor.Text = this.GetTitle();
         }
 
-        public void MadeChanges()
+        public virtual void MadeChanges()
         {
             NeedChangesSaved = true;
             UpdateViewTitles();
@@ -36,9 +36,14 @@ namespace TreeWriterWF
 
         public virtual int CountWords(Model Model, Main View) { throw new NotImplementedException(); }
         
-        public String GetEditorTitle()
+        public String GetTitle()
         {
-            return (NeedChangesSaved ? "*" : "") + System.IO.Path.GetFileName(Path);
+            return (NeedChangesSaved ? "*" : "") + ImplementGetEditorTitle();
+        }
+
+        protected virtual String ImplementGetEditorTitle()
+        {
+            throw new NotImplementedException();
         }
 
         public virtual void SaveDocument() { }
@@ -60,6 +65,14 @@ namespace TreeWriterWF
             }
         }
 
+        public virtual void Close()
+        { }
+
+        public void ClearChangesFlag()
+        {
+            NeedChangesSaved = false;
+        }
+
         public virtual DockablePanel OpenView(Model Model)
         {
             throw new NotImplementedException();
@@ -75,14 +88,14 @@ namespace TreeWriterWF
             foreach (var editor in OpenEditors)
             {
                 editor.ReloadDocument();
-                editor.Text = GetEditorTitle();
+                editor.Text = GetTitle();
             }
         }
 
         public void UpdateViewTitles()
         {
             foreach (var editor in OpenEditors)
-                editor.Text = GetEditorTitle();
+                editor.Text = GetTitle();
         }
     }
 }
