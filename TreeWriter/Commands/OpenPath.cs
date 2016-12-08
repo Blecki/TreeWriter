@@ -49,6 +49,16 @@ namespace TreeWriterWF.Commands
             if (Succeeded == false && OpenStyle == OpenCommand.OpenStyles.CreateView)
                 System.Windows.Forms.MessageBox.Show(String.Format("Opening {0} failed or was aborted to preserve your data. Error message: {1}",
                     FileName, realCommand.ErrorMessage));
+
+            if (Succeeded == true && OpenStyle == OpenCommand.OpenStyles.CreateView)
+            {
+                Model.Settings.RecentDocuments.Remove(FileName);
+                Model.Settings.RecentDocuments.Add(FileName);
+                if (Model.Settings.RecentDocuments.Count > 10)
+                    Model.Settings.RecentDocuments.RemoveAt(0);
+
+                View.UpdateRecentDocuments();
+            }
         }
     }
 }

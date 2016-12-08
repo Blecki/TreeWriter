@@ -33,7 +33,27 @@ namespace TreeWriterWF
         {
             var openCommand = new Commands.OpenPath(persistString, Commands.OpenCommand.OpenStyles.InitialLoad);
             openCommand.Execute(ProjectModel, this);
+            if (openCommand.Panel != null)
+                openCommand.Panel.InvokeCommand += ProcessControllerCommand;
             return openCommand.Panel;
+        }
+
+        public void UpdateRecentDocuments()
+        {
+            recentToolStripMenuItem.DropDownItems.Clear();
+            recentToolStripMenuItem.DropDownItems.Add(recentClearList);
+            if (ProjectModel.Settings.RecentDocuments.Count > 0)
+                recentToolStripMenuItem.DropDownItems.Add(recentToolStripSeparator1);
+
+            foreach (var recentDocument in ProjectModel.Settings.RecentDocuments)
+            {
+                var item = new ToolStripMenuItem(recentDocument);
+                item.Click += (sender, args) =>
+                    {
+                        ProcessControllerCommand(new Commands.OpenPath(item.Text, Commands.OpenCommand.OpenStyles.CreateView));
+                    };
+                recentToolStripMenuItem.DropDownItems.Add(item);
+            }
         }
 
         public void OpenControllerPanel(DockablePanel Panel, DockState Where)
@@ -141,6 +161,12 @@ namespace TreeWriterWF
                 ProcessControllerCommand(new Commands.CreateNewDocumentAtPath(fileDialog.FileName));
                 ProcessControllerCommand(new Commands.OpenPath(fileDialog.FileName, Commands.OpenCommand.OpenStyles.CreateView));
             }
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            ProjectModel.Settings.RecentDocuments.Clear();
+            UpdateRecentDocuments();
         }
     }
 }

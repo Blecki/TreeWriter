@@ -24,6 +24,11 @@ namespace TreeWriterWF
             ParentDocument.OpenScenes.Add(this);
         }
 
+        public override WeifenLuo.WinFormsUI.Docking.DockState GetPreferredOpeningDockState()
+        {
+            return WeifenLuo.WinFormsUI.Docking.DockState.DockBottomAutoHide;
+        }
+
         public override void Close()
         {
             ParentDocument.OpenScenes.Remove(this);

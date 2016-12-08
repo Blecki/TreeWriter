@@ -15,35 +15,22 @@ namespace TreeWriterWF
         public NHunspell.MyThes Thesaurus;
         public Settings Settings;
 
-        public class SerializableSettings
-        {
-            public List<String> OpenDocuments;
-            public Settings Settings;
-        }
-
         public void LoadSettings(Main View)
         {
             try
             {
                 var settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\settings.txt";
-                SerializableSettings settingsObject = null;
 
                 if (System.IO.File.Exists(settingsPath))
                 {
                     var text = System.IO.File.ReadAllText(settingsPath);
-                    settingsObject = JsonConvert.DeserializeObject<SerializableSettings>(text);
-                    if (settingsObject != null) this.Settings = settingsObject.Settings;
+                    Settings = JsonConvert.DeserializeObject<Settings>(text);
                 }
 
                 if (this.Settings == null) this.Settings = new Settings();
 
                 SpellChecker = new NHunspell.Hunspell(Settings.Dictionary + ".aff", Settings.Dictionary + ".dic");
                 Thesaurus = new NHunspell.MyThes(Settings.Thesaurus);
-
-                //if (settingsObject != null)
-                //    foreach (var document in settingsObject.OpenDocuments)
-                //        View.ProcessControllerCommand(new Commands.OpenPath(document,
-                //            Commands.OpenCommand.OpenStyles.CreateView));
 
                 foreach (var word in Settings.CustomDictionaryEntries)
                     SpellChecker.Add(word);
@@ -56,6 +43,8 @@ namespace TreeWriterWF
 
                 System.Windows.Forms.MessageBox.Show("Error loading settings.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
             }
+
+            View.UpdateRecentDocuments();
         }
 
         public void SaveSettings()
@@ -67,13 +56,7 @@ namespace TreeWriterWF
                     System.IO.Directory.CreateDirectory(settingsDirectory);
                 var settingsPath = settingsDirectory + "\\settings.txt";
 
-                var settingsObject = new SerializableSettings
-                {
-                    OpenDocuments = OpenDocuments.Select(d => d.Path).ToList(),
-                    Settings = Settings
-                };
-                
-                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settingsObject, Formatting.Indented));
+                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(Settings, Formatting.Indented));
             }
             catch (Exception e)
             {
