@@ -13,7 +13,6 @@ namespace TreeWriterWF
 
         public NHunspell.Hunspell SpellChecker { get; private set; }
         public NHunspell.MyThes Thesaurus;
-        public Settings Settings;
 
         public void LoadSettings(Main View)
         {
@@ -24,15 +23,17 @@ namespace TreeWriterWF
                 if (System.IO.File.Exists(settingsPath))
                 {
                     var text = System.IO.File.ReadAllText(settingsPath);
-                    Settings = JsonConvert.DeserializeObject<Settings>(text);
+                    Settings.GlobalSettings = JsonConvert.DeserializeObject<Settings>(text);
                 }
 
-                if (this.Settings == null) this.Settings = new Settings();
+                if (Settings.GlobalSettings == null) Settings.GlobalSettings = new Settings();
 
-                SpellChecker = new NHunspell.Hunspell(Settings.Dictionary + ".aff", Settings.Dictionary + ".dic");
-                Thesaurus = new NHunspell.MyThes(Settings.Thesaurus);
+                SpellChecker = new NHunspell.Hunspell(
+                    Settings.GlobalSettings.Dictionary + ".aff", 
+                    Settings.GlobalSettings.Dictionary + ".dic");
+                Thesaurus = new NHunspell.MyThes(Settings.GlobalSettings.Thesaurus);
 
-                foreach (var word in Settings.CustomDictionaryEntries)
+                foreach (var word in Settings.GlobalSettings.CustomDictionaryEntries)
                     SpellChecker.Add(word);
 
             }
@@ -56,7 +57,7 @@ namespace TreeWriterWF
                     System.IO.Directory.CreateDirectory(settingsDirectory);
                 var settingsPath = settingsDirectory + "\\settings.txt";
 
-                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+                System.IO.File.WriteAllText(settingsPath, JsonConvert.SerializeObject(Settings.GlobalSettings, Formatting.Indented));
             }
             catch (Exception e)
             {

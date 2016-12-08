@@ -53,7 +53,7 @@ namespace TreeWriterWF
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new ManuscriptDocumentEditor(Model.Settings, this);
+            var r = new ManuscriptDocumentEditor(this);
             OpenEditors.Add(r);
             return r;
         }

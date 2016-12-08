@@ -24,6 +24,8 @@ namespace TreeWriterWF
             this.dockPanel.Theme = new VS2012LightTheme();
             ProjectModel.LoadSettings(this);
 
+            Font = Settings.GlobalSettings.SystemFont;
+
             var dockPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\dock.txt";
             if (System.IO.File.Exists(dockPath)) 
                 dockPanel.LoadFromXml(dockPath, DeserializeDockContent);
@@ -42,15 +44,15 @@ namespace TreeWriterWF
         {
             recentToolStripMenuItem.DropDownItems.Clear();
             recentToolStripMenuItem.DropDownItems.Add(recentClearList);
-            if (ProjectModel.Settings.RecentDocuments.Count > 0)
+            if (Settings.GlobalSettings.RecentDocuments.Count > 0)
                 recentToolStripMenuItem.DropDownItems.Add(recentToolStripSeparator1);
 
-            foreach (var recentDocument in ProjectModel.Settings.RecentDocuments)
+            foreach (var recentDocument in Settings.GlobalSettings.RecentDocuments)
             {
-                var item = new ToolStripMenuItem(recentDocument);
+                var item = new ToolStripMenuItem(recentDocument.Replace("&","&&"));
                 item.Click += (sender, args) =>
                     {
-                        ProcessControllerCommand(new Commands.OpenPath(item.Text, Commands.OpenCommand.OpenStyles.CreateView));
+                        ProcessControllerCommand(new Commands.OpenPath(item.Text.Replace("&&","&"), Commands.OpenCommand.OpenStyles.CreateView));
                     };
                 recentToolStripMenuItem.DropDownItems.Add(item);
             }
@@ -165,7 +167,7 @@ namespace TreeWriterWF
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            ProjectModel.Settings.RecentDocuments.Clear();
+            Settings.GlobalSettings.RecentDocuments.Clear();
             UpdateRecentDocuments();
         }
     }

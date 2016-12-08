@@ -19,7 +19,7 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            Model.Settings.CustomDictionaryEntries.Add(Word);
+            Settings.GlobalSettings.CustomDictionaryEntries.Add(Word);
             Model.SpellChecker.Add(Word);
 
             Succeeded = true;

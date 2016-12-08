@@ -138,6 +138,9 @@
             this.dataGridView.AllowDrop = true;
             this.dataGridView.AllowUserToAddRows = false;
             this.dataGridView.AllowUserToDeleteRows = false;
+            this.dataGridView.AllowUserToResizeRows = false;
+            this.dataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.dataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -161,6 +164,7 @@
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView.EnableHeadersVisualStyles = false;
             this.dataGridView.Location = new System.Drawing.Point(0, 26);
             this.dataGridView.MultiSelect = false;
             this.dataGridView.Name = "dataGridView";
@@ -173,6 +177,7 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.dataGridView.RowHeadersWidth = 20;
             this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView.Size = new System.Drawing.Size(465, 404);
             this.dataGridView.TabIndex = 3;
@@ -188,18 +193,21 @@
             // 
             // NameColumn
             // 
-            this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.NameColumn.DividerWidth = 1;
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
             this.NameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.NameColumn.Width = 345;
             // 
             // TagsColumn
             // 
-            this.TagsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.TagsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.TagsColumn.DividerWidth = 1;
             this.TagsColumn.HeaderText = "Tags";
             this.TagsColumn.Name = "TagsColumn";
             this.TagsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.TagsColumn.Width = 37;
+            this.TagsColumn.Width = 35;
             // 
             // WordsColumn
             // 
@@ -208,7 +216,7 @@
             this.WordsColumn.Name = "WordsColumn";
             this.WordsColumn.ReadOnly = true;
             this.WordsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.WordsColumn.Width = 44;
+            this.WordsColumn.Width = 42;
             // 
             // ManuscriptDocumentEditor
             // 

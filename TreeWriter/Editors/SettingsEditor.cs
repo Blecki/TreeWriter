@@ -23,17 +23,17 @@ namespace TreeWriterWF
 
             this.InitializeComponent();
 
-            propertyGrid.SelectedObject = Model.Settings;
+            propertyGrid.SelectedObject = Settings.GlobalSettings;
 
-            Model.Settings.OnEditorFontChanged = null;
-            Model.Settings.OnEditorFontChanged += OnFontChanged;
+            Settings.GlobalSettings.OnSettingsChanged = null;
+            Settings.GlobalSettings.OnSettingsChanged += OnFontChanged;
         }       
 
         private void OnFontChanged()
         {
             foreach (var openDocument in Model.EnumerateOpenDocuments())
                 foreach (var openView in openDocument.OpenEditors)
-                    openView.ReloadSettings(Model.Settings);
+                    openView.ReloadSettings();
         }
 
         private void SettingsEditor_FormClosing(object sender, FormClosingEventArgs e)

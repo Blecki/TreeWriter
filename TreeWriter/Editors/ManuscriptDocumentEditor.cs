@@ -18,9 +18,7 @@ namespace TreeWriterWF
         private Point MouseDownPoint;
         private ManuscriptDocument ManuDoc;
 
-        public ManuscriptDocumentEditor(
-            Settings Settings,
-            ManuscriptDocument Document) : base(Document)
+        public ManuscriptDocumentEditor(ManuscriptDocument Document) : base(Document)
         {
             ManuDoc = Document;
 
@@ -28,8 +26,6 @@ namespace TreeWriterWF
 
             UpdateList();
             Text = Document.GetTitle();
-
-            ReloadSettings(Settings);
 
             var notesContextMenuItem = new ToolStripMenuItem("Notes");
             notesContextMenuItem.Click += notesContextMenuItem_Click;

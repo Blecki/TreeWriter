@@ -20,7 +20,7 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             if (Document.HasUnsavedChanges)
-                Document.Save(Model.Settings.BackupOnSave);
+                Document.Save(Settings.GlobalSettings.BackupOnSave);
             
             Succeeded = true;
         }

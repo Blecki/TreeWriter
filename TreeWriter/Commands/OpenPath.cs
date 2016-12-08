@@ -23,41 +23,49 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var extension = System.IO.Path.GetExtension(FileName);
-            OpenCommand realCommand = null;
-
-            if (extension == ".txt")
-                realCommand = new OpenCommand<TextDocument>(FileName, OpenStyle);
-            else if (extension == ".ms")
-                realCommand = new OpenCommand<ManuscriptDocument>(FileName, OpenStyle);
-            else if (extension == ".$prose")
-                realCommand = new OpenCommand<SceneDocument>(FileName, OpenStyle);
-            else if (extension == ".$settings")
-                realCommand = new OpenCommand<SceneSettingsDocument>(FileName, OpenStyle);
-            else if (extension == ".$notes")
-                realCommand = new OpenCommand<NotesDocument>(FileName, OpenStyle);
-            else if (System.IO.Directory.Exists(FileName))
-                realCommand = new OpenCommand<FolderDocument>(FileName, OpenStyle);
-            else
-                throw new InvalidOperationException("Unknown file type");
-
-            realCommand.Execute(Model, View);
-            Succeeded = realCommand.Succeeded;
-            Document = realCommand.Document;
-            Panel = realCommand.Panel;
-
-            if (Succeeded == false && OpenStyle == OpenCommand.OpenStyles.CreateView)
-                System.Windows.Forms.MessageBox.Show(String.Format("Opening {0} failed or was aborted to preserve your data. Error message: {1}",
-                    FileName, realCommand.ErrorMessage));
-
-            if (Succeeded == true && OpenStyle == OpenCommand.OpenStyles.CreateView)
+            try
             {
-                Model.Settings.RecentDocuments.Remove(FileName);
-                Model.Settings.RecentDocuments.Add(FileName);
-                if (Model.Settings.RecentDocuments.Count > 10)
-                    Model.Settings.RecentDocuments.RemoveAt(0);
+                var extension = System.IO.Path.GetExtension(FileName);
+                OpenCommand realCommand = null;
 
-                View.UpdateRecentDocuments();
+                if (extension == ".txt")
+                    realCommand = new OpenCommand<TextDocument>(FileName, OpenStyle);
+                else if (extension == ".ms")
+                    realCommand = new OpenCommand<ManuscriptDocument>(FileName, OpenStyle);
+                else if (extension == ".$prose")
+                    realCommand = new OpenCommand<SceneDocument>(FileName, OpenStyle);
+                else if (extension == ".$settings")
+                    realCommand = new OpenCommand<SceneSettingsDocument>(FileName, OpenStyle);
+                else if (extension == ".$notes")
+                    realCommand = new OpenCommand<NotesDocument>(FileName, OpenStyle);
+                else if (System.IO.Directory.Exists(FileName))
+                    realCommand = new OpenCommand<FolderDocument>(FileName, OpenStyle);
+                else
+                    throw new InvalidOperationException("Unknown file type");
+
+                realCommand.Execute(Model, View);
+                Succeeded = realCommand.Succeeded;
+                Document = realCommand.Document;
+                Panel = realCommand.Panel;
+
+                if (Succeeded == false && OpenStyle == OpenCommand.OpenStyles.CreateView)
+                    System.Windows.Forms.MessageBox.Show(String.Format("Opening {0} failed or was aborted to preserve your data. Error message: {1}",
+                        FileName, realCommand.ErrorMessage));
+
+                if (Succeeded == true && OpenStyle == OpenCommand.OpenStyles.CreateView)
+                {
+                    Settings.GlobalSettings.RecentDocuments.Remove(FileName);
+                    Settings.GlobalSettings.RecentDocuments.Add(FileName);
+                    if (Settings.GlobalSettings.RecentDocuments.Count > 10)
+                        Settings.GlobalSettings.RecentDocuments.RemoveAt(0);
+
+                    View.UpdateRecentDocuments();
+                }
+            }
+            catch (Exception)
+            {
+                Succeeded = false;
+                Panel = null;
             }
         }
     }

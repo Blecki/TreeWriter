@@ -24,7 +24,7 @@ namespace TreeWriterWF.Commands
                 var promptResult = System.Windows.Forms.MessageBox.Show("One or more files have changes to save. Save them?", "Alert!", System.Windows.Forms.MessageBoxButtons.YesNoCancel);
                 if (promptResult == System.Windows.Forms.DialogResult.Yes)
                     foreach (var document in Model.EnumerateOpenDocuments())
-                        document.Save(Model.Settings.BackupOnSave);
+                        document.Save(Settings.GlobalSettings.BackupOnSave);
                 else if (promptResult == System.Windows.Forms.DialogResult.No)
                 {
                     Cancel = false;

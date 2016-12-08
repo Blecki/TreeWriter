@@ -49,7 +49,7 @@ namespace TreeWriterWF
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new TextDocumentEditor(Model.Settings, this, null, Model.SpellChecker, Model.Thesaurus);
+            var r = new TextDocumentEditor(this, null, Model.SpellChecker, Model.Thesaurus);
             OpenEditors.Add(r);
             return r;
         }

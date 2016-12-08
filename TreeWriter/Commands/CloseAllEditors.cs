@@ -25,7 +25,7 @@ namespace TreeWriterWF.Commands
                 if (promptResult == System.Windows.Forms.DialogResult.Yes)
                 {
                     foreach (var document in Model.EnumerateOpenDocuments().Where(d => d.HasUnsavedChanges))
-                        document.Save(Model.Settings.BackupOnSave);
+                        document.Save(Settings.GlobalSettings.BackupOnSave);
                 }
                 else if (promptResult == System.Windows.Forms.DialogResult.No)
                 {

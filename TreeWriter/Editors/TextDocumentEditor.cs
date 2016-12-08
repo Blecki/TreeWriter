@@ -18,7 +18,6 @@ namespace TreeWriterWF
         NHunspell.MyThes Thesaurus;
 
         public TextDocumentEditor(
-            Settings Settings,
             EditableDocument Document,
             ScintillaNET.Document? LinkingDocument,
             NHunspell.Hunspell SpellChecker,
@@ -43,12 +42,12 @@ namespace TreeWriterWF
             //Register last to avoid spurius events
             this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
 
-            ReloadSettings(Settings);
+            ReloadSettings();
         }
 
-        public override void ReloadSettings(Settings Settings)
+        public override void ReloadSettings()
         {
-            textEditor.LoadFont(Settings.EditorFont);
+            textEditor.LoadFont(Settings.GlobalSettings.TextEditorFont);
         }
 
         public override void ReloadDocument()

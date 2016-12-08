@@ -15,6 +15,7 @@ namespace TreeWriterWF
         public DistractionFreeEditor()
         {
             InitializeComponent();
+            Font = Settings.GlobalSettings.SystemFont;
         }
         
         public DistractionFreeEditor(System.Drawing.Font Font, ScintillaNET.Document LinkedDocument)

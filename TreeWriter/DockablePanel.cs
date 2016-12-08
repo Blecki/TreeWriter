@@ -18,12 +18,11 @@ namespace TreeWriterWF
         public DockablePanel()
         {
             InitializeComponent();
+            if (Settings.GlobalSettings != null)
+                Font = Settings.GlobalSettings.SystemFont;
         }
 
-        public virtual void ReloadDocument()
-        { }
-
-        public virtual void ReloadSettings(Settings Settings)
-        { }
+        public virtual void ReloadDocument()  { }
+        public virtual void ReloadSettings()  { }
     }
 }
