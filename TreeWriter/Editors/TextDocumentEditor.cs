@@ -81,6 +81,12 @@ namespace TreeWriterWF
                     textEditor.ReplaceSelection("");
                 }
             }
-        }       
+        }    
+   
+        public void SetCursorAndScroll(int Place)
+        {
+            textEditor.GotoPosition(Place);
+            textEditor.ScrollCaret();
+        }
     }
 }

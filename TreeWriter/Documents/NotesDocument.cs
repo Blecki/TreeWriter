@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF
 {
-    public class SceneSettingsDocument : EditableDocument
+    public class NotesDocument : EditableDocument
     {
-        public SceneData Data;
         public ManuscriptDocument ParentDocument;
 
         public override void Load(Model Model, Main View, string Path)
@@ -22,8 +21,6 @@ namespace TreeWriterWF
             if (!openManuscript.Succeeded) throw new InvalidOperationException();
             ParentDocument = openManuscript.Document as ManuscriptDocument;
             if (ParentDocument == null) throw new InvalidOperationException();
-            var sceneName = System.IO.Path.GetFileNameWithoutExtension(split[1]);
-            Data = ParentDocument.Data.Scenes.FirstOrDefault(s => s.Name == sceneName);
             ParentDocument.OpenScenes.Add(this);
         }
 
@@ -34,24 +31,29 @@ namespace TreeWriterWF
 
         protected override string ImplementGetEditorTitle()
         {
-            return System.IO.Path.GetFileNameWithoutExtension(ParentDocument.Path) + " - $ " + Data.Name;
+            return System.IO.Path.GetFileNameWithoutExtension(ParentDocument.Path) + " - $ Notes";
         }
 
         public override string GetContents()
         {
-            return Data.Prose;
+            return "";
         }
 
         public override int CountWords(Model Model, Main View)
         {
-            return WordParser.CountWords(Data.Prose);
+            return 0;
         }
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new DocumentSettingsEditor(this, Data);
+            var r = new NoteList(this);
             OpenEditors.Add(r);
             return r;
+        }
+
+        public override void ApplyChanges(string NewText)
+        {
+            MadeChanges();
         }
 
         public override void Save(bool Backup)

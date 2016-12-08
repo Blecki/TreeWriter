@@ -12,9 +12,9 @@ using ScintillaNET;
 
 namespace TreeWriterWF
 {
-    public partial class NoteList : DockablePanel
+    public partial class NoteList : DocumentEditor
     {
-        ManuscriptDocument Document;
+        NotesDocument NoteSource;
 
         private class ScenePosition
         {
@@ -22,31 +22,37 @@ namespace TreeWriterWF
             public int Place;
         }
 
-        public NoteList(ManuscriptDocument Document)
+        public NoteList(NotesDocument Document) : base(Document)
         {
-            this.Document = Document;
+            this.NoteSource = Document;
 
             this.InitializeComponent();
 
             Text = Document.GetTitle();
+
+            var refreshContextMenuItem = new ToolStripMenuItem("Refresh");
+            refreshContextMenuItem.Click += refreshToolStripMenuItem_Click;
+            this.contextMenuStrip1.Items.Add(refreshContextMenuItem);
+
+            RefreshList();
         }
 
         public void RefreshList()
         {
             listView.Items.Clear();
 
-            foreach (var scene in Document.Data.Scenes)
+            foreach (var scene in NoteSource.ParentDocument.Data.Scenes)
             {
                 var index = 0;
                 while (index != -1)
                 {
-                    index = scene.Summary.IndexOf('[', index);
+                    index = scene.Prose.IndexOf('[', index);
                     if (index != -1)
                     {
-                        var end = scene.Summary.IndexOf(']', index);
+                        var end = scene.Prose.IndexOf(']', index);
                         if (end != -1)
                         {
-                            var note = scene.Summary.Substring(index + 1, end - index - 1);
+                            var note = scene.Prose.Substring(index + 1, end - index - 1);
                             var item = new ListViewItem(new string[] { note, scene.Name });
                             item.Tag = new ScenePosition { Scene = scene, Place = index };
                             listView.Items.Add(item);
@@ -60,11 +66,6 @@ namespace TreeWriterWF
             listView.Columns[1].Width = -1;
         }
 
-        private void NoteList_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Document.OpenEditors.Remove(this);
-        }
-
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RefreshList();
@@ -75,15 +76,19 @@ namespace TreeWriterWF
             var item = listView.GetItemAt(e.Location.X, e.Location.Y);
             if (item != null)
             {
-                ManuscriptDocumentEditor editor = Document.OpenEditors.FirstOrDefault(d => d is ManuscriptDocumentEditor)
-                    as ManuscriptDocumentEditor;
-                if (editor == null)
+                var position = item.Tag as ScenePosition;
+                var openCommand = new Commands.OpenPath(Document.Path + "&" + position.Scene.Name + ".$prose",
+                    Commands.OpenCommand.OpenStyles.CreateView);
+                InvokeCommand(openCommand);
+                if (openCommand.Succeeded && openCommand.Document != null)
                 {
-                    InvokeCommand(new Commands.DuplicateView(Document));
-                    editor = Document.OpenEditors.FirstOrDefault(d => d is ManuscriptDocumentEditor)
-                        as ManuscriptDocumentEditor;
-                }
-                editor.BringSceneToFront((item.Tag as ScenePosition).Scene, (item.Tag as ScenePosition).Place);  
+                    var textEditor = openCommand.Document.OpenEditors.FirstOrDefault(d => d is TextDocumentEditor) as TextDocumentEditor;
+                    if (textEditor != null)
+                    {
+                        textEditor.SetCursorAndScroll(position.Place);
+                        textEditor.Focus();
+                    }
+                }                
             }            
         }
     }

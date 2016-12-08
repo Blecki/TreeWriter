@@ -11,13 +11,16 @@ namespace TreeWriterWF.Commands
         public enum OpenStyles
         {
             Transient,
-            CreateView
+            CreateView,
+            InitialLoad
         }
 
         protected String FileName;
         protected OpenStyles OpenStyle = OpenStyles.CreateView;
         public EditableDocument Document { get; protected set; }
+        public DockablePanel Panel { get; protected set; }
         public bool Succeeded { get; protected set; }
+        public String ErrorMessage { get; protected set; }
 
         public void Execute(Model Model, Main View)
         {
@@ -51,7 +54,7 @@ namespace TreeWriterWF.Commands
                 {
                     Document = new T();
                     Document.Load(Model, View, FileName);
-                    if (this.OpenStyle == OpenCommand.OpenStyles.CreateView) Model.OpenDocument(Document);
+                    if (this.OpenStyle != OpenCommand.OpenStyles.Transient) Model.OpenDocument(Document);
                 }
 
                 if (this.OpenStyle == OpenCommand.OpenStyles.Transient)
@@ -60,16 +63,25 @@ namespace TreeWriterWF.Commands
                     return;
                 }
 
-                if (Document.OpenEditors.Count != 0)
-                    Document.OpenEditors[0].BringToFront();
-                else
-                    View.OpenControllerPanel(Document.OpenView(Model), Document.GetPreferredOpeningDockState());
+                if (this.OpenStyle == OpenStyles.CreateView)
+                {
+                    if (Document.OpenEditors.Count != 0)
+                        Document.OpenEditors[0].BringToFront();
+                    else
+                        View.OpenControllerPanel(Document.OpenView(Model), Document.GetPreferredOpeningDockState());
+                }
+
+                if (this.OpenStyle == OpenStyles.InitialLoad)
+                {
+                    Panel = Document.OpenView(Model);
+                }
 
                 Succeeded = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Succeeded = false;
+                ErrorMessage = e.Message;
             }
         }
     }

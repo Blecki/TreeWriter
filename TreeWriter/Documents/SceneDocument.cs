@@ -39,12 +39,12 @@ namespace TreeWriterWF
 
         public override string GetContents()
         {
-            return Data.Summary;
+            return Data.Prose;
         }
 
         public override int CountWords(Model Model, Main View)
         {
-            return WordParser.CountWords(Data.Summary);
+            return WordParser.CountWords(Data.Prose);
         }
 
         public override DockablePanel OpenView(Model Model)
@@ -56,13 +56,13 @@ namespace TreeWriterWF
 
         public override void ApplyChanges(string NewText)
         {
-            Data.Summary = NewText;
+            Data.Prose = NewText;
             MadeChanges();
         }
 
-        public override void SaveDocument()
+        public override void Save(bool Backup)
         {
-            ParentDocument.SaveDocument();
+            ParentDocument.Save(Backup);
             NeedChangesSaved = false;
             UpdateViewTitles();
         }

@@ -11,8 +11,8 @@ namespace TreeWriterWF
     {
         public String Name { get; set; }
         public String Tags { get; set; }
-        public String Summary = "";
-        public int Color { get; set; }
+        public String Prose = "";
+        public System.Drawing.Color Color { get; set; }
 
         [Description("Does this scene begin a new chapter? If true, set the chapter name attribute.")]
         [Category("Chapter")]
@@ -25,8 +25,8 @@ namespace TreeWriterWF
         {
             Name = "";
             Tags = "";
-            Color = -1;
-            Summary = "";
+            Color = System.Drawing.Color.Transparent;
+            Prose = "";
             StartsNewChapter = false;
             ChapterName = "";
         }
@@ -35,7 +35,7 @@ namespace TreeWriterWF
         {
             if (Name == null) Name = "";
             if (Tags == null) Tags = "";
-            if (Summary == null) Summary = "";
+            if (Prose == null) Prose = "";
         }
     }
 
@@ -69,7 +69,7 @@ namespace TreeWriterWF
         {
             return new ManuscriptData
             {
-                Scenes = Legacy.Scenes.Select(scene => new SceneData { Name = scene.Name, Color = scene.Color, Summary = scene.Summary, Tags = scene.Tags }).ToList(),
+                Scenes = Legacy.Scenes.Select(scene => new SceneData { Name = scene.Name, Color = System.Drawing.Color.FromArgb(scene.Color), Prose = scene.Summary, Tags = scene.Tags }).ToList(),
                 ExtractionSettings = new Commands.Extract.ExtractionSettings()
             };
         }

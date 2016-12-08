@@ -23,6 +23,17 @@ namespace TreeWriterWF
 
             this.dockPanel.Theme = new VS2012LightTheme();
             ProjectModel.LoadSettings(this);
+
+            var dockPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\dock.txt";
+            if (System.IO.File.Exists(dockPath)) 
+                dockPanel.LoadFromXml(dockPath, DeserializeDockContent);
+        }
+
+        IDockContent DeserializeDockContent(string persistString)
+        {
+            var openCommand = new Commands.OpenPath(persistString, Commands.OpenCommand.OpenStyles.InitialLoad);
+            openCommand.Execute(ProjectModel, this);
+            return openCommand.Panel;
         }
 
         public void OpenControllerPanel(DockablePanel Panel, DockState Where)
@@ -62,7 +73,10 @@ namespace TreeWriterWF
             var closeCommand = new Commands.CloseApplication();
             ProcessControllerCommand(closeCommand);
             if (closeCommand.Cancel == false)
+            {
                 ProjectModel.SaveSettings();
+                dockPanel.SaveAsXml(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\dock.txt");
+            }
             else
                 e.Cancel = true;
         }

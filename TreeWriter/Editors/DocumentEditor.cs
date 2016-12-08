@@ -30,6 +30,11 @@ namespace TreeWriterWF
             Text = Document.GetTitle();
         }
 
+        protected override string GetPersistString()
+        {
+            return Document.Path;
+        }
+
         public override void ReloadDocument()
         {
             Text = Document.GetTitle();

@@ -40,10 +40,10 @@ namespace TreeWriterWF
                 SpellChecker = new NHunspell.Hunspell(Settings.Dictionary + ".aff", Settings.Dictionary + ".dic");
                 Thesaurus = new NHunspell.MyThes(Settings.Thesaurus);
 
-                if (settingsObject != null)
-                    foreach (var document in settingsObject.OpenDocuments)
-                        View.ProcessControllerCommand(new Commands.OpenPath(document,
-                            Commands.OpenCommand.OpenStyles.CreateView));
+                //if (settingsObject != null)
+                //    foreach (var document in settingsObject.OpenDocuments)
+                //        View.ProcessControllerCommand(new Commands.OpenPath(document,
+                //            Commands.OpenCommand.OpenStyles.CreateView));
 
                 foreach (var word in Settings.CustomDictionaryEntries)
                     SpellChecker.Add(word);

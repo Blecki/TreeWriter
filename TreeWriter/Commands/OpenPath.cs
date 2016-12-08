@@ -11,6 +11,7 @@ namespace TreeWriterWF.Commands
         private String FileName;
         private OpenCommand.OpenStyles OpenStyle = OpenCommand.OpenStyles.CreateView;
         internal EditableDocument Document;
+        internal DockablePanel Panel;
         public bool Succeeded { get; private set; }
 
         public OpenPath(String FileName, OpenCommand.OpenStyles OpenStyle)
@@ -33,6 +34,8 @@ namespace TreeWriterWF.Commands
                 realCommand = new OpenCommand<SceneDocument>(FileName, OpenStyle);
             else if (extension == ".$settings")
                 realCommand = new OpenCommand<SceneSettingsDocument>(FileName, OpenStyle);
+            else if (extension == ".$notes")
+                realCommand = new OpenCommand<NotesDocument>(FileName, OpenStyle);
             else if (System.IO.Directory.Exists(FileName))
                 realCommand = new OpenCommand<FolderDocument>(FileName, OpenStyle);
             else
@@ -41,6 +44,11 @@ namespace TreeWriterWF.Commands
             realCommand.Execute(Model, View);
             Succeeded = realCommand.Succeeded;
             Document = realCommand.Document;
+            Panel = realCommand.Panel;
+
+            if (Succeeded == false && OpenStyle == OpenCommand.OpenStyles.CreateView)
+                System.Windows.Forms.MessageBox.Show(String.Format("Opening {0} failed or was aborted to preserve your data. Error message: {1}",
+                    FileName, realCommand.ErrorMessage));
         }
     }
 }

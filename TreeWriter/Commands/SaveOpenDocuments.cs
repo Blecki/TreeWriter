@@ -18,8 +18,7 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             foreach (var document in Model.EnumerateOpenDocuments())
-                document.SaveDocument();
-
+                (new Commands.SaveDocument(document)).Execute(Model, View);
             Succeeded = true;
         }
     }

@@ -47,7 +47,7 @@ namespace TreeWriterWF
 
         void notesContextMenuItem_Click(object sender, EventArgs e)
         {
-            InvokeCommand(new Commands.OpenNoteList(Document as ManuscriptDocument));
+            InvokeCommand(new Commands.OpenPath(Document.Path + "&notes.$notes", Commands.OpenCommand.OpenStyles.CreateView));
         }
 
         private void UpdateList()
@@ -66,9 +66,9 @@ namespace TreeWriterWF
                 {
                    
                     var item = new DataGridViewRow();
-                    item.CreateCells(dataGridView, scene.Name, scene.Tags, WordParser.CountWords(scene.Summary).ToString());
+                    item.CreateCells(dataGridView, scene.Name, scene.Tags, WordParser.CountWords(scene.Prose).ToString());
                     item.Tag = scene;
-                    item.DefaultCellStyle.BackColor = Color.FromArgb(scene.Color);
+                    item.DefaultCellStyle.BackColor = scene.Color;
                     if (i == selectedIndex) selectedRow = item;
                     dataGridView.Rows.Add(item);
                 }
@@ -85,8 +85,8 @@ namespace TreeWriterWF
             var scene = row.Tag as SceneData;
             row.Cells[0].Value = scene.Name;
             row.Cells[1].Value = scene.Tags;
-            row.Cells[2].Value = WordParser.CountWords(scene.Summary).ToString();
-            row.DefaultCellStyle.BackColor = Color.FromArgb(scene.Color);
+            row.Cells[2].Value = WordParser.CountWords(scene.Prose).ToString();
+            row.DefaultCellStyle.BackColor = scene.Color;
         }
 
         public void RebuildLineItem(SceneData Scene)
@@ -194,7 +194,7 @@ namespace TreeWriterWF
             var dResult = colorPicker.ShowDialog();
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
-                scene.Color = colorPicker.Color.ToArgb();
+                scene.Color = colorPicker.Color;
                 Document.MadeChanges();
                 RebuildListItem(e.RowIndex);
             }

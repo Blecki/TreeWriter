@@ -37,12 +37,14 @@ namespace TreeWriterWF
             base.ApplyChanges(NewText);
         }
 
-        public override void SaveDocument()
+        public override void Save(bool Backup)
         {
-
             System.IO.File.WriteAllText(Path, Contents);
             NeedChangesSaved = false;
             UpdateViewTitles();
+
+            if (Backup)
+                System.IO.File.WriteAllText(GetBackupFilename(), Contents);
         }
 
         public override DockablePanel OpenView(Model Model)

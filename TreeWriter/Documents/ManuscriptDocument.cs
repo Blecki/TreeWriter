@@ -48,7 +48,7 @@ namespace TreeWriterWF
 
         public override int CountWords(Model Model, Main View)
         {
-            return Data.Scenes.Select(s => WordParser.CountWords(s.Summary)).Sum();
+            return Data.Scenes.Select(s => WordParser.CountWords(s.Prose)).Sum();
         }
 
         public override DockablePanel OpenView(Model Model)
@@ -58,9 +58,11 @@ namespace TreeWriterWF
             return r;
         }
 
-        public override void SaveDocument()
+        public override void Save(bool Backup)
         {
-            System.IO.File.WriteAllText(Path, ManuscriptData.CurrentVersionString + "\n" + Newtonsoft.Json.JsonConvert.SerializeObject(Data, Newtonsoft.Json.Formatting.Indented));
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(Data, Newtonsoft.Json.Formatting.Indented);
+            var contents = ManuscriptData.CurrentVersionString + "\n" + json;
+            System.IO.File.WriteAllText(Path, contents);
             NeedChangesSaved = false;
             UpdateViewTitles();
 
@@ -69,6 +71,9 @@ namespace TreeWriterWF
                 openScene.ClearChangesFlag();
                 openScene.UpdateViewTitles();
             }
+
+            if (Backup)
+                System.IO.File.WriteAllText(GetBackupFilename(), contents);
         }
 
         protected override string ImplementGetEditorTitle()

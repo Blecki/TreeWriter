@@ -56,7 +56,7 @@ namespace TreeWriterWF.Commands.Extract
                 if (scenesInChapter > 0)
                     formatter.AddSceneBreak(Document.ExtractionSettings.SceneSeperator);
 
-                formatter.AddScene(scene.Summary);
+                formatter.AddScene(scene.Prose);
 
                 scenesInChapter += 1;
             }

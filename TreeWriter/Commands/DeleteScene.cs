@@ -22,7 +22,7 @@ namespace TreeWriterWF.Commands
         public void Execute(Model Model, Main View)
         {
             var scrap = String.Format("\nScrapped {0}\nName: {1}\nTags: {2}\nSummary: {3}\n\n",
-                   DateTime.Now, Scene.Name, Scene.Tags, Scene.Summary);
+                   DateTime.Now, Scene.Name, Scene.Tags, Scene.Prose);
             var scrapCommand = new Commands.SendToScrap(scrap, Document.Path);
             scrapCommand.Execute(Model, View);
             if (!scrapCommand.Succeeded) return;

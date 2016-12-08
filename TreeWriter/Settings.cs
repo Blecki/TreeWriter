@@ -15,6 +15,7 @@ namespace TreeWriterWF
         public String Dictionary { get; set; }
         public String Thesaurus { get; set; }
         public List<String> CustomDictionaryEntries { get; set; }
+        public bool BackupOnSave { get; set; }
 
         private System.Drawing.Font _editorFont = null;
         
@@ -37,6 +38,7 @@ namespace TreeWriterWF
             Thesaurus = "th_en_US_new.dat";
             CustomDictionaryEntries = new List<string>();
             EditorFont = new System.Drawing.Font("Arial", 12);
+            BackupOnSave = true;
         }        
     }
 }

@@ -46,7 +46,7 @@ namespace TreeWriterWF.Commands
 
                     if (prompt == System.Windows.Forms.DialogResult.Yes)
                     {
-                        Document.SaveDocument();
+                        Document.Save(Model.Settings.BackupOnSave);
                         if (!AppClosing) Model.CloseDocument(Document);
                         Cancel = false;
                     }

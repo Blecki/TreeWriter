@@ -46,8 +46,18 @@ namespace TreeWriterWF
             throw new NotImplementedException();
         }
 
-        public virtual void SaveDocument() { }
+        public virtual void Save(bool Backup) { }
 
+        protected String GetBackupFilename()
+        {
+            var directory = System.IO.Path.GetDirectoryName(Path);
+            var file = System.IO.Path.GetFileName(Path);
+            var newDirectory = directory + "\\" + file.Replace('.', '_');
+            if (!System.IO.Directory.Exists(newDirectory))
+                System.IO.Directory.CreateDirectory(newDirectory);
+            var newPath = newDirectory + "\\" + System.Guid.NewGuid();
+            return newPath;
+        }
 
         public enum CloseStyle
         {

@@ -19,7 +19,9 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            Document.SaveDocument();
+            if (Document.HasUnsavedChanges)
+                Document.Save(Model.Settings.BackupOnSave);
+            
             Succeeded = true;
         }
     }
