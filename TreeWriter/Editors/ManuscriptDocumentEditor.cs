@@ -121,14 +121,10 @@ namespace TreeWriterWF
 
         private void newSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Bug - New scenes are drawn wrong until the first time they are modified. Possibly because props are null?
-            // TODO: Make sure scene is selected and visible, and enter edit mode.
             var command = new Commands.CreateScene(ContextScene, ManuDoc);
             InvokeCommand(command);
             if (command.Succeeded)
                 UpdateList();
-
-
         }        
 
         private void deleteSceneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -161,11 +157,6 @@ namespace TreeWriterWF
             for (var itemIndex = 0; itemIndex < dataGridView.Rows.Count; ++itemIndex)
                 if (dataGridView.Rows[itemIndex].Tag == Scene) return itemIndex;
             return -1;
-        }
-
-        public void BringSceneToFront(SceneData Scene, int Location)
-        {
-            // TODO: Find or open scene editor and navigate to location.
         }
 
         private void OpenSceneEditor(SceneData Scene)
