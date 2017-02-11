@@ -78,6 +78,11 @@ namespace TreeWriterWF
         private void closeEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close(); // Close event takes care of the saving and cancelling.
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InvokeCommand(new Commands.OpenPath(Document.Path + "&find.$find", Commands.OpenCommand.OpenStyles.CreateView));
         }       
     }
 }

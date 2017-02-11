@@ -38,6 +38,8 @@ namespace TreeWriterWF.Commands
                     realCommand = new OpenCommand<SceneSettingsDocument>(FileName, OpenStyle);
                 else if (extension == ".$notes")
                     realCommand = new OpenCommand<NotesDocument>(FileName, OpenStyle);
+                else if (extension == ".$find")
+                    realCommand = new OpenCommand<FindDocument>(FileName, OpenStyle);
                 else if (System.IO.Directory.Exists(FileName))
                     realCommand = new OpenCommand<FolderDocument>(FileName, OpenStyle);
                 else

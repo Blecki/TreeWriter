@@ -51,6 +51,7 @@ namespace TreeWriterWF
             int selectedIndex = -1;
             if (dataGridView.SelectedCells.Count > 0)
                 selectedIndex = ManuDoc.Data.Scenes.IndexOf(dataGridView.SelectedCells[0].OwningRow.Tag as SceneData);
+            var topRow = dataGridView.FirstDisplayedScrollingRowIndex;
 
             DataGridViewRow selectedRow = null;
             dataGridView.DataSource = null;
@@ -72,7 +73,10 @@ namespace TreeWriterWF
 
             if (selectedRow != null)
                 selectedRow.Selected = true;
-               
+
+            if (topRow >= dataGridView.Rows.Count) topRow = dataGridView.Rows.Count - 1;
+            if (topRow < 0) topRow = 0;
+            dataGridView.FirstDisplayedScrollingRowIndex = topRow;
         }
 
         private void RebuildListItem(int Index)
@@ -117,10 +121,14 @@ namespace TreeWriterWF
 
         private void newSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // TODO: Bug - New scenes are drawn wrong until the first time they are modified. Possibly because props are null?
+            // TODO: Make sure scene is selected and visible, and enter edit mode.
             var command = new Commands.CreateScene(ContextScene, ManuDoc);
             InvokeCommand(command);
             if (command.Succeeded)
                 UpdateList();
+
+
         }        
 
         private void deleteSceneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -271,7 +279,7 @@ namespace TreeWriterWF
             {
                 var hit = dataGridView.HitTest(e.X, e.Y);
 
-                if (hit.RowIndex >= 0 && hit.RowIndex < dataGridView.Rows.Count)
+                if (hit.RowIndex >= 0 && hit.RowIndex < dataGridView.Rows.Count && hit.ColumnIndex >= 0 && hit.ColumnIndex < dataGridView.Columns.Count)
                 {
                     dataGridView.ClearSelection();
                     dataGridView.Rows[hit.RowIndex].Cells[hit.ColumnIndex].Selected = true;

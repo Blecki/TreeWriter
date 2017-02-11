@@ -15,7 +15,7 @@ namespace TreeWriterWF
     {
         NHunspell.Hunspell SpellChecker;
         NHunspell.MyThes Thesaurus;
-        String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-'`";
+        String WordBoundaries = " \t\r\n.,;:\\/\"?![]{}()<>#-`";
         Point ContextPoint;
         System.Drawing.Font LoadedFont;
 
@@ -220,16 +220,16 @@ namespace TreeWriterWF
                 StartStyling(line.Position);
                 SetStyling(line.Length, 0);
 
-                var bracketPos = line.Text.IndexOf('*');
+                var bracketPos = line.Text.IndexOf('/');
                 while (bracketPos != -1)
                 {
-                    var end = line.Text.IndexOf('*', bracketPos + 1);
+                    var end = line.Text.IndexOf('/', bracketPos + 1);
                     if (end != -1)
                     {
                         StartStyling(line.Position + bracketPos);
                         SetStyling(end - bracketPos + 1, 3);
 
-                        bracketPos = line.Text.IndexOf('*', end + 1);
+                        bracketPos = line.Text.IndexOf('/', end + 1);
                     }
                     else
                         bracketPos = -1;

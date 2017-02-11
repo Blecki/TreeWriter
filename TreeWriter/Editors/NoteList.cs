@@ -77,7 +77,7 @@ namespace TreeWriterWF
             if (item != null)
             {
                 var position = item.Tag as ScenePosition;
-                var openCommand = new Commands.OpenPath(Document.Path + "&" + position.Scene.Name + ".$prose",
+                var openCommand = new Commands.OpenPath((Document as NotesDocument).ParentDocument.Path + "&" + position.Scene.Name + ".$prose",
                     Commands.OpenCommand.OpenStyles.CreateView);
                 InvokeCommand(openCommand);
                 if (openCommand.Succeeded && openCommand.Document != null)

@@ -86,6 +86,7 @@ namespace TreeWriterWF
         {
             textEditor.GotoPosition(Place);
             textEditor.ScrollCaret();
+            textEditor.Focus();
         }
     }
 }

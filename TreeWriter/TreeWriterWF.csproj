@@ -105,6 +105,8 @@
     <Compile Include="DockablePanel.Designer.cs">
       <DependentUpon>DockablePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Documents\FindDocument.cs" />
+    <Compile Include="Documents\Scene.cs" />
     <Compile Include="Documents\NotesDocument.cs" />
     <Compile Include="Documents\SceneSettingsDocument.cs" />
     <Compile Include="Documents\SceneDocument.cs" />
@@ -142,6 +144,12 @@
     </Compile>
     <Compile Include="Commands\ExtractManuscript\ManuscriptExtractor.Designer.cs">
       <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\Find.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\Find.Designer.cs">
+      <DependentUpon>Find.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="Help.cs">
@@ -199,6 +207,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\DocumentEditor.resx">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\Find.resx">
+      <DependentUpon>Find.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Help.resx">
       <DependentUpon>Help.cs</DependentUpon>

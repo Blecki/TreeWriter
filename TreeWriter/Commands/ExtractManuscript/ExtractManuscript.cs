@@ -43,6 +43,8 @@ namespace TreeWriterWF.Commands.Extract
 
             foreach (var scene in Document.Scenes)
             {
+                if (scene.SkipOnExtract) continue;
+
                 if (scene.StartsNewChapter)
                 {
                     chapter += 1;
@@ -59,6 +61,9 @@ namespace TreeWriterWF.Commands.Extract
                 formatter.AddScene(scene.Prose);
 
                 scenesInChapter += 1;
+
+                if (scene.StopExtractionHere)
+                    break;
             }
 
             System.IO.File.WriteAllText(Document.ExtractionSettings.DestinationFile, formatter.ToString());

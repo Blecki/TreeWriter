@@ -7,38 +7,6 @@ using System.ComponentModel;
 
 namespace TreeWriterWF
 {
-    public class SceneData
-    {
-        public String Name { get; set; }
-        public String Tags { get; set; }
-        public String Prose = "";
-        public System.Drawing.Color Color { get; set; }
-
-        [Description("Does this scene begin a new chapter? If true, set the chapter name attribute.")]
-        [Category("Chapter")]
-        public bool StartsNewChapter { get; set; }
-
-        [Category("Chapter")]
-        public String ChapterName { get; set; }
-
-        public SceneData()
-        {
-            Name = "";
-            Tags = "";
-            Color = System.Drawing.Color.Transparent;
-            Prose = "";
-            StartsNewChapter = false;
-            ChapterName = "";
-        }
-
-        internal void Validate()
-        {
-            if (Name == null) Name = "";
-            if (Tags == null) Tags = "";
-            if (Prose == null) Prose = "";
-        }
-    }
-
     public class ManuscriptData
     {
         public const String CurrentVersionString = "V1.0";
