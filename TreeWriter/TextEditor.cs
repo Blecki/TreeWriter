@@ -90,20 +90,27 @@ namespace TreeWriterWF
 
             #endregion
 
+            LoadStyles();
+
+            if (!this.DesignMode) initContextMenu();
+        }
+
+        private void LoadStyles()
+        {
             StyleClearAll();
 
-            //Styles[1].ForeColor = Color.Blue;
-            //Styles[1].Hotspot = true;
+            for (var i = 0; i < Settings.GlobalSettings.Styles.Count; ++i)
+            {
+                var style = Settings.GlobalSettings.Styles[i];
 
-            Styles[2].ForeColor = Color.Red;
-            Styles[2].Italic = true;
-
-            Styles[3].Italic = true;
+                Styles[i].ForeColor = style.ForeColor;
+                Styles[i].BackColor = style.BackColor;
+                Styles[i].Bold = style.Bold;
+                Styles[i].Italic = style.Italic;
+            }
 
             Indicators[1].Style = IndicatorStyle.Squiggle;
             Indicators[1].ForeColor = Color.Red;
-
-            if (!this.DesignMode) initContextMenu();
         }
 
         public void LoadFont(System.Drawing.Font Font)
@@ -113,11 +120,15 @@ namespace TreeWriterWF
             var fontName = Font == null ? Scintilla.DefaultFont.Name : Font.Name;
             var fontSize = Font == null ? Scintilla.DefaultFont.SizeInPoints : Font.SizeInPoints;
 
-            for (var i = 0; i < 4; ++i)
+            LoadStyles();
+
+            for (var i = 0; i < 256; ++i)
             {
                 Styles[i].Font = fontName;
                 Styles[i].SizeF = fontSize;
             }
+
+            
         }
                 
         private void initContextMenu()
@@ -227,7 +238,7 @@ namespace TreeWriterWF
                     if (end != -1)
                     {
                         StartStyling(line.Position + bracketPos);
-                        SetStyling(end - bracketPos + 1, 3);
+                        SetStyling(end - bracketPos + 1, 1);
 
                         bracketPos = line.Text.IndexOf('/', end + 1);
                     }
@@ -282,6 +293,14 @@ namespace TreeWriterWF
                         var end = FindWordEnd(line.Text, startPos);
                         // Style between startPos and end
                         var word = line.Text.Substring(startPos, end - startPos);
+
+                        var hiliteWord = Settings.GlobalSettings.SpecialWords.FirstOrDefault(h => h.Word == word.ToUpper());
+                        if (hiliteWord != null)
+                        {
+                            StartStyling(line.Position + startPos);
+                            SetStyling(end - startPos, hiliteWord.Style);
+                        }
+
                         var spellingResults = SpellChecker.Spell(word);
                         if (!spellingResults)
                             IndicatorFillRange(line.Position + startPos, end - startPos);

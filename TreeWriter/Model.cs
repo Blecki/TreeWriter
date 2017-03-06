@@ -26,16 +26,7 @@ namespace TreeWriterWF
                     Settings.GlobalSettings = JsonConvert.DeserializeObject<Settings>(text);
                 }
 
-                if (Settings.GlobalSettings == null) Settings.GlobalSettings = new Settings();
-
-                SpellChecker = new NHunspell.Hunspell(
-                    Settings.GlobalSettings.Dictionary + ".aff", 
-                    Settings.GlobalSettings.Dictionary + ".dic");
-                Thesaurus = new NHunspell.MyThes(Settings.GlobalSettings.Thesaurus);
-
-                foreach (var word in Settings.GlobalSettings.CustomDictionaryEntries)
-                    SpellChecker.Add(word);
-
+                
             }
             catch (Exception e)
             {
@@ -44,6 +35,19 @@ namespace TreeWriterWF
 
                 System.Windows.Forms.MessageBox.Show("Error loading settings.", "Alert!", System.Windows.Forms.MessageBoxButtons.OK);
             }
+
+            if (Settings.GlobalSettings == null) Settings.GlobalSettings = new Settings();
+
+            Settings.GlobalSettings.Verify();
+
+            SpellChecker = new NHunspell.Hunspell(
+                Settings.GlobalSettings.Dictionary + ".aff",
+                Settings.GlobalSettings.Dictionary + ".dic");
+            Thesaurus = new NHunspell.MyThes(Settings.GlobalSettings.Thesaurus);
+
+            foreach (var word in Settings.GlobalSettings.CustomDictionaryEntries)
+                SpellChecker.Add(word);
+
 
             View.UpdateRecentDocuments();
         }

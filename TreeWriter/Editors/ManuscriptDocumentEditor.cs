@@ -63,7 +63,7 @@ namespace TreeWriterWF
                 {
                    
                     var item = new DataGridViewRow();
-                    item.CreateCells(dataGridView, scene.Name, scene.Tags, WordParser.CountWords(scene.Prose).ToString());
+                    item.CreateCells(dataGridView, i.ToString(), scene.Name, scene.Tags, WordParser.CountWords(scene.Prose).ToString());
                     item.Tag = scene;
                     item.DefaultCellStyle.BackColor = scene.Color;
                     if (i == selectedIndex) selectedRow = item;
@@ -83,9 +83,10 @@ namespace TreeWriterWF
         {
             var row = dataGridView.Rows[Index];
             var scene = row.Tag as SceneData;
-            row.Cells[0].Value = scene.Name;
-            row.Cells[1].Value = scene.Tags;
-            row.Cells[2].Value = WordParser.CountWords(scene.Prose).ToString();
+            row.Cells[0].Value = Index.ToString();
+            row.Cells[1].Value = scene.Name;
+            row.Cells[2].Value = scene.Tags;
+            row.Cells[3].Value = WordParser.CountWords(scene.Prose).ToString();
             row.DefaultCellStyle.BackColor = scene.Color;
         }
 
@@ -201,7 +202,7 @@ namespace TreeWriterWF
             var scene = row.Tag as SceneData;
             var value = row.Cells[e.ColumnIndex].Value.ToString();
 
-            if (e.ColumnIndex == 0) // Edit Name
+            if (e.ColumnIndex == 1) // Edit Name
             {
                 if (String.IsNullOrEmpty(value))
                 {
@@ -212,7 +213,7 @@ namespace TreeWriterWF
                     InvokeCommand(new Commands.RenameScene(ManuDoc, scene, value));
                 }
             }
-            else if (e.ColumnIndex == 1) // Edit tags
+            else if (e.ColumnIndex == 2) // Edit tags
             {
                 scene.Tags = value;
                 Document.MadeChanges();
