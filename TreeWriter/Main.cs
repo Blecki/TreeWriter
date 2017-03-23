@@ -27,8 +27,13 @@ namespace TreeWriterWF
             Font = Settings.GlobalSettings.SystemFont;
 
             var dockPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BleckiTreeWriter\\dock.txt";
-            if (System.IO.File.Exists(dockPath)) 
-                dockPanel.LoadFromXml(dockPath, DeserializeDockContent);
+
+            try
+            {
+                if (System.IO.File.Exists(dockPath))
+                    dockPanel.LoadFromXml(dockPath, DeserializeDockContent);
+            }
+            catch (Exception) { }
         }
 
         IDockContent DeserializeDockContent(string persistString)

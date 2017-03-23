@@ -6,24 +6,21 @@ using System.Threading.Tasks;
 
 namespace TreeWriterWF
 {
-    public class SceneDocument : EditableDocument
+    public class ManuscriptSettingsDocument : EditableDocument
     {
-        public SceneData Data;
+        public ManuscriptData Data;
         public ManuscriptDocument ParentDocument;
 
         public override void Load(Model Model, Main View, string Path)
         {
             this.Path = Path;
-            var split = Path.Split('&');
-            if (split.Length != 2) throw new InvalidOperationException();
-
-            var openManuscript = new Commands.OpenPath(split[0], Commands.OpenCommand.OpenStyles.CreateView);
+            var manuPath = System.IO.Path.GetDirectoryName(Path) + "\\" + System.IO.Path.GetFileNameWithoutExtension(Path);
+            var openManuscript = new Commands.OpenPath(manuPath, Commands.OpenCommand.OpenStyles.CreateView);
             openManuscript.Execute(Model, View);
             if (!openManuscript.Succeeded) throw new InvalidOperationException();
             ParentDocument = openManuscript.Document as ManuscriptDocument;
             if (ParentDocument == null) throw new InvalidOperationException();
-            var sceneName = System.IO.Path.GetFileNameWithoutExtension(split[1]);
-            Data = ParentDocument.Data.Scenes.FirstOrDefault(s => s.Name == sceneName);
+            Data = ParentDocument.Data;
             ParentDocument.OpenScenes.Add(this);
         }
 
@@ -34,30 +31,24 @@ namespace TreeWriterWF
 
         protected override string ImplementGetEditorTitle()
         {
-            return System.IO.Path.GetFileNameWithoutExtension(ParentDocument.Path) + " - " + Data.Name;
+            return System.IO.Path.GetFileNameWithoutExtension(ParentDocument.Path) + " - $settings";
         }
 
         public override string GetContents()
         {
-            return Data.Prose;
+            return "";
         }
 
         public override int CountWords(Model Model, Main View)
         {
-            return WordParser.CountWords(Data.Prose);
+            return 0;
         }
 
         public override DockablePanel OpenView(Model Model)
         {
-            var r = new TextDocumentEditor(this, null, Model.SpellChecker, Model.Thesaurus);
+            var r = new DocumentSettingsEditor(this, Data);
             OpenEditors.Add(r);
             return r;
-        }
-
-        public override void ApplyChanges(string NewText)
-        {
-            Data.Prose = NewText;
-            MadeChanges();
         }
 
         public override void Save(bool Backup)
@@ -70,14 +61,6 @@ namespace TreeWriterWF
         public override void MadeChanges()
         {
             ParentDocument.MadeChanges();
-
-            foreach (var manuEditor in ParentDocument.OpenEditors)
-                if (manuEditor is ManuscriptDocumentEditor)
-                {
-                    (manuEditor as ManuscriptDocumentEditor).RebuildLineItem(Data);
-                    //(manuEditor as ManuscriptDocumentEditor).RebuildStatus();
-                }
-
             base.MadeChanges();
         }
     }

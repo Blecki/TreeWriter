@@ -34,6 +34,14 @@ namespace TreeWriterWF
             var extractMenuItem = new ToolStripMenuItem("Extract Manuscript");
             extractMenuItem.Click += extractMenuItem_Click;
             this.contextMenuStrip1.Items.Add(extractMenuItem);
+
+            var settingsMenuItem = new ToolStripMenuItem("Manuscript Settings");
+            settingsMenuItem.Click += settingsMenuItem_Click;
+            this.contextMenuStrip1.Items.Add(settingsMenuItem);
+
+            var statusMenuItem = new ToolStripMenuItem("Refresh Goal");
+            statusMenuItem.Click += (sender, args) => RebuildStatus();
+            this.contextMenuStrip1.Items.Add(statusMenuItem);
         }
 
         void extractMenuItem_Click(object sender, EventArgs e)
@@ -44,6 +52,12 @@ namespace TreeWriterWF
         void notesContextMenuItem_Click(object sender, EventArgs e)
         {
             InvokeCommand(new Commands.OpenPath(Document.Path + "&notes.$notes", Commands.OpenCommand.OpenStyles.CreateView));
+        }
+
+        void settingsMenuItem_Click(object sender, EventArgs e)
+        {
+            InvokeCommand(new Commands.OpenPath(Document.Path + ".$settings",
+                Commands.OpenCommand.OpenStyles.CreateView));
         }
 
         private void UpdateList()
@@ -63,7 +77,7 @@ namespace TreeWriterWF
                 {
                    
                     var item = new DataGridViewRow();
-                    item.CreateCells(dataGridView, i.ToString(), scene.Name, scene.Tags, WordParser.CountWords(scene.Prose).ToString());
+                    item.CreateCells(dataGridView, i.ToString(), scene.DraftStatus.ToString(), scene.Name, scene.Tags, WordParser.CountWords(scene.Prose).ToString());
                     item.Tag = scene;
                     item.DefaultCellStyle.BackColor = scene.Color;
                     if (i == selectedIndex) selectedRow = item;
@@ -77,6 +91,8 @@ namespace TreeWriterWF
             if (topRow >= dataGridView.Rows.Count) topRow = dataGridView.Rows.Count - 1;
             if (topRow < 0) topRow = 0;
             dataGridView.FirstDisplayedScrollingRowIndex = topRow;
+
+            RebuildStatus();
         }
 
         private void RebuildListItem(int Index)
@@ -84,9 +100,10 @@ namespace TreeWriterWF
             var row = dataGridView.Rows[Index];
             var scene = row.Tag as SceneData;
             row.Cells[0].Value = Index.ToString();
-            row.Cells[1].Value = scene.Name;
-            row.Cells[2].Value = scene.Tags;
-            row.Cells[3].Value = WordParser.CountWords(scene.Prose).ToString();
+            row.Cells[1].Value = scene.DraftStatus.ToString();
+            row.Cells[2].Value = scene.Name;
+            row.Cells[3].Value = scene.Tags;
+            row.Cells[4].Value = WordParser.CountWords(scene.Prose).ToString();
             row.DefaultCellStyle.BackColor = scene.Color;
         }
 
@@ -202,7 +219,22 @@ namespace TreeWriterWF
             var scene = row.Tag as SceneData;
             var value = row.Cells[e.ColumnIndex].Value.ToString();
 
-            if (e.ColumnIndex == 1) // Edit Name
+            if (e.ColumnIndex == 1) // Edit Status
+            {
+                try
+                {
+                    scene.DraftStatus = Int32.Parse(value);
+                } 
+                catch (Exception)
+                {
+                    scene.DraftStatus = 0;
+                    RebuildLineItem(scene);
+                }
+
+                RebuildStatus();
+                Document.MadeChanges();
+            }
+            else if (e.ColumnIndex == 2) // Edit Name
             {
                 if (String.IsNullOrEmpty(value))
                 {
@@ -213,7 +245,7 @@ namespace TreeWriterWF
                     InvokeCommand(new Commands.RenameScene(ManuDoc, scene, value));
                 }
             }
-            else if (e.ColumnIndex == 2) // Edit tags
+            else if (e.ColumnIndex == 3) // Edit tags
             {
                 scene.Tags = value;
                 Document.MadeChanges();
@@ -312,8 +344,11 @@ namespace TreeWriterWF
                 else
                 {
                     var insertAfter = GetSceneForRow(dropRow.RowIndex);
-                    ManuDoc.Data.Scenes.Remove(MouseDownScene);
-                    ManuDoc.Data.Scenes.Insert(ManuDoc.Data.Scenes.IndexOf(insertAfter) + 1, MouseDownScene);
+                    if (!Object.ReferenceEquals(insertAfter, MouseDownScene))
+                    {
+                        ManuDoc.Data.Scenes.Remove(MouseDownScene);
+                        ManuDoc.Data.Scenes.Insert(ManuDoc.Data.Scenes.IndexOf(insertAfter) + 1, MouseDownScene);
+                    }
                 }
 
                 ManuDoc.MadeChanges();
@@ -321,6 +356,22 @@ namespace TreeWriterWF
             }
 
             MouseDownScene = null;
+        }
+
+        public void RebuildStatus()
+        {
+            var highestDraft = ManuDoc.Data.Scenes.Select(s => s.DraftStatus).Max();
+
+            var totalWords = ManuDoc.CountWords(null,null);
+
+            GoalLabel.Text = String.Format("{0} of {1} words: {2:P2}, DRAFT {3} {4:P2}",
+                totalWords,
+                ManuDoc.Data.WordCountGoal,
+                (float)totalWords / (float)ManuDoc.Data.WordCountGoal,
+                highestDraft,
+                ManuDoc.Data.Scenes.Count == 0 ? 0 : (float)ManuDoc.Data.Scenes.Count(s => s.DraftStatus == highestDraft) / (float)ManuDoc.Data.Scenes.Count);
+
+
         }
     }
 }

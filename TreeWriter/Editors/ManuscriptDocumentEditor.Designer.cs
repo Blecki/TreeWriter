@@ -42,7 +42,9 @@
             this.deleteSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.GoalLabel = new System.Windows.Forms.Label();
             this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WordsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -58,7 +60,7 @@
             filterPanel.Controls.Add(this.clearFilterButton);
             filterPanel.Controls.Add(this.refreshFilterButton);
             filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            filterPanel.Location = new System.Drawing.Point(0, 0);
+            filterPanel.Location = new System.Drawing.Point(0, 13);
             filterPanel.MinimumSize = new System.Drawing.Size(2, 26);
             filterPanel.Name = "filterPanel";
             filterPanel.Padding = new System.Windows.Forms.Padding(3);
@@ -154,6 +156,7 @@
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
+            this.Status,
             this.NameColumn,
             this.TagsColumn,
             this.WordsColumn});
@@ -167,7 +170,7 @@
             this.dataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.EnableHeadersVisualStyles = false;
-            this.dataGridView.Location = new System.Drawing.Point(0, 26);
+            this.dataGridView.Location = new System.Drawing.Point(0, 39);
             this.dataGridView.MultiSelect = false;
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -181,7 +184,7 @@
             this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView.RowHeadersWidth = 20;
             this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView.Size = new System.Drawing.Size(465, 404);
+            this.dataGridView.Size = new System.Drawing.Size(465, 391);
             this.dataGridView.TabIndex = 3;
             this.dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellDoubleClick);
             this.dataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellEndEdit);
@@ -193,11 +196,30 @@
             this.dataGridView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.dataGridView_MouseMove);
             this.dataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.dataGridView_MouseUp);
             // 
+            // GoalLabel
+            // 
+            this.GoalLabel.AutoSize = true;
+            this.GoalLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.GoalLabel.Location = new System.Drawing.Point(0, 0);
+            this.GoalLabel.Name = "GoalLabel";
+            this.GoalLabel.Size = new System.Drawing.Size(35, 13);
+            this.GoalLabel.TabIndex = 4;
+            this.GoalLabel.Text = "label1";
+            // 
             // ID
             // 
             this.ID.HeaderText = "ID";
             this.ID.Name = "ID";
             this.ID.ReadOnly = true;
+            this.ID.Width = 20;
+            // 
+            // Status
+            // 
+            this.Status.HeaderText = "Status";
+            this.Status.Name = "Status";
+            this.Status.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Status.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Status.Width = 20;
             // 
             // NameColumn
             // 
@@ -234,6 +256,7 @@
             this.ClientSize = new System.Drawing.Size(465, 430);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(filterPanel);
+            this.Controls.Add(this.GoalLabel);
             this.Name = "ManuscriptDocumentEditor";
             this.Text = "SceneListing";
             filterPanel.ResumeLayout(false);
@@ -241,6 +264,7 @@
             this.contextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -254,7 +278,9 @@
         private System.Windows.Forms.Button refreshFilterButton;
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.Label GoalLabel;
         private System.Windows.Forms.DataGridViewTextBoxColumn ID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Status;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn TagsColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn WordsColumn;

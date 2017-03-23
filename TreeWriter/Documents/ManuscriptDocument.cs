@@ -28,12 +28,16 @@ namespace TreeWriterWF
                     var legacy = ManuscriptDataLegacyA.CreateFromJson(json);
                     if (System.Windows.Forms.MessageBox.Show("This manuscript is in a legacy format. It must be converted to open.", "Warning!", System.Windows.Forms.MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
                     {
-                        Data = ManuscriptData.CreateFromLegacy(legacy);
+                        Data = ManuscriptData.CreateFromLegacy(ManuscriptDataLegacyB.CreateFromLegacy(legacy));
                     }
                     else
                         throw new InvalidOperationException("Manuscript upgrade failed.");
                 }
                 else if (version == "V1.0")
+                {
+                    Data = ManuscriptData.CreateFromLegacy(ManuscriptDataLegacyB.CreateFromJson(json.Substring(versionEnd + 1)));
+                }
+                else if (version == "V1.1")
                 {
                     Data = ManuscriptData.CreateFromJson(json.Substring(versionEnd + 1));
                 }

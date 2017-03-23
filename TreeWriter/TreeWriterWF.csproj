@@ -106,8 +106,10 @@
       <DependentUpon>DockablePanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Documents\FindDocument.cs" />
+    <Compile Include="Documents\LegacyFormats\ManuscriptLegacyB.cs" />
     <Compile Include="Documents\Scene.cs" />
     <Compile Include="Documents\NotesDocument.cs" />
+    <Compile Include="Documents\ManuscriptSettingsDocument.cs" />
     <Compile Include="Documents\SceneSettingsDocument.cs" />
     <Compile Include="Documents\SceneDocument.cs" />
     <Compile Include="Documents\ManuscriptDocument.cs" />

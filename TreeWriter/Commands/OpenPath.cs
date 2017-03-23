@@ -34,8 +34,10 @@ namespace TreeWriterWF.Commands
                     realCommand = new OpenCommand<ManuscriptDocument>(FileName, OpenStyle);
                 else if (extension == ".$prose")
                     realCommand = new OpenCommand<SceneDocument>(FileName, OpenStyle);
-                else if (extension == ".$settings")
+                else if (extension == ".$settings" && FileName.Contains('&'))
                     realCommand = new OpenCommand<SceneSettingsDocument>(FileName, OpenStyle);
+                else if (extension == ".$settings")
+                    realCommand = new OpenCommand<ManuscriptSettingsDocument>(FileName, OpenStyle);
                 else if (extension == ".$notes")
                     realCommand = new OpenCommand<NotesDocument>(FileName, OpenStyle);
                 else if (extension == ".$find")

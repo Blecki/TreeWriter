@@ -37,5 +37,15 @@ namespace TreeWriterWF.Commands.Extract
             SceneSeperator = "* * *";
             Format = Formats.PlainText;
         }
+
+        public static ExtractionSettings CreateFromLegacy(ManuscriptDataLegacyB.CExtractionSettings Legacy)
+        {
+            return new ExtractionSettings
+            {
+                DestinationFile = Legacy.DestinationFile,
+                Format = (Formats)Legacy.Format,
+                SceneSeperator = Legacy.SceneSeperator
+            };
+        }
     }
 }

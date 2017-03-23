@@ -12,6 +12,7 @@ namespace TreeWriterWF
         public String Name { get; set; }
         public String Tags { get; set; }
         public String Prose = "";
+        public int DraftStatus { get; set; }
         public System.Drawing.Color Color { get; set; }
 
         [Description("Does this scene begin a new chapter? If true, set the chapter name attribute.")]
@@ -34,6 +35,7 @@ namespace TreeWriterWF
             ChapterName = "";
             SkipOnExtract = false;
             StopExtractionHere = false;
+            DraftStatus = 0;
         }
 
         internal void Validate()
