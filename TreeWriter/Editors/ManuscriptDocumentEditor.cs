@@ -90,7 +90,8 @@ namespace TreeWriterWF
 
             if (topRow >= dataGridView.Rows.Count) topRow = dataGridView.Rows.Count - 1;
             if (topRow < 0) topRow = 0;
-            dataGridView.FirstDisplayedScrollingRowIndex = topRow;
+            if (dataGridView.Rows.Count > 0) 
+                dataGridView.FirstDisplayedScrollingRowIndex = topRow;
 
             RebuildStatus();
         }
@@ -360,7 +361,7 @@ namespace TreeWriterWF
 
         public void RebuildStatus()
         {
-            var highestDraft = ManuDoc.Data.Scenes.Select(s => s.DraftStatus).Max();
+            var highestDraft = ManuDoc.Data.Scenes.Count == 0 ? 0 : ManuDoc.Data.Scenes.Select(s => s.DraftStatus).Max();
 
             var totalWords = ManuDoc.CountWords(null,null);
 
