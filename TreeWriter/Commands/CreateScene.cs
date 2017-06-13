@@ -11,6 +11,7 @@ namespace TreeWriterWF.Commands
         private ManuscriptDocument Owner;
         private SceneData InsertAfter;
         public bool Succeeded { get; private set; }
+        public SceneData NewScene;
 
         public CreateScene(SceneData InsertAfter, ManuscriptDocument Owner)
         {
@@ -21,15 +22,15 @@ namespace TreeWriterWF.Commands
 
         public void Execute(Model Model, Main View)
         {
-            var scene = new SceneData
+            NewScene = new SceneData
             {
                 Name = "New Scene"
             };
 
             if (InsertAfter != null)
-                Owner.Data.Scenes.Insert(Owner.Data.Scenes.IndexOf(InsertAfter) + 1, scene);
+                Owner.Data.Scenes.Insert(Owner.Data.Scenes.IndexOf(InsertAfter) + 1, NewScene);
             else
-                Owner.Data.Scenes.Add(scene);
+                Owner.Data.Scenes.Add(NewScene);
 
             Owner.MadeChanges();
             Succeeded = true;

@@ -60,7 +60,7 @@
 
         #endregion
 
-        private TextEditor textEditor;
+        public TextEditor textEditor { get; private set; }
 
     }
 }

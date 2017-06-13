@@ -34,6 +34,7 @@ namespace TreeWriterWF
         MenuItem miCloseDistractionFree;
         #endregion
 
+        public Action<ContextMenu> CustomizeMenu;
         Action<ICommand> ControllerCommand;
         public bool IsDistractionFreeMode = false;
 
@@ -195,6 +196,7 @@ namespace TreeWriterWF
                 {
                     FindForm().Close();
                 };
+
         }
 
         private void textEditor_StyleNeeded(object sender, StyleNeededEventArgs e)
@@ -432,6 +434,8 @@ namespace TreeWriterWF
                     this.ContextMenu.MenuItems.Add(miCloseDistractionFree);
                 else
                     this.ContextMenu.MenuItems.Add(miLaunchDistractionFree);
+
+                if (CustomizeMenu != null) CustomizeMenu(ContextMenu);
 
                 this.ContextMenu.Show(this, e.Location);
             }

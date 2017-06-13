@@ -16,6 +16,7 @@ namespace TreeWriterWF
     {
         NHunspell.Hunspell SpellChecker;
         NHunspell.MyThes Thesaurus;
+        public Action<ContextMenu> CustomizeContextMenu;
 
         public TextDocumentEditor(
             EditableDocument Document,
@@ -36,6 +37,10 @@ namespace TreeWriterWF
                 textEditor.Document = LinkingDocument.Value;
 
             textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
+            textEditor.CustomizeMenu = (menu) =>
+                {
+                    if (CustomizeContextMenu != null) CustomizeContextMenu(menu);
+                };
 
             Text = Document.GetTitle();
 

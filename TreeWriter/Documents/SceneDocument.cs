@@ -50,6 +50,27 @@ namespace TreeWriterWF
         public override DockablePanel OpenView(Model Model)
         {
             var r = new TextDocumentEditor(this, null, Model.SpellChecker, Model.Thesaurus);
+            r.CustomizeContextMenu = (menu) =>
+                {
+                    var item = menu.MenuItems.Add("Cut to new scene");
+                    item.Click += (sender, args) =>
+                        {
+                            var createCommand = new Commands.CreateScene(Data, ParentDocument);
+                            r.InvokeCommand(createCommand);
+                            createCommand.NewScene.Prose = r.textEditor.SelectedText;
+                            r.textEditor.ReplaceSelection("");
+
+                            foreach (var manuEditor in ParentDocument.OpenEditors)
+                                if (manuEditor is ManuscriptDocumentEditor)
+                                {
+                                    (manuEditor as ManuscriptDocumentEditor).ReloadDocument();
+                                    (manuEditor as ManuscriptDocumentEditor).RebuildLineItem(createCommand.NewScene);
+                                }
+
+                            ParentDocument.MadeChanges();
+                            MadeChanges();
+                        };
+                };
             OpenEditors.Add(r);
             return r;
         }
