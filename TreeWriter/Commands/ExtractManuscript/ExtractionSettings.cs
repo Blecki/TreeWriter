@@ -25,10 +25,10 @@ namespace TreeWriterWF.Commands.Extract
 
         public Formats Format { get; set; }
 
-        public void SetDefaultPath(ManuscriptDocument Document)
+        public void SetDefaultPath(String Path)
         {
-            DestinationFile = System.IO.Path.GetDirectoryName(Document.Path) + "\\" +
-                System.IO.Path.GetFileNameWithoutExtension(Document.Path) +
+            DestinationFile = System.IO.Path.GetDirectoryName(Path) + "\\" +
+                System.IO.Path.GetFileNameWithoutExtension(Path) +
                 "_extracted.txt";
         }
 
@@ -36,16 +36,6 @@ namespace TreeWriterWF.Commands.Extract
         {
             SceneSeperator = "* * *";
             Format = Formats.PlainText;
-        }
-
-        public static ExtractionSettings CreateFromLegacy(ManuscriptDataLegacyB.CExtractionSettings Legacy)
-        {
-            return new ExtractionSettings
-            {
-                DestinationFile = Legacy.DestinationFile,
-                Format = (Formats)Legacy.Format,
-                SceneSeperator = Legacy.SceneSeperator
-            };
         }
     }
 }

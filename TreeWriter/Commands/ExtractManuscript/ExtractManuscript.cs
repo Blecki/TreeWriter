@@ -9,26 +9,28 @@ namespace TreeWriterWF.Commands.Extract
 {
     public class ExtractManuscript : ICommand
     {
-        private ManuscriptData Document;
+        private String Path;
+        private ExtractionSettings Settings;
         public bool Succeeded { get; private set; }
 
-        public ExtractManuscript(ManuscriptData Document)
+        public ExtractManuscript(String Path, ExtractionSettings Settings)
         {
-            this.Document = Document;
+            this.Path = Path;
+            this.Settings = Settings;
             Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
-            if (System.IO.File.Exists(Document.ExtractionSettings.DestinationFile))
+            if (System.IO.File.Exists(Settings.DestinationFile))
                 if (System.Windows.Forms.MessageBox.Show(
-                    String.Format("{0} already exists. Overwrite?", Document.ExtractionSettings.DestinationFile), 
+                    String.Format("{0} already exists. Overwrite?", Settings.DestinationFile), 
                     "Warning", System.Windows.Forms.MessageBoxButtons.YesNo) 
                     != System.Windows.Forms.DialogResult.Yes)
                     return;
 
             ManuscriptFormatter formatter = null;
-            switch (Document.ExtractionSettings.Format)
+            switch (Settings.Format)
             {
                 case ExtractionSettings.Formats.PlainText:
                     formatter = new PlainTextFormatter();
@@ -41,6 +43,7 @@ namespace TreeWriterWF.Commands.Extract
             var chapter = 0;
             var scenesInChapter = 0;
 
+            /* Iterate over files instead!
             foreach (var scene in Document.Scenes)
             {
                 if (scene.SkipOnExtract) continue;
@@ -68,6 +71,7 @@ namespace TreeWriterWF.Commands.Extract
 
             System.IO.File.WriteAllText(Document.ExtractionSettings.DestinationFile, formatter.ToString());
             Succeeded = true;
+            */
         }
     }
 }

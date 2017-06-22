@@ -9,24 +9,19 @@ namespace TreeWriterWF.Commands.Extract
 {
     public class OpenManuscriptExtractor : ICommand
     {
-        private ManuscriptDocument Document;
+        private String Path;
         public bool Succeeded { get; private set; }
 
-        public OpenManuscriptExtractor(ManuscriptDocument Document)
+        public OpenManuscriptExtractor(String Path)
         {
-            this.Document = Document;
+            this.Path = Path;
             Succeeded = false;
         }
 
         public void Execute(Model Model, Main View)
         {
-            ManuscriptExtractor existing = Document.OpenEditors.FirstOrDefault(v => v is ManuscriptExtractor) as ManuscriptExtractor;
-            if (existing == null)
-            {
-                existing = new ManuscriptExtractor(Document);
-                View.OpenControllerPanel(existing, WeifenLuo.WinFormsUI.Docking.DockState.DockRight);
-                Document.OpenEditors.Add(existing);
-            }
+            var existing = new ManuscriptExtractor(Path);
+            View.OpenControllerPanel(existing, WeifenLuo.WinFormsUI.Docking.DockState.DockRight);
             existing.Focus();
             Succeeded = true;
         }

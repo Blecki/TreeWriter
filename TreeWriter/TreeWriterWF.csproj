@@ -73,22 +73,12 @@
     <Compile Include="Commands\CloseApplication.cs" />
     <Compile Include="Commands\AddWordToDictionary.cs" />
     <Compile Include="Commands\CreateNewDocumentAtPath.cs" />
-    <Compile Include="Commands\ExtractManuscript\ExtractionSettings.cs" />
-    <Compile Include="Commands\ExtractManuscript\ManuscriptFormatter.cs" />
-    <Compile Include="Commands\ExtractManuscript\OpenManuscriptExtractor.cs" />
-    <Compile Include="Commands\ExtractManuscript\LatexFormatter.cs" />
-    <Compile Include="Commands\ExtractManuscript\PlainTextFormatter.cs" />
-    <Compile Include="Commands\ExtractManuscript\SaveFileNameEditor.cs" />
-    <Compile Include="Commands\ExtractManuscript\ExtractManuscript.cs" />
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SendToScrap.cs" />
-    <Compile Include="Commands\DeleteScene.cs" />
     <Compile Include="Commands\CountWords.cs" />
     <Compile Include="Commands\DuplicateView.cs" />
     <Compile Include="Commands\CloseAllEditors.cs" />
     <Compile Include="Commands\OpenPath.cs" />
-    <Compile Include="Commands\CreateScene.cs" />
-    <Compile Include="Commands\RenameScene.cs" />
     <Compile Include="Commands\SaveOpenDocuments.cs" />
     <Compile Include="Commands\SaveDocument.cs" />
     <Compile Include="Commands\CloseFolder.cs" />
@@ -105,16 +95,8 @@
     <Compile Include="DockablePanel.Designer.cs">
       <DependentUpon>DockablePanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Documents\FindDocument.cs" />
     <Compile Include="Documents\LegacyFormats\ManuscriptLegacyB.cs" />
-    <Compile Include="Documents\Scene.cs" />
-    <Compile Include="Documents\NotesDocument.cs" />
-    <Compile Include="Documents\ManuscriptSettingsDocument.cs" />
-    <Compile Include="Documents\SceneSettingsDocument.cs" />
-    <Compile Include="Documents\SceneDocument.cs" />
-    <Compile Include="Documents\ManuscriptDocument.cs" />
     <Compile Include="Documents\LegacyFormats\ManuscriptLegacyA.cs" />
-    <Compile Include="Documents\ManuscriptData.cs" />
     <Compile Include="Documents\EditableDocument.cs" />
     <Compile Include="DistractionFreeEditor.cs">
       <SubType>Form</SubType>
@@ -122,11 +104,8 @@
     <Compile Include="DistractionFreeEditor.Designer.cs">
       <DependentUpon>DistractionFreeEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\ManuscriptDocumentEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\ManuscriptDocumentEditor.Designer.cs">
-      <DependentUpon>ManuscriptDocumentEditor.cs</DependentUpon>
+    <Compile Include="Documents\NotesDocument.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Editors\DirectoryListing.cs">
       <SubType>Form</SubType>
@@ -141,17 +120,17 @@
     <Compile Include="Editors\DocumentEditor.Designer.cs">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Commands\ExtractManuscript\ManuscriptExtractor.cs">
+    <Compile Include="Editors\NoteList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Commands\ExtractManuscript\ManuscriptExtractor.Designer.cs">
-      <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
+    <Compile Include="Editors\NoteList.Designer.cs">
+      <DependentUpon>NoteList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\Find.cs">
+    <Compile Include="Editors\SettingsEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Editors\Find.Designer.cs">
-      <DependentUpon>Find.cs</DependentUpon>
+    <Compile Include="Editors\SettingsEditor.Designer.cs">
+      <DependentUpon>SettingsEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="Help.cs">
@@ -159,24 +138,6 @@
     </Compile>
     <Compile Include="Help.Designer.cs">
       <DependentUpon>Help.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\NoteList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\NoteList.Designer.cs">
-      <DependentUpon>NoteList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\DocumentSettingsEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\DocumentSettingsEditor.Designer.cs">
-      <DependentUpon>DocumentSettingsEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\SettingsEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\SettingsEditor.Designer.cs">
-      <DependentUpon>SettingsEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Editors\TextDocumentEditor.cs">
       <SubType>Form</SubType>
@@ -201,32 +162,20 @@
     <EmbeddedResource Include="DistractionFreeEditor.resx">
       <DependentUpon>DistractionFreeEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editors\ManuscriptDocumentEditor.resx">
-      <DependentUpon>ManuscriptDocumentEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editors\DirectoryListing.resx">
       <DependentUpon>DirectoryListing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\DocumentEditor.resx">
       <DependentUpon>DocumentEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editors\Find.resx">
-      <DependentUpon>Find.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Help.resx">
-      <DependentUpon>Help.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Commands\ExtractManuscript\ManuscriptExtractor.resx">
-      <DependentUpon>ManuscriptExtractor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editors\NoteList.resx">
       <DependentUpon>NoteList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editors\DocumentSettingsEditor.resx">
-      <DependentUpon>DocumentSettingsEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editors\SettingsEditor.resx">
       <DependentUpon>SettingsEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Help.resx">
+      <DependentUpon>Help.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\TextDocumentEditor.resx">
       <DependentUpon>TextDocumentEditor.cs</DependentUpon>

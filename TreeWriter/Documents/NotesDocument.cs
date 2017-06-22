@@ -8,20 +8,10 @@ namespace TreeWriterWF
 {
     public class NotesDocument : EditableDocument
     {
-        public ManuscriptDocument ParentDocument;
-
         public override void Load(Model Model, Main View, string Path)
         {
             this.Path = Path;
-            var split = Path.Split('&');
-            if (split.Length != 2) throw new InvalidOperationException();
-
-            var openManuscript = new Commands.OpenPath(split[0], Commands.OpenCommand.OpenStyles.CreateView);
-            openManuscript.Execute(Model, View);
-            if (!openManuscript.Succeeded) throw new InvalidOperationException();
-            ParentDocument = openManuscript.Document as ManuscriptDocument;
-            if (ParentDocument == null) throw new InvalidOperationException();
-            ParentDocument.OpenScenes.Add(this);
+            // UI loads and parses.
         }
 
         public override WeifenLuo.WinFormsUI.Docking.DockState GetPreferredOpeningDockState()
@@ -29,14 +19,9 @@ namespace TreeWriterWF
             return WeifenLuo.WinFormsUI.Docking.DockState.DockBottomAutoHide;
         }
 
-        public override void Close()
-        {
-            ParentDocument.OpenScenes.Remove(this);
-        }
-
         protected override string ImplementGetEditorTitle()
         {
-            return System.IO.Path.GetFileNameWithoutExtension(ParentDocument.Path) + " - $ Notes";
+            return Path;
         }
 
         public override string GetContents()
@@ -63,14 +48,12 @@ namespace TreeWriterWF
 
         public override void Save(bool Backup)
         {
-            ParentDocument.Save(Backup);
             NeedChangesSaved = false;
             UpdateViewTitles();
         }
 
         public override void MadeChanges()
         {
-            ParentDocument.MadeChanges();
             base.MadeChanges();
         }
     }

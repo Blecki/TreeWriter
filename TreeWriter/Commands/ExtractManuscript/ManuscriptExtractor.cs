@@ -14,22 +14,22 @@ namespace TreeWriterWF.Commands.Extract
 {
     public partial class ManuscriptExtractor : DockablePanel
     {
-        ManuscriptDocument Document;
+        String Path;
+        ExtractionSettings Settings = new ExtractionSettings();
 
-        public ManuscriptExtractor(ManuscriptDocument Document)
+        public ManuscriptExtractor(String Path)
         {
-            this.Document = Document;
+            this.Path = Path;
 
             this.InitializeComponent();
 
-            Text = Document.GetTitle();
-            extractionSettings.SelectedObject = Document.Data.ExtractionSettings;
-            Document.Data.ExtractionSettings.SetDefaultPath(Document);
+            Text = "Extract " + Path;
+            extractionSettings.SelectedObject = Settings;
+            Settings.SetDefaultPath(Path);
         }
 
         private void NoteList_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Document.OpenEditors.Remove(this);
         }
 
         private void buttonExtract_Click(object sender, EventArgs e)

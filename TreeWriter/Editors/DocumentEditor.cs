@@ -82,7 +82,7 @@ namespace TreeWriterWF
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InvokeCommand(new Commands.OpenPath(Document.Path + "&find.$find", Commands.OpenCommand.OpenStyles.CreateView));
+            InvokeCommand(new Commands.OpenPath(Document.Path + ".$find", Commands.OpenCommand.OpenStyles.CreateView));
         }       
     }
 }

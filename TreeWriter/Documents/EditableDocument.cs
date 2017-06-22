@@ -52,7 +52,7 @@ namespace TreeWriterWF
         {
             var directory = System.IO.Path.GetDirectoryName(Path);
             var file = System.IO.Path.GetFileName(Path);
-            var newDirectory = directory + "\\" + file.Replace('.', '_');
+            var newDirectory = directory + "\\backup--" + file.Replace('.', '_');
             if (!System.IO.Directory.Exists(newDirectory))
                 System.IO.Directory.CreateDirectory(newDirectory);
             var newPath = newDirectory + "\\" + System.Guid.NewGuid();

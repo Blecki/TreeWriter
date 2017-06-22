@@ -101,5 +101,26 @@ namespace TreeWriterWF
         {
             return OpenDocuments;
         }
+
+        public static IEnumerable<String> EnumerateDirectories(String Path)
+        {
+            foreach (var subDir in System.IO.Directory.EnumerateDirectories(Path))
+            {
+                var lastDirectory = System.IO.Path.GetFileName(subDir);
+                if (!lastDirectory.StartsWith("backup--"))
+                    yield return subDir;
+            }
+        }
+
+        public static IEnumerable<String> EnumerateFiles(String Path)
+        {
+            foreach (var file in System.IO.Directory.EnumerateFiles(Path))
+            {
+                var fileName = System.IO.Path.GetFileName(file);
+                var extension = System.IO.Path.GetExtension(file);
+                if (extension == ".txt")
+                    yield return file;
+            }
+        }
     }
 }

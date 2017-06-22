@@ -18,6 +18,7 @@ namespace TreeWriterWF
             public enum Type
             {
                 Directory,
+                Project,
                 File,
                 Root
             }
@@ -71,17 +72,28 @@ namespace TreeWriterWF
 
         private void BuildDirectoryTreeItems(String DirectoryPath, TreeNodeCollection Into)
         {
+            // Todo: Lift this
             foreach (var subDir in System.IO.Directory.EnumerateDirectories(DirectoryPath))
-                Into.Add(BuildDirectoryTree(subDir));
+            {
+                var lastDirectory = System.IO.Path.GetFileName(subDir);
+                if (!lastDirectory.StartsWith("backup--"))
+                    Into.Add(BuildDirectoryTree(subDir));
+            }
+        
             foreach (var file in System.IO.Directory.EnumerateFiles(DirectoryPath))
             {
                 var fileName = System.IO.Path.GetFileName(file);
                 var extension = System.IO.Path.GetExtension(file);
-                var fileNode = new TreeNode() { Text = System.IO.Path.GetFileName(file) };
-                fileNode.Tag = new NodeTag { NodeType = NodeTag.Type.File, Path = file };
-                fileNode.ImageIndex = 0;
-                fileNode.SelectedImageIndex = 0;
-                Into.Add(fileNode);
+                if (extension == ".txt")
+                {
+                    var fileNode = new TreeNode() { Text = System.IO.Path.GetFileName(file) };
+                    fileNode.Tag = new NodeTag { NodeType = NodeTag.Type.File, Path = file };
+                    fileNode.ImageIndex = 0;
+                    fileNode.SelectedImageIndex = 0;
+                    Into.Add(fileNode);
+
+                    // Add word count to title. Update when item is editted.
+                }
             }
         }
 
@@ -379,49 +391,23 @@ namespace TreeWriterWF
                 InvokeCommand(new Commands.CountWords(System.IO.Path.GetDirectoryName(Project.Path)));
         }
 
-        private void newManuscriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Commands.CreateNewDocument createCommand = null;
-            TreeNode newNode = null;
-            
-            if (ContextNode != null)
-            {
-                var tag = ContextNode.Tag as NodeTag;
-                createCommand = new Commands.CreateNewDocument(tag.Path, "ms");
-                InvokeCommand(createCommand);
-                UpdateNode(ContextNode);
-                foreach (TreeNode node in ContextNode.Nodes)
-                    if ((node.Tag as NodeTag).Path == tag.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-            else
-            {
-                createCommand = new Commands.CreateNewDocument(Project.Path, "ms");
-                InvokeCommand(createCommand);
-                UpdateNode(null);
-                foreach (TreeNode node in treeView.Nodes)
-                    if ((node.Tag as NodeTag).Path == Project.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-
-            newNode.EnsureVisible();
-            treeView.SelectedNode = newNode;
-            newNode.BeginEdit();
-        }
-
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReloadDocument();
         }
 
-        private void openAsTextToolStripMenuItem_Click(object sender, EventArgs e)
+        private void notesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var file = ContextNode.Tag as NodeTag;
-            if (file.NodeType == NodeTag.Type.File)
-            {
-                InvokeCommand(new Commands.OpenCommand<TextDocument>(file.Path, 
-                    Commands.OpenCommand.OpenStyles.CreateView));
-            }
+            if (ContextNode != null)
+                InvokeCommand(new Commands.OpenPath((ContextNode.Tag as NodeTag).Path + ".$notes", Commands.OpenCommand.OpenStyles.CreateView));
         }
+
+        private void notesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (ContextNode != null)
+                InvokeCommand(new Commands.OpenPath((ContextNode.Tag as NodeTag).Path + ".$notes",
+                    Commands.OpenCommand.OpenStyles.CreateView));
+        }
+
     }
 }
