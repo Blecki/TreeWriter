@@ -65,11 +65,6 @@ namespace TreeWriterWF
             InvokeCommand(new Commands.DuplicateView(Document));
         }
 
-        private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InvokeCommand(new Commands.CountWords(Document.Path));
-        }
-
         private void saveDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InvokeCommand(new Commands.SaveDocument(Document));
@@ -79,10 +74,5 @@ namespace TreeWriterWF
         {
             this.Close(); // Close event takes care of the saving and cancelling.
         }
-
-        private void findToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InvokeCommand(new Commands.OpenPath(Document.Path + ".$find", Commands.OpenCommand.OpenStyles.CreateView));
-        }       
     }
 }

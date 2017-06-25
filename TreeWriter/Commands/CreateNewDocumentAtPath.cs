@@ -10,6 +10,7 @@ namespace TreeWriterWF.Commands
     {
         private String DirectoryPath;
         public String NewFileName;
+        public String FullPath { get { return DirectoryPath + "\\" + NewFileName; } }
         public String Extension;
         public bool Succeeded { get; private set; }
         

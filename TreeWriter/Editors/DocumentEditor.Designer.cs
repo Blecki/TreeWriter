@@ -31,10 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.duplicateViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wordCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -42,12 +40,10 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.duplicateViewToolStripMenuItem,
-            this.wordCountToolStripMenuItem,
             this.saveDocumentToolStripMenuItem,
-            this.closeEditorToolStripMenuItem,
-            this.findToolStripMenuItem});
+            this.closeEditorToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(158, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(158, 70);
             // 
             // duplicateViewToolStripMenuItem
             // 
@@ -55,13 +51,6 @@
             this.duplicateViewToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.duplicateViewToolStripMenuItem.Text = "Duplicate View";
             this.duplicateViewToolStripMenuItem.Click += new System.EventHandler(this.duplicateViewToolStripMenuItem_Click);
-            // 
-            // wordCountToolStripMenuItem
-            // 
-            this.wordCountToolStripMenuItem.Name = "wordCountToolStripMenuItem";
-            this.wordCountToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.wordCountToolStripMenuItem.Text = "Word Count";
-            this.wordCountToolStripMenuItem.Click += new System.EventHandler(this.wordCountToolStripMenuItem_Click);
             // 
             // saveDocumentToolStripMenuItem
             // 
@@ -76,13 +65,6 @@
             this.closeEditorToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.closeEditorToolStripMenuItem.Text = "Close Editor";
             this.closeEditorToolStripMenuItem.Click += new System.EventHandler(this.closeEditorToolStripMenuItem_Click);
-            // 
-            // findToolStripMenuItem
-            // 
-            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.findToolStripMenuItem.Text = "Find";
-            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
             // DocumentEditor
             // 
@@ -103,10 +85,8 @@
 
         protected System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem duplicateViewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem wordCountToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveDocumentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeEditorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
 
     }
 }

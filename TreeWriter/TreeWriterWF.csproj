@@ -132,6 +132,7 @@
     <Compile Include="Editors\SettingsEditor.Designer.cs">
       <DependentUpon>SettingsEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="MetaInformation.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Help.cs">
       <SubType>Form</SubType>

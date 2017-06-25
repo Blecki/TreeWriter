@@ -18,13 +18,13 @@ namespace TreeWriterWF
             public enum Type
             {
                 Directory,
-                Project,
                 File,
                 Root
             }
 
             public Type NodeType;
             public String Path;
+            public int WordCount;
         }
 
         private TreeNode ContextNode = null;
@@ -40,12 +40,21 @@ namespace TreeWriterWF
             InitializeComponent();
 
             var directoryPath = Project.Path;
-            BuildDirectoryTreeItems(directoryPath, treeView.Nodes);
+            BuildDirectoryTreeItems(directoryPath, treeView.Nodes, new MetaInformation(Project.Path));
             Text = System.IO.Path.GetFileName(Project.Path);
 
             var refreshMenuItem = new ToolStripMenuItem("Refresh");
             refreshMenuItem.Click += refreshMenuItem_Click;
             this.contextMenuStrip1.Items.Add(refreshMenuItem);
+
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
+            var setStyleMethod = typeof(Control).GetMethod("SetStyle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (setStyleMethod != null) setStyleMethod.Invoke(treeView,
+                new Object[] {
+                ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, 
+                true});
         }
 
         void refreshMenuItem_Click(object sender, EventArgs e)
@@ -55,29 +64,31 @@ namespace TreeWriterWF
 
         private TreeNode BuildDirectoryTree(String DirectoryPath)
         {
+            var meta = new MetaInformation(DirectoryPath);
+
             var r = new TreeNode()
             {
                 Text = System.IO.Path.GetFileName(DirectoryPath),
                 Tag = new NodeTag
                 {
                     NodeType = NodeTag.Type.Directory,
-                    Path = DirectoryPath
+                    Path = DirectoryPath,
+                    WordCount = meta.Data.TotalWordCount
                 },
                 ImageIndex = 1,
                 SelectedImageIndex = 1,
             };
-            BuildDirectoryTreeItems(DirectoryPath, r.Nodes);
+         
+            BuildDirectoryTreeItems(DirectoryPath, r.Nodes, meta);
             return r;
         }
 
-        private void BuildDirectoryTreeItems(String DirectoryPath, TreeNodeCollection Into)
+        private void BuildDirectoryTreeItems(String DirectoryPath, TreeNodeCollection Into, MetaInformation Meta)
         {
-            // Todo: Lift this
-            foreach (var subDir in System.IO.Directory.EnumerateDirectories(DirectoryPath))
+            foreach (var subDir in Model.EnumerateDirectories(DirectoryPath))
             {
-                var lastDirectory = System.IO.Path.GetFileName(subDir);
-                if (!lastDirectory.StartsWith("backup--"))
-                    Into.Add(BuildDirectoryTree(subDir));
+                var dirNode = BuildDirectoryTree(subDir);
+                Into.Add(dirNode);
             }
         
             foreach (var file in System.IO.Directory.EnumerateFiles(DirectoryPath))
@@ -92,7 +103,8 @@ namespace TreeWriterWF
                     fileNode.SelectedImageIndex = 0;
                     Into.Add(fileNode);
 
-                    // Add word count to title. Update when item is editted.
+                    if (Meta.Data.Files.ContainsKey(file))
+                        (fileNode.Tag as NodeTag).WordCount = Meta.Data.Files[file].WordCount;
                 }
             }
         }
@@ -102,12 +114,12 @@ namespace TreeWriterWF
             if (Node == null)
             {
                 treeView.Nodes.Clear();
-                BuildDirectoryTreeItems(Project.Path, treeView.Nodes);
+                BuildDirectoryTreeItems(Project.Path, treeView.Nodes, new MetaInformation(Project.Path));
             }
             else
             {
                 Node.Nodes.Clear();
-                BuildDirectoryTreeItems((Node.Tag as NodeTag).Path, Node.Nodes);
+                BuildDirectoryTreeItems((Node.Tag as NodeTag).Path, Node.Nodes, new MetaInformation((Node.Tag as NodeTag).Path));
             }
         }
 
@@ -136,29 +148,141 @@ namespace TreeWriterWF
         {
             if (e.Button == MouseButtons.Right)
             {
-
-                // Point where the mouse is clicked.
                 Point p = new Point(e.X, e.Y);
-
-                // Get the node that the user has clicked.
                 TreeNode node = treeView.GetNodeAt(p);
-                if (node != null && node.Tag != null)
-                {
-                    ContextNode = node;
-                    treeView.SelectedNode = ContextNode;
 
-                    var tag = node.Tag as NodeTag;
-                    if (tag.NodeType == NodeTag.Type.Directory)
-                        DirectoryContextMenu.Show(treeView, p);
-                    else if (tag.NodeType == NodeTag.Type.File)
-                        FileContextMenu.Show(treeView, p);
-                }
-                else if (node == null)
+                var menu = new ContextMenu();
+                ContextNode = node;
+                if (ContextNode != null) treeView.SelectedNode = ContextNode;
+
+                menu.MenuItems.Add("New File", NewFileMenuItemHandler);
+                menu.MenuItems.Add("New Folder", NewFolderMenuItemHandler);
+
+                if (ContextNode != null)
                 {
-                    ContextNode = null;
-                    DirectoryContextMenu.Show(treeView, p);
+                    menu.MenuItems.Add("Refresh Wordcount", RefreshWordCountMenuItemHandler);
+                    menu.MenuItems.Add("Notes", (_s, args) =>
+                        {
+                            InvokeCommand(new Commands.OpenPath((ContextNode.Tag as NodeTag).Path + ".$notes", Commands.OpenCommand.OpenStyles.CreateView));
+                        });
                 }
+
+                if (ContextNode == null || (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.Directory)
+                {
+                    if (ContextNode != null)
+                        menu.MenuItems.Add("Delete", (_s, args) =>
+                        {
+                            if (!Confirm("Are you sure you want to delete this folder?")) return;
+                            if (ContextNode == null) return;
+                            var tag = ContextNode.Tag as NodeTag;
+                            InvokeCommand(new Commands.DeleteFolder(tag.Path));
+                            UpdateNode(ContextNode.Parent);
+                        });
+                }
+                else
+                {
+                    menu.MenuItems.Add("Delete", (_s, args) =>
+                        {
+                            if (!Confirm("Are you sure you want to delete this document?")) return;
+                            if (ContextNode == null) return;
+                            System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.File);
+                            var tag = ContextNode.Tag as NodeTag;
+                            InvokeCommand(new Commands.DeleteDocument(tag.Path));
+                            UpdateNode(ContextNode.Parent);
+                        });
+
+                }
+
+                menu.Show(treeView, p);
             }
+        }
+
+        private void NewFileMenuItemHandler(object sender, EventArgs e)
+        {
+            Commands.CreateNewDocument createCommand = null;
+            TreeNode newNode = null;
+
+            if (ContextNode != null)
+            {
+                var tag = ContextNode.Tag as NodeTag;
+                var dirPath = tag.Path;
+                if (tag.NodeType == NodeTag.Type.File)
+                    dirPath = System.IO.Path.GetDirectoryName(dirPath);
+                createCommand = new Commands.CreateNewDocument(dirPath, "txt");
+                InvokeCommand(createCommand);
+                UpdateNode(ContextNode);
+                foreach (TreeNode node in ContextNode.Nodes)
+                    if ((node.Tag as NodeTag).Path == dirPath + "\\" + createCommand.NewFileName)
+                        newNode = node;
+            }
+            else
+            {
+                createCommand = new Commands.CreateNewDocument(Project.Path, "txt");
+                InvokeCommand(createCommand);
+                UpdateNode(null);
+                foreach (TreeNode node in treeView.Nodes)
+                    if ((node.Tag as NodeTag).Path == Project.Path + "\\" + createCommand.NewFileName)
+                        newNode = node;
+            }
+
+            newNode.EnsureVisible();
+            treeView.SelectedNode = newNode;
+            newNode.BeginEdit();
+        }
+
+        private void NewFolderMenuItemHandler(object sender, EventArgs e)
+        {
+            Commands.CreateFolder createCommand = null;
+            TreeNode newNode = null;
+
+            if (ContextNode != null)
+            {
+                var tag = ContextNode.Tag as NodeTag;
+                var dirPath = tag.Path;
+                if (tag.NodeType == NodeTag.Type.File)
+                    dirPath = System.IO.Path.GetDirectoryName(dirPath);
+                createCommand = new Commands.CreateFolder(dirPath);
+                InvokeCommand(createCommand);
+                UpdateNode(ContextNode);
+                foreach (TreeNode node in ContextNode.Nodes)
+                    if ((node.Tag as NodeTag).Path == dirPath + "\\" + createCommand.NewFileName)
+                        newNode = node;
+            }
+            else
+            {
+                createCommand = new Commands.CreateFolder(Project.Path);
+                InvokeCommand(createCommand);
+                UpdateNode(null);
+                foreach (TreeNode node in treeView.Nodes)
+                    if ((node.Tag as NodeTag).Path == Project.Path + "\\" + createCommand.NewFileName)
+                        newNode = node;
+            }
+
+            newNode.EnsureVisible();
+            treeView.SelectedNode = newNode;
+            newNode.BeginEdit();
+        }
+
+        private void RefreshWordCountMenuItemHandler(object sender, EventArgs e)
+        {
+            //InvokeCommand(new Commands.CountWords((ContextNode.Tag as NodeTag).Path));
+            var tag = ContextNode.Tag as NodeTag;
+            if (tag.NodeType == NodeTag.Type.File)
+            {
+                // Handle case where document is open?
+                tag.WordCount = WordParser.CountWords(System.IO.File.ReadAllText(tag.Path));
+
+            }
+            else if (tag.NodeType == NodeTag.Type.Directory)
+            {
+                // Need to update tags of sub folders.
+                var meta = new MetaInformation(tag.Path);
+                meta.UpdateFromDisc();
+                tag.WordCount = meta.Data.TotalWordCount;
+                meta.Save();
+            }
+
+            Refresh();
         }
 
         private void treeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
@@ -200,55 +324,6 @@ namespace TreeWriterWF
             }
         }
 
-        private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Commands.CreateNewDocument createCommand = null;
-            TreeNode newNode = null;
-            
-            if (ContextNode != null)
-            {
-                var tag = ContextNode.Tag as NodeTag;
-                createCommand = new Commands.CreateNewDocument(tag.Path, "txt");
-                InvokeCommand(createCommand);
-                UpdateNode(ContextNode);
-                foreach (TreeNode node in ContextNode.Nodes)
-                    if ((node.Tag as NodeTag).Path == tag.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-            else
-            {
-                createCommand = new Commands.CreateNewDocument(Project.Path, "txt");
-                InvokeCommand(createCommand);
-                UpdateNode(null);
-                foreach (TreeNode node in treeView.Nodes)
-                    if ((node.Tag as NodeTag).Path == Project.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-
-            newNode.EnsureVisible();
-            treeView.SelectedNode = newNode;
-            newNode.BeginEdit();
-        }
-
-        private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!Confirm("Are you sure you want to delete this folder?")) return;
-            if (ContextNode == null) return;
-            var tag = ContextNode.Tag as NodeTag;
-            InvokeCommand(new Commands.DeleteFolder(tag.Path));
-            UpdateNode(ContextNode.Parent);
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!Confirm("Are you sure you want to delete this document?")) return;
-            if (ContextNode == null) return;
-            System.Diagnostics.Debug.Assert(ContextNode != null && (ContextNode.Tag as NodeTag).NodeType == NodeTag.Type.File);
-            var tag = ContextNode.Tag as NodeTag;
-            InvokeCommand(new Commands.DeleteDocument(tag.Path));
-            UpdateNode(ContextNode.Parent);
-        }
-
         private bool Confirm(String Text)
         {
             var r = MessageBox.Show(Text, "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -261,36 +336,6 @@ namespace TreeWriterWF
             {
                 InvokeCommand(new Commands.CloseFolder(Project));
             }
-        }
-
-        private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Commands.CreateFolder createCommand = null;
-            TreeNode newNode = null;
-
-            if (ContextNode != null)
-            {
-                var tag = ContextNode.Tag as NodeTag;
-                createCommand = new Commands.CreateFolder(tag.Path);
-                InvokeCommand(createCommand);
-                UpdateNode(ContextNode);
-                foreach (TreeNode node in ContextNode.Nodes)
-                    if ((node.Tag as NodeTag).Path == tag.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-            else
-            {
-                createCommand = new Commands.CreateFolder(Project.Path);
-                InvokeCommand(createCommand);
-                UpdateNode(null);
-                foreach (TreeNode node in treeView.Nodes)
-                    if ((node.Tag as NodeTag).Path == Project.Path + "\\" + createCommand.NewFileName)
-                        newNode = node;
-            }
-
-            newNode.EnsureVisible();
-            treeView.SelectedNode = newNode;
-            newNode.BeginEdit();
         }
 
         private void treeView_KeyDown(object sender, KeyEventArgs e)
@@ -308,11 +353,7 @@ namespace TreeWriterWF
             }
         }
 
-        private void wordCountToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InvokeCommand(new Commands.CountWords((ContextNode.Tag as NodeTag).Path));
-        }
-
+        #region Drag and Drop
         private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
             var tag = (e.Item as TreeNode).Tag;
@@ -382,32 +423,29 @@ namespace TreeWriterWF
         {
             treeView.SelectedNode = treeView.GetNodeAt(treeView.PointToClient(new Point(e.X, e.Y)));
         }
+        #endregion
 
-        private void wordCountToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void treeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            if (ContextNode != null)
-                InvokeCommand(new Commands.CountWords((ContextNode.Tag as NodeTag).Path));
-            else
-                InvokeCommand(new Commands.CountWords(System.IO.Path.GetDirectoryName(Project.Path)));
+            e.DrawDefault = true;
+
+            e.Graphics.FillRectangle(Brushes.White, e.Bounds.Right, e.Bounds.Y,
+                (sender as TreeView).Bounds.Right - e.Bounds.Right, e.Bounds.Height);
+
+            if (e.Node.Tag != null)
+            {
+                e.Graphics.DrawString((e.Node.Tag as NodeTag).WordCount.ToString(), Font, Brushes.Black, (sender as TreeView).Bounds.Right - 64, e.Bounds.Top);
+            }
         }
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        private void treeView_Resize(object sender, EventArgs e)
         {
-            ReloadDocument();
+            Refresh();
         }
 
-        private void notesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void treeView_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            if (ContextNode != null)
-                InvokeCommand(new Commands.OpenPath((ContextNode.Tag as NodeTag).Path + ".$notes", Commands.OpenCommand.OpenStyles.CreateView));
+            Refresh();
         }
-
-        private void notesToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (ContextNode != null)
-                InvokeCommand(new Commands.OpenPath((ContextNode.Tag as NodeTag).Path + ".$notes",
-                    Commands.OpenCommand.OpenStyles.CreateView));
-        }
-
     }
 }

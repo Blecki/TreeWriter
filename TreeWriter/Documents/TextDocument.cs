@@ -53,6 +53,26 @@ namespace TreeWriterWF
                 this, 
                 OpenEditors.Count != 0 ? (OpenEditors[0] as TextDocumentEditor).GetScintillaDocument() : (ScintillaNET.Document?)null,
                 Model.SpellChecker, Model.Thesaurus);
+            r.CustomizeContextMenu = (menu) =>
+            {
+                var item = menu.MenuItems.Add("Cut to new document");
+                item.Click += (sender, args) =>
+                {
+                    var createCommand = new Commands.CreateNewDocument(System.IO.Path.GetDirectoryName(Path), "txt");
+                    r.InvokeCommand(createCommand);
+                    if (!createCommand.Succeeded)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Failed to create new file.");
+                        return;
+                    }
+
+                    var prose = r.textEditor.SelectedText;
+                    System.IO.File.WriteAllText(createCommand.FullPath, prose);
+                    r.textEditor.ReplaceSelection("");
+
+                    MadeChanges();
+                };
+            };
             OpenEditors.Add(r);
             return r;
         }
