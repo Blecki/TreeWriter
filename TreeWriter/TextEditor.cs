@@ -54,6 +54,7 @@ namespace TreeWriterWF
             //this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
             this.WrapMode = ScintillaNET.WrapMode.Word;
+
             if (!this.DesignMode) this.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.textEditor_StyleNeeded);
             if (!this.DesignMode) this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textEditor_MouseDown);
 
@@ -91,9 +92,11 @@ namespace TreeWriterWF
 
             #endregion
 
-            LoadStyles();
-
-            if (!this.DesignMode) initContextMenu();
+            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+            {
+                LoadStyles();
+                initContextMenu();
+            }
         }
 
         private void LoadStyles()

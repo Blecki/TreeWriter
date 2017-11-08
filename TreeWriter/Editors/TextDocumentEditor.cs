@@ -18,6 +18,11 @@ namespace TreeWriterWF
         NHunspell.MyThes Thesaurus;
         public Action<ContextMenu> CustomizeContextMenu;
 
+        public TextDocumentEditor()
+        {
+            this.InitializeComponent();
+        }
+
         public TextDocumentEditor(
             EditableDocument Document,
             ScintillaNET.Document? LinkingDocument,
@@ -30,24 +35,28 @@ namespace TreeWriterWF
 
             this.InitializeComponent();
 
-            // Load document into editor.
-            if (!LinkingDocument.HasValue)
-                textEditor.Text = Document.GetContents();
-            else
-                textEditor.Document = LinkingDocument.Value;
+            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+            {
 
-            textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
-            textEditor.CustomizeMenu = (menu) =>
-                {
-                    if (CustomizeContextMenu != null) CustomizeContextMenu(menu);
-                };
+                // Load document into editor.
+                if (!LinkingDocument.HasValue)
+                    textEditor.Text = Document.GetContents();
+                else
+                    textEditor.Document = LinkingDocument.Value;
 
-            Text = Document.GetTitle();
+                textEditor.Create(SpellChecker, Thesaurus, (a) => InvokeCommand(a));
+                textEditor.CustomizeMenu = (menu) =>
+                    {
+                        if (CustomizeContextMenu != null) CustomizeContextMenu(menu);
+                    };
 
-            //Register last to avoid spurius events
-            this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
+                Text = Document.GetTitle();
 
-            ReloadSettings();
+                //Register last to avoid spurius events
+                this.textEditor.TextChanged += new System.EventHandler(this.textEditor_TextChanged);
+
+                ReloadSettings();
+            }
         }
 
         public override void ReloadSettings()
@@ -69,6 +78,7 @@ namespace TreeWriterWF
         private void textEditor_TextChanged(object sender, EventArgs e)
         {
             Document.ApplyChanges(textEditor.Text);
+            WordCountStatus.Text = String.Format("WORDS {0}", Document.CountWords(null, null));
         }
           
         private void TextEditor_KeyDown(object sender, KeyEventArgs e)
